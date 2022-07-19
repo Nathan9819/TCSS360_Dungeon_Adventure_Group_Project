@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class DungeonGenerator {
     public static room[][] dungeon = new room[11][11];
-    public static ArrayList<Point> prospects;
+//    public static ArrayList<Point> prospects;
     private final int MAX_EXPANSION_COUNT = 6;
     private int count = 0;
 
@@ -135,7 +135,7 @@ public class DungeonGenerator {
     }
 
     public List<Point> getProspects() {
-        ArrayList points = new ArrayList();
+        ArrayList<Point> points = new ArrayList<>();
         for (int row = 0; row < dungeon.length; row++) {
             for (int col = 0; col < dungeon[0].length; col++) {
                 if (dungeon[row][col].myRoomContents.equals("P")) {
