@@ -16,6 +16,7 @@ public class DungeonGenerator {
 
         fillMaze();
         startGame();
+//        cleanUpDungeon();
         finalizeDungeon();
         displayDungeon();
     }
@@ -150,6 +151,7 @@ public class DungeonGenerator {
     }
 
     public void finalizeDungeon() {
+        cleanUpDungeon();
         int dunRow = 0;
         int dunCol = 0;
         for (int i = 0; i < finalDungeon.length; i++) {
@@ -206,6 +208,29 @@ public class DungeonGenerator {
             }
         }
         return theRooms;
+    }
+
+    public void cleanUpDungeon() {
+        for (int i = 0; i < initialDungeon.length; i++) {
+            for (int j = 0; j < initialDungeon[0].length; j++) {
+                if(initialDungeon[i][j].myRoomContents.equals("P")) {
+                    if (initialDungeon[i][j].myNorth != null) {
+                        initialDungeon[i - 1][j].mySouth = null;
+                        initialDungeon[i][j].myNorth = null;
+                    } else if (initialDungeon[i][j].myEast != null) {
+                        initialDungeon[i][j + 1].myWest = null;
+                        initialDungeon[i][j].myEast = null;
+                    } else if (initialDungeon[i][j].mySouth != null) {
+                        initialDungeon[i + 1][j].myNorth = null;
+                        initialDungeon[i][j].mySouth = null;
+                    } else if (initialDungeon[i][j].myWest != null) {
+                        initialDungeon[i][j - 1].myEast = null;
+                        initialDungeon[i][j].myWest = null;
+                    }
+                    initialDungeon[i][j].myRoomContents = " ";
+                }
+            }
+        }
     }
 
     public class room {

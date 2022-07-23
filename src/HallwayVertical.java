@@ -6,7 +6,7 @@ public class HallwayVertical extends Entity{
     public HallwayVertical() {
         URL url = HallwayVertical.class.getResource("Assets/HallwayVertical.png");
         sprite = new ImageIcon(url);
-        height = 20;
+        height = 27;
         width = 24;
     }
 
