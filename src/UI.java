@@ -17,7 +17,7 @@ public class UI {
     }
 
     public void createMainField() {
-        window = new JFrame();
+        window = new JFrame("Dungeon Adventure");
         window.setSize(800, 900);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Color bgColor = new Color(115, 62, 57);
