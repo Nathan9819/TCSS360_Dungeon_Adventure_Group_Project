@@ -20,7 +20,8 @@ public class UI {
         window = new JFrame();
         window.setSize(800, 900);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.getContentPane().setBackground(Color.white);
+        Color bgColor = new Color(115, 62, 57);
+        window.getContentPane().setBackground(bgColor);
         window.setLayout(null);
     }
 

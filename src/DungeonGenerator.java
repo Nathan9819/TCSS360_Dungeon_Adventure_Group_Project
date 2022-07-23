@@ -197,7 +197,7 @@ public class DungeonGenerator {
                             theRooms[i + 1][j].myRoomContents = "|";
                         }
                     }
-                    if (j < theRooms.length - 1) {
+                    if (j < theRooms[0].length - 1) {
                         if (theRooms[i][j].myEast == theRooms[i][j + 2]) {
                             theRooms[i][j + 1].myRoomContents = "-";
                         }
