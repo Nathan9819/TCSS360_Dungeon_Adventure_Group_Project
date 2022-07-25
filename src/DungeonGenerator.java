@@ -6,8 +6,7 @@ import java.util.Random;
 public class DungeonGenerator {
     private static room[][] initialDungeon;
     public static room[][] finalDungeon;
-//    public static ArrayList<Point> prospects;
-    private final int MAX_EXPANSION_COUNT = 6;
+    private final int MAX_EXPANSION_COUNT = 8;
     private int count = 0;
 
     public DungeonGenerator() {
@@ -16,7 +15,6 @@ public class DungeonGenerator {
 
         fillMaze();
         startGame();
-//        cleanUpDungeon();
         finalizeDungeon();
         displayDungeon();
     }
@@ -36,12 +34,6 @@ public class DungeonGenerator {
         initialDungeon[initialDungeon[0].length / 2][1].myRoomContents = "P";
         initialDungeon[initialDungeon[0].length / 2][1].myWest = initialDungeon[initialDungeon[0].length / 2][0];
         initialDungeon[initialDungeon[0].length / 2][1].myCoords = new Point(initialDungeon[0].length / 2, 1);
-//        dungeon[0][0].roomContents = "S";
-//        dungeon[0][0].east = dungeon[0][1];
-//        dungeon[0][0].coords = new Point(0, 0);
-//        dungeon[0][1].roomContents = "P";
-//        dungeon[0][1].west = dungeon[0][0];
-//        dungeon[0][1].coords = new Point(0, 1);
 
         while (hasProspects() && count < MAX_EXPANSION_COUNT) {
             generateRooms();
@@ -66,7 +58,7 @@ public class DungeonGenerator {
         for (Point p : getProspects()) {
             int numOfExits;
             numOfExits = rand.nextInt(3);
-            if (roomsGenerated == 0) {
+            if (roomsGenerated < 3) {
                 numOfExits = 2;
             }
             initialDungeon[p.x][p.y].myRoomContents = "S";
@@ -110,15 +102,6 @@ public class DungeonGenerator {
         }
     }
 
-//    public void bugTest() {
-//        dungeon[10][10].roomContents = "C";
-//        dungeon[10 - 1][10].roomContents = "N";
-//        dungeon[10][10 + 1].roomContents = "E";
-//        dungeon[10 + 1][10].roomContents = "S";
-//        dungeon[10][10 - 1].roomContents = "W";
-//        displayDungeon();
-//    }
-
     public boolean validMove(room room, int direction) {
         // If the move is north
         if (direction == 0 && room.myCoords.x - 1 >= 0) {
@@ -131,7 +114,7 @@ public class DungeonGenerator {
             return initialDungeon[room.myCoords.x + 1][room.myCoords.y].myRoomContents.equals(" ");
         // If move is west
         } else if (direction == 3 && room.myCoords.y - 1 >= 0) {
-            return initialDungeon[room.myCoords.x + 1][room.myCoords.y].myRoomContents.equals(" ");
+            return initialDungeon[room.myCoords.x - 1][room.myCoords.y].myRoomContents.equals(" ");
         // Room was on edge of board and thus could not move off it
         } else {
             return false;
@@ -158,6 +141,7 @@ public class DungeonGenerator {
             for (int j = 0; j < finalDungeon[0].length; j++) {
                 if (j % 2 == 1 && i % 2 == 1) {
                     finalDungeon[i][j] = initialDungeon[dunRow][dunCol];
+                    initialDungeon[dunRow][dunCol].myCoords = new Point(i, j);
                     dunCol++;
                     if (dunCol == initialDungeon[0].length) {
                         dunCol = 0;

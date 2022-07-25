@@ -1,19 +1,23 @@
 
 public class DungeonAdventure{
     DungeonGenerator dg;
+    protected Player p;
     UI ui = new UI(this);
 
     public DungeonAdventure() {
         dg = new DungeonGenerator();
+//        int count = spawnHallways();
+//        spawnRooms(count);
         int count = spawnHallways();
         spawnRooms(count);
-        ui.window.setVisible(true);
+        spawnCharacter();
+        ui.setVisible(true);
     }
 
     public int spawnHallways() {
         HallwayVertical hv = new HallwayVertical();
         HallwayHorizontal hh = new HallwayHorizontal();
-        int count = 0;
+        int count = 1;
         for (int i = 0; i < dg.finalDungeon.length; i++) {
             for (int j = 0; j < dg.finalDungeon[0].length; j++) {
                 if (j % 2 == 1 && i % 2 == 1 && dg.finalDungeon[i][j].myRoomContents.equals("S")) {
@@ -35,7 +39,7 @@ public class DungeonAdventure{
 
 
 
-    public void spawnRooms(int c) {
+    public int spawnRooms(int c) {
         int count = c;
         RoomTile room = new RoomTile();
         StringBuilder roomExits = new StringBuilder();
@@ -68,6 +72,12 @@ public class DungeonAdventure{
                 }
             }
         }
+        return count;
+    }
 
+    public void spawnCharacter() {
+        p = new Player(11, 1);
+        ui.spawnItem(p, (((int) Math.ceil((double)p.myCoords.y/ 2) * 26) + ((p.myCoords.y / 2) * 51) + 17), (((int) Math.ceil((double)p.myCoords.x/2) * 20) + ((p.myCoords.x / 2) * 51) + 17), 0);
+        ui.refresh();
     }
 }

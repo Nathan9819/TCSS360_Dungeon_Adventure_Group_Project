@@ -8,6 +8,7 @@ public class HallwayHorizontal extends Entity{
         sprite = new ImageIcon(url);
         height = 32;
         width = 27;
+        layer = 100;
     }
 
 }
