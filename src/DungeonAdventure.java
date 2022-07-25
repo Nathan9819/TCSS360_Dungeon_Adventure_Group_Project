@@ -77,6 +77,7 @@ public class DungeonAdventure{
 
     public void spawnCharacter() {
         p = new Player(11, 1);
+        DungeonGenerator.updatePlayerCoords(p);
         ui.spawnItem(p, (((int) Math.ceil((double)p.myCoords.y/ 2) * 26) + ((p.myCoords.y / 2) * 51) + 17), (((int) Math.ceil((double)p.myCoords.x/2) * 20) + ((p.myCoords.x / 2) * 51) + 17), 0);
         ui.refresh();
     }

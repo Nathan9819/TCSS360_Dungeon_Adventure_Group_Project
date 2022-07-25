@@ -48,17 +48,29 @@ public class UI extends JFrame implements KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         switch(e.getKeyChar()) {
-            case 'w' : movePlayer(0);
-                System.out.println("w pressed");
+            case 'w' :
+                if (da.p.myRoom.myNorth != null) {
+                    movePlayer(0);
+                    System.out.println("w pressed");
+                }
                 break;
-            case 'd' : movePlayer(1);
-                System.out.println("d pressed");
+            case 'd' :
+                if (da.p.myRoom.myEast != null) {
+                    movePlayer(1);
+                    System.out.println("d pressed");
+                }
                 break;
-            case 's' : movePlayer(2);
-                System.out.println("s pressed");
+            case 's' :
+                if (da.p.myRoom.mySouth != null) {
+                    movePlayer(2);
+                    System.out.println("s pressed");
+                }
                 break;
-            case 'a' : movePlayer(3);
-                System.out.println("a pressed");
+            case 'a' :
+                if (da.p.myRoom.myWest != null) {
+                    movePlayer(3);
+                    System.out.println("a pressed");
+                }
                 break;
         }
     }
@@ -82,25 +94,9 @@ public class UI extends JFrame implements KeyListener{
                 break;
         }
         bgLabel[0].setBounds((((int) Math.ceil(((double)da.p.myCoords.y + offsetJ)/ 2) * 26) + (((da.p.myCoords.y + offsetJ)/ 2) * 51) + 17),
-                (((int) Math.ceil(((double)da.p.myCoords.x + offsetI)/2) * 20) + ((((da.p.myCoords.x + offsetI) / 2)) * 51) + 17), da.p.width, da.p.height);
+                            (((int) Math.ceil(((double)da.p.myCoords.x + offsetI)/2) * 20) + ((((da.p.myCoords.x + offsetI) / 2)) * 51) + 17), da.p.width, da.p.height);
         da.p.myCoords = new Point(da.p.myCoords.x + offsetI, da.p.myCoords.y + offsetJ);
+        DungeonGenerator.updatePlayerCoords(da.p);
         refresh();
     }
-
-//    public void createBackground() {
-//        bgPanel[1] = new JPanel();
-//        bgPanel[1].setBounds(50, 50, 20, 20);
-//        bgPanel[1].setBackground(null);
-//        bgPanel[1].setLayout(null);
-//        window.add(bgPanel[1]);
-//
-//        bgLabel[1] = new JLabel();
-//        bgLabel[1].setBounds(0,0,20,20);
-//
-//        URL url = Potion.class.getResource("Assets/PotionFull.png");
-//        ImageIcon image = new ImageIcon(url);
-//        bgLabel[1].setIcon(image);
-//
-//        bgPanel[1].add(bgLabel[1]);
-//    }
 }

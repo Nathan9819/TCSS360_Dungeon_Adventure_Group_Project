@@ -1,4 +1,6 @@
+import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,7 +18,8 @@ public class DungeonGenerator {
         fillMaze();
         startGame();
         finalizeDungeon();
-        displayDungeon();
+        displayDungeon(initialDungeon);
+        displayDungeon(finalDungeon);
     }
 
     public void fillMaze() {
@@ -114,7 +117,7 @@ public class DungeonGenerator {
             return initialDungeon[room.myCoords.x + 1][room.myCoords.y].myRoomContents.equals(" ");
         // If move is west
         } else if (direction == 3 && room.myCoords.y - 1 >= 0) {
-            return initialDungeon[room.myCoords.x - 1][room.myCoords.y].myRoomContents.equals(" ");
+            return initialDungeon[room.myCoords.x][room.myCoords.y - 1].myRoomContents.equals(" ");
         // Room was on edge of board and thus could not move off it
         } else {
             return false;
@@ -155,19 +158,19 @@ public class DungeonGenerator {
         finalDungeon = generateConnections(finalDungeon);
     }
 
-    public void displayDungeon() {
+    public void displayDungeon(room[][] d) {
         System.out.print("\t ");
-        for(int i = 0; i < initialDungeon.length; i++) {
+        for(int i = 0; i < d.length; i++) {
             if (i < 10) {
                 System.out.print(" " + i + "  ");
             } else {
                 System.out.print(i + "  ");
             }
         }
-        for (int i = 0; i < finalDungeon.length; i++) {
+        for (int i = 0; i < d.length; i++) {
             System.out.print(i + "\t| ");
-            for (int j = 0; j < finalDungeon[0].length; j++) {
-                System.out.print(finalDungeon[i][j].myRoomContents);
+            for (int j = 0; j < d[0].length; j++) {
+                System.out.print(d[i][j].myRoomContents);
                 System.out.print("   ");
             }
             System.out.print("\n");
@@ -217,6 +220,10 @@ public class DungeonGenerator {
         }
     }
 
+    public static void updatePlayerCoords(Player p) {
+        p.setRoom(finalDungeon[p.myCoords.x][p.myCoords.y]);
+    }
+
     public class room {
         public String myRoomContents;
         public room myNorth, myEast, mySouth, myWest = null;
@@ -227,5 +234,4 @@ public class DungeonGenerator {
             myCoords = theCoords;
         }
     }
-
 }

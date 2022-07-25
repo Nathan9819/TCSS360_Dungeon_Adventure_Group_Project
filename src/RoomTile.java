@@ -10,8 +10,12 @@ public class RoomTile extends Entity{
     }
 
     public void setRoomImage(String s) {
-        URL url = HallwayVertical.class.getResource("Assets/" + s + ".png");
-        sprite = new ImageIcon(url);
+        try {
+            URL url = HallwayVertical.class.getResource("Assets/" + s + ".png");
+            sprite = new ImageIcon(url);
+        } catch (NullPointerException e) {
+            System.out.println(s);
+        }
     }
 
 }
