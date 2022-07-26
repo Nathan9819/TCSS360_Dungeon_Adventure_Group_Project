@@ -1,6 +1,4 @@
-import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -109,13 +107,13 @@ public class DungeonGenerator {
         // If the move is north
         if (direction == 0 && room.myCoords.x - 1 >= 0) {
             return initialDungeon[room.myCoords.x - 1][room.myCoords.y].myRoomContents.equals(" ");
-        // If move is east
+        // If the move is east
         } else if (direction == 1 && room.myCoords.y + 1 < initialDungeon[0].length) {
             return initialDungeon[room.myCoords.x][room.myCoords.y + 1].myRoomContents.equals(" ");
-        // If move is south
+        // If the move is south
         } else if (direction == 2 && room.myCoords.x + 1 < initialDungeon.length) {
             return initialDungeon[room.myCoords.x + 1][room.myCoords.y].myRoomContents.equals(" ");
-        // If move is west
+        // If the move is west
         } else if (direction == 3 && room.myCoords.y - 1 >= 0) {
             return initialDungeon[room.myCoords.x][room.myCoords.y - 1].myRoomContents.equals(" ");
         // Room was on edge of board and thus could not move off it

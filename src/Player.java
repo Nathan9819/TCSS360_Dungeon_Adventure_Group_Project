@@ -18,4 +18,8 @@ public class Player extends Entity {
     public void setRoom (DungeonGenerator.room r) {
         myRoom = r;
     }
+
+    public DungeonGenerator.room getRoom () {
+        return myRoom;
+    }
 }

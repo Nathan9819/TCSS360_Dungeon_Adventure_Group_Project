@@ -6,7 +6,8 @@ import java.awt.event.KeyListener;
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
     JLayeredPane layeredPane;
-    public JLabel bgLabel[] = new JLabel[100];
+    public JLabel bgLabel[][] = new JLabel[22][22];
+    public JLabel Player;
 
     public UI(DungeonAdventure da) {
         this.da = da;
@@ -15,11 +16,11 @@ public class UI extends JFrame implements KeyListener{
 
     public void createMainField() {
         layeredPane = new JLayeredPane();
-        layeredPane.setBounds(0, 0, 800, 900);
+        layeredPane.setBounds(0, 0, 2560, 1440);
 
         this.setTitle("Dungeon Adventure");
         this.add(layeredPane);
-        this.setSize(800, 900);
+        this.setSize(2560, 1440);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Color bgColor = new Color(115, 62, 57);
         this.getContentPane().setBackground(bgColor);
@@ -28,11 +29,18 @@ public class UI extends JFrame implements KeyListener{
         this.addKeyListener(this);
     }
 
-    public void spawnItem(Entity e, int x, int y, int count) {
-        bgLabel[count] = new JLabel();
-        bgLabel[count].setBounds(x,y,e.width,e.height);
-        bgLabel[count].setIcon(e.sprite);
-        layeredPane.add(bgLabel[count], e.layer);
+    public void spawnItem(Entity e, int x, int y, int i, int j) {
+        bgLabel[i][j] = new JLabel();
+        bgLabel[i][j].setBounds(x,y,e.width,e.height);
+        bgLabel[i][j].setIcon(e.sprite);
+        layeredPane.add(bgLabel[i][j], e.layer);
+    }
+
+    public void spawnPlayer(Player p, int x, int y, int i, int j) {
+        Player = new JLabel();
+        Player.setBounds(x,y,p.width,p.height);
+        Player.setIcon(p.sprite);
+        layeredPane.add(Player, p.layer);
     }
 
     public void refresh() {
@@ -93,10 +101,14 @@ public class UI extends JFrame implements KeyListener{
             case 3 : offsetJ = -2;
                 break;
         }
-        bgLabel[0].setBounds((((int) Math.ceil(((double)da.p.myCoords.y + offsetJ)/ 2) * 26) + (((da.p.myCoords.y + offsetJ)/ 2) * 51) + 17),
+
+        Player.setBounds((((int) Math.ceil(((double)da.p.myCoords.y + offsetJ)/ 2) * 26) + (((da.p.myCoords.y + offsetJ)/ 2) * 51) + 17),
                             (((int) Math.ceil(((double)da.p.myCoords.x + offsetI)/2) * 20) + ((((da.p.myCoords.x + offsetI) / 2)) * 51) + 17), da.p.width, da.p.height);
         da.p.myCoords = new Point(da.p.myCoords.x + offsetI, da.p.myCoords.y + offsetJ);
         DungeonGenerator.updatePlayerCoords(da.p);
+//        updateBoard();
         refresh();
     }
+
+
 }
