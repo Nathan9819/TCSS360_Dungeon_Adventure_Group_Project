@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Random;
 
 public class DungeonGenerator {
-    private static room[][] initialDungeon;
-    public static room[][] finalDungeon;
+    private static Room[][] initialDungeon;
+    public static Room[][] finalDungeon;
     private final int MAX_EXPANSION_COUNT = 8;
     private int count = 0;
 
     public DungeonGenerator() {
-        initialDungeon = new room[11][11];
-        finalDungeon = new room[initialDungeon.length * 2][initialDungeon[0].length * 2];
+        initialDungeon = new Room[11][11];
+        finalDungeon = new Room[initialDungeon.length * 2][initialDungeon[0].length * 2];
 
         fillMaze();
         startGame();
         finalizeDungeon();
+        addRoomCodes(finalDungeon);
         displayDungeon(initialDungeon);
         displayDungeon(finalDungeon);
     }
@@ -23,7 +24,7 @@ public class DungeonGenerator {
     public void fillMaze() {
         for (int i = 0; i < initialDungeon.length; i++) {
             for (int j = 0; j < initialDungeon[0].length; j++) {
-                initialDungeon[i][j] = new room(" ", new Point(i, j));
+                initialDungeon[i][j] = new Room(" ", new Point(i, j));
             }
         }
     }
@@ -103,7 +104,7 @@ public class DungeonGenerator {
         }
     }
 
-    public boolean validMove(room room, int direction) {
+    public boolean validMove(Room room, int direction) {
         // If the move is north
         if (direction == 0 && room.myCoords.x - 1 >= 0) {
             return initialDungeon[room.myCoords.x - 1][room.myCoords.y].myRoomContents.equals(" ");
@@ -149,14 +150,14 @@ public class DungeonGenerator {
                         dunRow++;
                     }
                 } else {
-                    finalDungeon[i][j] = new room(" ", new Point(i, j));
+                    finalDungeon[i][j] = new Room(" ", new Point(i, j));
                 }
             }
         }
         finalDungeon = generateConnections(finalDungeon);
     }
 
-    public void displayDungeon(room[][] d) {
+    public void displayDungeon(Room[][] d) {
         System.out.print("\t ");
         for(int i = 0; i < d.length; i++) {
             if (i < 10) {
@@ -175,7 +176,7 @@ public class DungeonGenerator {
         }
     }
 
-    public room[][] generateConnections(room[][] theRooms) {
+    public Room[][] generateConnections(Room[][] theRooms) {
         for (int i = 0; i < theRooms.length; i++) {
             for (int j = 0; j < theRooms[0].length; j++) {
                 if (i % 2 == 1 && j % 2 == 1) {
@@ -201,18 +202,30 @@ public class DungeonGenerator {
                 if(initialDungeon[i][j].myRoomContents.equals("P")) {
                     if (initialDungeon[i][j].myNorth != null) {
                         initialDungeon[i - 1][j].mySouth = null;
-                        initialDungeon[i][j].myNorth = null;
                     } else if (initialDungeon[i][j].myEast != null) {
                         initialDungeon[i][j + 1].myWest = null;
-                        initialDungeon[i][j].myEast = null;
                     } else if (initialDungeon[i][j].mySouth != null) {
                         initialDungeon[i + 1][j].myNorth = null;
-                        initialDungeon[i][j].mySouth = null;
                     } else if (initialDungeon[i][j].myWest != null) {
                         initialDungeon[i][j - 1].myEast = null;
-                        initialDungeon[i][j].myWest = null;
                     }
-                    initialDungeon[i][j].myRoomContents = " ";
+                    initialDungeon[i][j] = new Room(" ", new Point(i, j));
+                }
+            }
+        }
+    }
+
+    public void addRoomCodes(Room[][] d) {
+        StringBuilder roomExits = new StringBuilder();
+        for (int i = 0; i < d.length; i++) {
+            for (int j = 0; j < d[0].length; j++) {
+                if (j % 2 == 1 && i % 2 == 1 && d[i][j].myRoomContents.equals("S")) {
+                    roomExits.append(d[i][j].myNorth == null ? 0 : 1);
+                    roomExits.append(d[i][j].myEast == null ? 0 : 1);
+                    roomExits.append(d[i][j].mySouth == null ? 0 : 1);
+                    roomExits.append(d[i][j].myWest == null ? 0 : 1);
+                    finalDungeon[i][j].roomCode = roomExits.toString();
+                    roomExits.setLength(0);
                 }
             }
         }
@@ -220,16 +233,5 @@ public class DungeonGenerator {
 
     public static void updatePlayerCoords(Player p) {
         p.setRoom(finalDungeon[p.myCoords.x][p.myCoords.y]);
-    }
-
-    public class room {
-        public String myRoomContents;
-        public room myNorth, myEast, mySouth, myWest = null;
-        public Point myCoords;
-
-        private room(String theContents, Point theCoords) {
-            myRoomContents = theContents;
-            myCoords = theCoords;
-        }
     }
 }

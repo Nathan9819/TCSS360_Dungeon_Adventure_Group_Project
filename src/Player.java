@@ -4,10 +4,10 @@ import java.net.URL;
 
 public class Player extends Entity {
     public Point myCoords;
-    public DungeonGenerator.room myRoom;
+    public Room myRoom;
 
     public Player(int i, int j) {
-        URL url = HallwayVertical.class.getResource("Assets/PotionFull.png");
+        URL url = getClass().getResource("Assets/PotionFull.png");
         sprite = new ImageIcon(url);
         height = 17;
         width = 17;
@@ -15,11 +15,11 @@ public class Player extends Entity {
         myCoords = new Point(i, j);
     }
 
-    public void setRoom (DungeonGenerator.room r) {
+    public void setRoom (Room r) {
         myRoom = r;
     }
 
-    public DungeonGenerator.room getRoom () {
+    public Room getRoom () {
         return myRoom;
     }
 }

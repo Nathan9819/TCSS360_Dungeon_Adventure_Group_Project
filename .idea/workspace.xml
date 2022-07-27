@@ -1,35 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d8c49d3-7422-470d-811a-9fc4b76497b1" name="Changes" comment="Moving GUI and Dungeon Generation to master branch">
-      <change afterPath="$PROJECT_DIR$/.idea/description.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/project-template.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TCSS 360 Dungeon Adventure Group Project.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark0001.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark0010.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark0011.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark0100.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark0101.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark0110.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark0111.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1000.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1001.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1010.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1011.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1100.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1101.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1110.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/Dark1111.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/DarkHallwayHorizontal.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Assets/DarkHallwayVertical.png" afterDir="false" />
+    <list default="true" id="2d8c49d3-7422-470d-811a-9fc4b76497b1" name="Changes" comment="Added dark room tiles">
+      <change afterPath="$PROJECT_DIR$/src/Room.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/TCSS 360 Dungeon Adventure Group Project/Assets/DarkHallwayHorizontal.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/TCSS 360 Dungeon Adventure Group Project/Assets/DarkHallwayHorizontal.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/TCSS 360 Dungeon Adventure Group Project/Assets/DarkHallwayVertical.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/TCSS 360 Dungeon Adventure Group Project/Assets/DarkHallwayVertical.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/TCSS 360 Dungeon Adventure Group Project/HallwayVertical.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/TCSS 360 Dungeon Adventure Group Project/HallwayVertical.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Assets/DarkHallwayHorizontal.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Assets/DarkHallwayHorizontal.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Assets/DarkHallwayVertical.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/Assets/DarkHallwayVertical.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DungeonAdventure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DungeonAdventure.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/DungeonGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/DungeonGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HallwayHorizontal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HallwayHorizontal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HallwayVertical.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HallwayVertical.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/RoomTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/RoomTile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/UI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/UI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -51,6 +37,14 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -191,7 +185,7 @@
       <workItem from="1658774357869" duration="3905000" />
       <workItem from="1658812480329" duration="306000" />
       <workItem from="1658812904114" duration="329000" />
-      <workItem from="1658873455067" duration="2675000" />
+      <workItem from="1658873455067" duration="11606000" />
     </task>
     <task id="LOCAL-00001" summary="First test file added from Intellij IDEA">
       <created>1657860246553</created>
@@ -291,7 +285,21 @@
       <option name="project" value="LOCAL" />
       <updated>1658812598996</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Added dark room tiles">
+      <created>1658876931907</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1658876931907</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Added dark room tiles">
+      <created>1658876979398</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1658876979398</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -360,14 +368,15 @@
     <MESSAGE value="Incorrect sprite layering has been dealt with. Movement has changed from clicking a room to using WASD for movement. Currently, no checks are in place to stop the player from moving out of the bounds of the dungeon's rooms, but this will come in the next commit. For now, the player can move one room at a time with WASD and a potion is being used as placeholder art for the character." />
     <MESSAGE value="WASD movement implemented. Movement is restricted to the bounds of the dungeon and the player may only move between rooms, via hallways. Also fixed an erroneous return statement in the validMove method that was allowing rooms to generate atop previously generated rooms leaving blank spaces in the dungeon." />
     <MESSAGE value="Moving GUI and Dungeon Generation to master branch" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moving GUI and Dungeon Generation to master branch" />
+    <MESSAGE value="Added dark room tiles" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added dark room tiles" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/DungeonGenerator.java</url>
-          <line>178</line>
+          <line>179</line>
           <properties class="DungeonGenerator">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
