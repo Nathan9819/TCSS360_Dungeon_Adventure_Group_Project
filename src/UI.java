@@ -134,8 +134,8 @@ public class UI extends JFrame implements KeyListener{
                 break;
         }
 
-        Player.setBounds((((int) Math.ceil(((double)da.p.myCoords.y + offsetJ)/ 2) * 26) + (((da.p.myCoords.y + offsetJ)/ 2) * 51) + 17),
-                            (((int) Math.ceil(((double)da.p.myCoords.x + offsetI)/2) * 20) + ((((da.p.myCoords.x + offsetI) / 2)) * 51) + 17), da.p.width, da.p.height);
+        Player.setBounds((((int) Math.ceil(((double)da.p.myCoords.y + offsetJ)/ 2) * 26) + (((da.p.myCoords.y + offsetJ)/ 2) * 51) + da.p.offSetJ),
+                            (((int) Math.ceil(((double)da.p.myCoords.x + offsetI)/2) * 20) + ((((da.p.myCoords.x + offsetI) / 2)) * 51) + da.p.offSetI), da.p.width, da.p.height);
         da.p.myCoords = new Point(da.p.myCoords.x + offsetI, da.p.myCoords.y + offsetJ);
         if (direction < 2) {
             da.p.myRoom = direction == 0 ? da.p.myRoom.myNorth : da.p.myRoom.myEast;
