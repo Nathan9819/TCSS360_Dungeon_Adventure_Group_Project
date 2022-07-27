@@ -31,7 +31,6 @@ public class DungeonGenerator {
         fillMaze(initialDungeon);
         startGame();
         finalizeDungeon();
-        addRoomCodes(finalDungeon);
         displayDungeon(initialDungeon);
         displayDungeon(finalDungeon);
     }
@@ -211,6 +210,7 @@ public class DungeonGenerator {
      */
     public void finalizeDungeon() {
         cleanUpDungeon();
+        addRoomCodes(initialDungeon);
         int dunRow = 0;
         int dunCol = 0;
         for (int i = 0; i < finalDungeon.length; i++) {
@@ -257,9 +257,12 @@ public class DungeonGenerator {
     }
 
     /**
+     * The generateConnections method accepts a 2d array of Room objects. It is designed to add
+     * symbols in positions that are between two Rooms which are connected via references to
+     * each other. It does this by iterating over the Room[][] and adding symbols where applicable.
      *
-     * @param theRooms
-     * @return
+     * @param theRooms The array to which connections between rooms should be added
+     * @return         The provided array but with connections between all applicable Rooms
      */
     public Room[][] generateConnections(Room[][] theRooms) {
         for (int i = 0; i < theRooms.length; i++) {
@@ -281,6 +284,12 @@ public class DungeonGenerator {
         return theRooms;
     }
 
+    /**
+     * The cleanUpDungeon method snips any connections between Rooms with the contents "P" and any other rooms. Rooms
+     * marked "P" are only used in the generation process to denote rooms which could be generated and, at this point,
+     * no longer serve purpose and are thus removed. This is done by iterating over the initial dungeon and setting
+     * appropriate connections between rooms to null and setting the Rooms containing "P" to contain " ".
+     */
     public void cleanUpDungeon() {
         for (int i = 0; i < initialDungeon.length; i++) {
             for (int j = 0; j < initialDungeon[0].length; j++) {
@@ -300,16 +309,26 @@ public class DungeonGenerator {
         }
     }
 
+    /**
+     * The addRoomCodes method is designed to encrypt the state of each room within the given 2d
+     * array of room objects. Each room is evaluated regarding its connections to other rooms. Each
+     * connection (or lack thereof) is stored in a 4-digit binary number beginning with the Room's north
+     * and proceeding clockwise. A 1 represents a connection to another Room, while a 0 represents no
+     * connection. This string is then saved to the Room object for which it was generated for later
+     * use by the GUI.
+     *
+     * @param d The 2d array of rooms for which roomCodes should be generated.
+     */
     public void addRoomCodes(Room[][] d) {
         StringBuilder roomExits = new StringBuilder();
         for (int i = 0; i < d.length; i++) {
             for (int j = 0; j < d[0].length; j++) {
-                if (j % 2 == 1 && i % 2 == 1 && d[i][j].myRoomContents.equals("S")) {
+                if (d[i][j].myRoomContents.equals("S")) {
                     roomExits.append(d[i][j].myNorth == null ? 0 : 1);
                     roomExits.append(d[i][j].myEast == null ? 0 : 1);
                     roomExits.append(d[i][j].mySouth == null ? 0 : 1);
                     roomExits.append(d[i][j].myWest == null ? 0 : 1);
-                    finalDungeon[i][j].roomCode = roomExits.toString();
+                    d[i][j].roomCode = roomExits.toString();
                     roomExits.setLength(0);
                 }
             }

@@ -35,7 +35,7 @@ public class DungeonAdventure{
     public void spawnCharacter() {
         int i = 11;
         int j = 1;
-        p = new Player(i, j, 0);
+        p = new Player(i, j, 1);
         p.myRoom = dg.finalDungeon[i][j];
         ui.spawnPlayer(p, (((int) Math.ceil((double)p.myCoords.y/ 2) * 26) + ((p.myCoords.y / 2) * 51) + p.offSetJ), (((int) Math.ceil((double)p.myCoords.x/2) * 20) + ((p.myCoords.x / 2) * 51) + p.offSetI));
     }
