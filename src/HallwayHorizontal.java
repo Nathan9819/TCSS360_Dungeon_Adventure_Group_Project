@@ -7,20 +7,21 @@ import java.net.URL;
  * @Author Nathan Mahnke
  */
 public class HallwayHorizontal extends Entity{
-    boolean light;
+    final boolean isLight;
 
     /**
      * This is the HallwayHorizontal constructor. It sets the height and width of the hallway, its layer, and
      * its visibility.
      *
-     * @param isLight Whether the tile should be lit up or darkened
+     * @param theLight Whether the tile should be lit up or darkened
      */
-    public HallwayHorizontal(boolean isLight) {
+    public HallwayHorizontal(boolean theLight) {
         height = 32;
         width = 27;
         layer = 100;
-        light = isLight;
-        URL url = getClass().getResource(light ? "Assets/HallwayHorizontal.png" : "Assets/DarkHallwayHorizontal.png");
-        sprite = new ImageIcon(url);
+        isLight = theLight;
+        URL myUrl = getClass().getResource(isLight ? "Assets/HallwayHorizontal.png" : "Assets/DarkHallwayHorizontal.png");
+        assert myUrl != null;
+        sprite = new ImageIcon(myUrl);
     }
 }

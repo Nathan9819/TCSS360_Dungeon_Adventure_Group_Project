@@ -9,8 +9,8 @@ import java.net.URL;
  */
 
 public class Player extends Entity {
-    public Point myCoords;
-    public Room myRoom;
+    public Point coords;
+    public Room room;
     int offSetI;
     int offSetJ;
 
@@ -23,38 +23,39 @@ public class Player extends Entity {
      * up properly with the rooms of the dungeon. It also sets the player's layer as, during its addition to the
      * LayeredPane, it will be used to decide what z height the image is showed on.
      *
-     * @param i The vertical coordinate
-     * @param j The horizontal coordinate
-     * @param c The class of the player
+     * @param theI The vertical coordinate
+     * @param theJ The horizontal coordinate
+     * @param theClass The class of the player
      */
-    public Player(int i, int j, int c) {
-        URL url = null;
-        switch (c) {
-            case 0 :
-                url = getClass().getResource("Assets/Knight.png");
+    public Player(int theI, int theJ, int theClass) {
+        URL myUrl = null;
+        switch (theClass) {
+            case 0 -> {
+                myUrl = getClass().getResource("Assets/Knight.png");
                 height = 45;
                 width = 31;
                 offSetI = -9;
                 offSetJ = 8;
-                break;
-            case 1 :
-                url = getClass().getResource("Assets/Priestess.png");
+            }
+            case 1 -> {
+                myUrl = getClass().getResource("Assets/Priestess.png");
                 height = 46;
                 width = 31;
                 offSetI = -9;
                 offSetJ = 12;
-                break;
-            case 2 :
-                url = getClass().getResource("Assets/Thief.png");
+            }
+            case 2 -> {
+                myUrl = getClass().getResource("Assets/Thief.png");
                 height = 45;
                 width = 27;
                 offSetI = -9;
                 offSetJ = 12;
-                break;
+            }
         }
-        sprite = new ImageIcon(url);
+        assert myUrl != null;
+        sprite = new ImageIcon(myUrl);
         layer = 200;
-        myCoords = new Point(i, j);
+        coords = new Point(theI, theJ);
     }
 
 }

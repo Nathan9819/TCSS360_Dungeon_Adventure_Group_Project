@@ -2,24 +2,25 @@ import javax.swing.*;
 import java.net.URL;
 
 public class HallwayVertical extends Entity{
-    private boolean light;
+    private final boolean isLight;
 
-    public HallwayVertical(boolean isLight) {
+    public HallwayVertical(boolean theLight) {
         height = 27;
         width = 24;
         layer = 100;
-        light = isLight;
+        isLight = theLight;
         setSprite();
     }
 
     private void setSprite() {
-        URL url;
-        if(light) {
-            url = getClass().getResource("Assets/HallwayVertical.png");
+        URL myUrl;
+        if(isLight) {
+            myUrl = getClass().getResource("Assets/HallwayVertical.png");
         } else {
-            url = getClass().getResource("Assets/DarkHallwayVertical.png");
+            myUrl = getClass().getResource("Assets/DarkHallwayVertical.png");
         }
-        sprite = new ImageIcon(url);
+        assert myUrl != null;
+        sprite = new ImageIcon(myUrl);
     }
 
 }
