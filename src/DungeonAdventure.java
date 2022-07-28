@@ -22,9 +22,11 @@ public class DungeonAdventure{
     public DungeonAdventure() {
         dg = new DungeonGenerator();
         dungeon = dg.getDungeon();
+    }
+
+    public void startGame() {
         spawnDungeon();
         spawnCharacter();
-        ui.setVisible(true);
     }
 
     /**
@@ -61,7 +63,7 @@ public class DungeonAdventure{
     public void spawnCharacter() {
         int myI = 11;
         int myJ = 1;
-        p = new Player(myI, myJ, 2);
+        p = new Player(myI, myJ, 0);
         p.room = dungeon[myI][myJ];
         ui.spawnPlayer(p, (((int) Math.ceil((double)p.coords.y/ 2) * 26) + ((p.coords.y / 2) * 51) + p.offSetJ), (((int) Math.ceil((double)p.coords.x/2) * 20) + ((p.coords.x / 2) * 51) + p.offSetI));
     }

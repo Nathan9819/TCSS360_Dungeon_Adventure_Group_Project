@@ -1,7 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
@@ -11,9 +15,17 @@ import java.awt.event.KeyListener;
  */
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
-    JLayeredPane layeredPane;
+    private JPanel titleScreen;
+    private JLayeredPane layeredPane;
+    private Font titleFont, startButtonFont;
+    private JLabel titleLabel, startLabel;
+    private JButton startButton;
+    private gameStartHandler gameStart = new gameStartHandler();
+
     public JLabel[][] labels = new JLabel[22][22];
     public JLabel player;
+
+
 
     /**
      * This is the UI constructor. It receives a DungeonAdventure object that allows it to reference
@@ -33,12 +45,8 @@ public class UI extends JFrame implements KeyListener{
      * It also instantiates the JLayeredPane to be used in the placement of visual assets.
      */
     public void createMainField() {
-        layeredPane = new JLayeredPane();
-        layeredPane.setBounds(0, 0, 2560, 1440);
-
         this.setTitle("Dungeon Adventure");
-        this.add(layeredPane);
-        this.setPreferredSize(new Dimension(2560, 1440));
+        this.setPreferredSize(new Dimension(1600, 1200));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Color myBgColor = new Color(115, 62, 57);
         this.getContentPane().setBackground(myBgColor);
@@ -46,6 +54,44 @@ public class UI extends JFrame implements KeyListener{
         this.setLayout(null);
         this.addKeyListener(this);
         this.pack();
+        mainMenu();
+    }
+
+    public void mainMenu() {
+        try {
+            InputStream is = getClass().getResourceAsStream("Assets/MaruMonica.ttf");
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(70f);
+            startButtonFont = titleFont.deriveFont(40f);
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            System.out.println("Font error!");
+        }
+        titleScreen = new JPanel(new GridLayout(0, 2));
+        layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0, 0, 1600, 1200);
+        this.add(layeredPane);
+        titleLabel = new JLabel("DUNGEON ADVENTURE", SwingConstants.CENTER);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(titleFont);
+        titleLabel.setBounds(500, 400, 600, 150);
+        layeredPane.add(titleLabel, 1);
+
+
+        startButton = new JButton("START");
+        startButton.setFont(startButtonFont);
+        startButton.setForeground(Color.WHITE);
+        startButton.setBackground(null);
+        startButton.addActionListener(gameStart);
+        startButton.setBounds(700, 700, 200, 100);
+        startButton.setAlignmentX(JLayeredPane.CENTER_ALIGNMENT);
+        layeredPane.add(startButton, 0);
+        this.setVisible(true);
+    }
+
+    public void startGame() {
+        titleLabel.setVisible(false);
+        startButton.setVisible(false);
+        da.startGame();
     }
 
 
@@ -219,5 +265,11 @@ public class UI extends JFrame implements KeyListener{
         refresh();
     }
 
+    public class gameStartHandler implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            startGame();
+        }
+    }
 }
