@@ -24,7 +24,7 @@ public class DungeonGenerator {
      * both dimensions. After the initialization of the arrays, various methods are called to generate and refine the dungeon.
      */
     public DungeonGenerator() {
-        initialDungeon = new Room[11][11];
+        initialDungeon = new Room[7][7];
         finalDungeon = new Room[initialDungeon.length * 2][initialDungeon[0].length * 2];
         fillDungeon(initialDungeon);
         startGame();
@@ -52,12 +52,12 @@ public class DungeonGenerator {
      * to begin the expansion process.
      */
     public void startGame() {
-        initialDungeon[initialDungeon[0].length / 2][0].roomContents = "S";
-        initialDungeon[initialDungeon[0].length / 2][0].east = initialDungeon[initialDungeon[0].length / 2][1];
-        initialDungeon[initialDungeon[0].length / 2][0].coords = new Point(initialDungeon[0].length / 2, 0);
-        initialDungeon[initialDungeon[0].length / 2][1].roomContents = "P";
-        initialDungeon[initialDungeon[0].length / 2][1].west = initialDungeon[initialDungeon[0].length / 2][0];
-        initialDungeon[initialDungeon[0].length / 2][1].coords = new Point(initialDungeon[0].length / 2, 1);
+        initialDungeon[0][initialDungeon[0].length / 2].roomContents = "S";
+        initialDungeon[0][initialDungeon[0].length / 2].south = initialDungeon[1][initialDungeon[0].length / 2];
+        initialDungeon[0][initialDungeon[0].length / 2].coords = new Point(0, initialDungeon[0].length / 2);
+        initialDungeon[1][initialDungeon[0].length / 2].roomContents = "P";
+        initialDungeon[1][initialDungeon[0].length / 2].north = initialDungeon[0][initialDungeon[0].length / 2];
+        initialDungeon[1][initialDungeon[0].length / 2].coords = new Point(1, initialDungeon[0].length / 2);
 
         int myMaxExpansions = 8;
         while (hasProspects() && count < myMaxExpansions) {
