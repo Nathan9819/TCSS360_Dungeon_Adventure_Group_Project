@@ -3,9 +3,9 @@ strength potions will increase your attack damage
  */
 package main;
 
- public class StrengthPotion extends PickupItem {
+ public class pillar extends PickupItem {
         public StrengthPotion(DungeonGenerator dungeon) {
-            super("StrengthPotion", dungeon);
+            super("pillar", dungeon);
         }
         @Override
         public void work (DungeonCharacter DungenCharacter) {
