@@ -1,13 +1,15 @@
+
 import java.awt.*;
 
 /**
- * The Room class is used to store information regarding the rooms within the dungeon. They hold
+ * The DungeonGeneration.Room class is used to store information regarding the rooms within the dungeon. They hold
  * references to their neighbors (if a connection exists), the room contents, the rooms coordinates,
  * the room's code, and if the room has been visited. This information is used throughout other methods
  * and helps achieve the proper display of rooms as well as other basic functions of the program.
  * @Author Nathan Mahnke
  */
 public class Room {
+    private DungeonCharacter dungeonCharacter;
     public String roomContents;
     public Room north, east, south, west = null;
     public Point coords;
@@ -15,7 +17,7 @@ public class Room {
     public boolean visited;
 
     /**
-     * This is the Room constructor. It receives a string for the room's contents and a point for the
+     * This is the DungeonGeneration.Room constructor. It receives a string for the room's contents and a point for the
      * room's coordinates. It also instantiates the boolean "visited" as false.
      *
      * @param theContents The contents of the room
@@ -25,5 +27,16 @@ public class Room {
         roomContents = theContents;
         coords = theCoords;
         visited = false;
+    }
+
+    public void setDungeonCharacter(DungeonCharacter theDungeonCharcter) {
+        dungeonCharacter = theDungeonCharcter;
+    }
+    public String getDungeonCharacterName() {
+        return dungeonCharacter.getName();
+    }
+
+    public DungeonCharacter getDungeonCharacter() {
+        return dungeonCharacter;
     }
 }

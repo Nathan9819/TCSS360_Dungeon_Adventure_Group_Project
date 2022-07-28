@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.net.URL;
 
@@ -10,7 +11,7 @@ public class HallwayHorizontal extends Entity{
     final boolean isLight;
 
     /**
-     * This is the HallwayHorizontal constructor. It sets the height and width of the hallway, its layer, and
+     * This is the DungeonGeneration.HallwayHorizontal constructor. It sets the height and width of the hallway, its layer, and
      * its visibility.
      *
      * @param theLight Whether the tile should be lit up or darkened
@@ -20,7 +21,7 @@ public class HallwayHorizontal extends Entity{
         width = 27;
         layer = 100;
         isLight = theLight;
-        URL myUrl = getClass().getResource(isLight ? "Assets/HallwayHorizontal.png" : "Assets/DarkHallwayHorizontal.png");
+        URL myUrl = getClass().getResource(isLight ? "DungeonGeneration/Assets/HallwayHorizontal.png" : "DungeonGeneration/Assets/DarkHallwayHorizontal.png");
         assert myUrl != null;
         sprite = new ImageIcon(myUrl);
     }

@@ -1,3 +1,4 @@
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class DungeonGenerator {
     private int count = 0;
 
     /**
-     * This is the DungeonGenerator constructor. It instantiates the initial dungeon as well as the final dungeon.
+     * This is the DungeonGeneration.DungeonGenerator constructor. It instantiates the initial dungeon as well as the final dungeon.
      * The initial dungeon will hold only room objects with the contents "S" or "P" representing their current state.
      * This initial dungeon will be 12 by 12 and the final dungeon will be 2 times the size of the initial dungeon in
      * both dimensions. After the initialization of the arrays, various methods are called to generate and refine the dungeon.
@@ -104,6 +105,7 @@ public class DungeonGenerator {
                 myNumOfExits = 2;
             }
             initialDungeon[p.x][p.y].roomContents = "S";
+            initialDungeon[p.x][p.y].setDungeonCharacter(new Ogre());
             int myRandDirection;
             myRandDirection = myRand.nextInt(3);
             while (myNumOfExits > 0) {
@@ -135,22 +137,18 @@ public class DungeonGenerator {
      */
     public void createRoom(Point thePoint, int theDirection) {
         if (theDirection == 0) {
-            initialDungeon[thePoint.x][thePoint.y].roomContents = "S";
             initialDungeon[thePoint.x][thePoint.y].north = initialDungeon[thePoint.x - 1][thePoint.y];
             initialDungeon[thePoint.x - 1][thePoint.y].roomContents = "P";
             initialDungeon[thePoint.x - 1][thePoint.y].south = initialDungeon[thePoint.x][thePoint.y];
         } else if (theDirection == 1) {
-            initialDungeon[thePoint.x][thePoint.y].roomContents = "S";
             initialDungeon[thePoint.x][thePoint.y].east = initialDungeon[thePoint.x][thePoint.y + 1];
             initialDungeon[thePoint.x][thePoint.y + 1].roomContents = "P";
             initialDungeon[thePoint.x][thePoint.y + 1].west = initialDungeon[thePoint.x][thePoint.y];
         } else if (theDirection == 2) {
-            initialDungeon[thePoint.x][thePoint.y].roomContents = "S";
             initialDungeon[thePoint.x][thePoint.y].south = initialDungeon[thePoint.x + 1][thePoint.y];
             initialDungeon[thePoint.x + 1][thePoint.y].roomContents = "P";
             initialDungeon[thePoint.x + 1][thePoint.y].north = initialDungeon[thePoint.x][thePoint.y];
         } else if (theDirection == 3) {
-            initialDungeon[thePoint.x][thePoint.y].roomContents = "S";
             initialDungeon[thePoint.x][thePoint.y].west = initialDungeon[thePoint.x][thePoint.y - 1];
             initialDungeon[thePoint.x][thePoint.y - 1].roomContents = "P";
             initialDungeon[thePoint.x][thePoint.y - 1].east = initialDungeon[thePoint.x][thePoint.y];
@@ -162,7 +160,7 @@ public class DungeonGenerator {
      * in the direction provided and returns true if the room is empty with no connections,
      * otherwise it returns false.
      *
-     * @param theRoom      The Room from which to check
+     * @param theRoom      The DungeonGeneration.Room from which to check
      * @param theDirection The direction in which to check
      * @return             True if the room in the given direction is empty, false otherwise
      */
@@ -179,7 +177,7 @@ public class DungeonGenerator {
         // If the move is west
         } else if (theDirection == 3 && theRoom.coords.y - 1 >= 0) {
             return initialDungeon[theRoom.coords.x][theRoom.coords.y - 1].roomContents.equals(" ");
-        // Room was on edge of board and thus could not move off it
+        // DungeonGeneration.Room was on edge of board and thus could not move off it
         } else {
             return false;
         }
@@ -234,9 +232,9 @@ public class DungeonGenerator {
 
 
     /**
-     * The displayDungeon method acts as debugging tool to print out a Room[][] to the console.
+     * The displayDungeon method acts as debugging tool to print out a DungeonGeneration.Room[][] to the console.
      *
-     * @param theRooms The Room[][] to be printed
+     * @param theRooms The DungeonGeneration.Room[][] to be printed
      */
     public void displayDungeon(Room[][] theRooms) {
         System.out.print("\t ");
@@ -258,9 +256,9 @@ public class DungeonGenerator {
     }
 
     /**
-     * The generateConnections method accepts a 2d array of Room objects. It is designed to add
+     * The generateConnections method accepts a 2d array of DungeonGeneration.Room objects. It is designed to add
      * symbols in positions that are between two Rooms which are connected via references to
-     * each other. It does this by iterating over the Room[][] and adding symbols where applicable.
+     * each other. It does this by iterating over the DungeonGeneration.Room[][] and adding symbols where applicable.
      *
      * @param theRooms The array to which connections between rooms should be added
      * @return         The provided array but with connections between all applicable Rooms
@@ -313,9 +311,9 @@ public class DungeonGenerator {
     /**
      * The addRoomCodes method is designed to encrypt the state of each room within the given 2d
      * array of room objects. Each room is evaluated regarding its connections to other rooms. Each
-     * connection (or lack thereof) is stored in a 4-digit binary number beginning with the Room's north
-     * and proceeding clockwise. A 1 represents a connection to another Room, while a 0 represents no
-     * connection. This string is then saved to the Room object for which it was generated for later
+     * connection (or lack thereof) is stored in a 4-digit binary number beginning with the DungeonGeneration.Room's north
+     * and proceeding clockwise. A 1 represents a connection to another DungeonGeneration.Room, while a 0 represents no
+     * connection. This string is then saved to the DungeonGeneration.Room object for which it was generated for later
      * use by the GUI.
      *
      * @param theRooms The 2d array of rooms for which roomCodes should be generated.
@@ -335,6 +333,14 @@ public class DungeonGenerator {
             }
         }
     }
+
+//    public void placeMonsters(Room[][] theDungeon) {
+//        for (int i = 0; i < theDungeon.length; i++) {
+//            for (int j = 0; j < theDungeon[0].length; j++) {
+//                if (theDungeon[i][j].roomContents.equals("S"))
+//            }
+//        }
+//    }
 
     public Room[][] getDungeon() {
         return finalDungeon;

@@ -1,10 +1,11 @@
+
 import javax.swing.*;
 import java.net.URL;
 
 public class Potion extends Entity{
 
     public Potion() {
-        URL myUrl = HallwayVertical.class.getResource("Assets/PotionFull.png");
+        URL myUrl = HallwayVertical.class.getResource("DungeonGeneration/Assets/PotionFull.png");
         assert myUrl != null;
         sprite = new ImageIcon(myUrl);
         height = 17;

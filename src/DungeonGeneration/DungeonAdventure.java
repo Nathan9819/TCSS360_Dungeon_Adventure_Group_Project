@@ -1,7 +1,8 @@
+
 /**
- * This class handles interaction between DungeonGenerator and UI. It passes information between
+ * This class handles interaction between DungeonGeneration.DungeonGenerator and DungeonGeneration.UI. It passes information between
  * the two classes, calling methods to both setup and display the dungeon in a GUI format. This is
- * done by iterating over the 2d array, "finalDungeon" within DungeonGenerator. This 2d array contains
+ * done by iterating over the 2d array, "finalDungeon" within DungeonGeneration.DungeonGenerator. This 2d array contains
  * rooms and their connections. This iterating is done within the spawnDungeon method and is used to
  * place all assets at the correct coordinates.
  * @Author Nathan Mahnke
@@ -13,10 +14,10 @@ public class DungeonAdventure{
     UI ui = new UI(this);
 
     /**
-     * This is the DungeonAdventure constructor. It is used to instantiate dg, which is a DungeonGenerator
+     * This is the DungeonGeneration.DungeonAdventure constructor. It is used to instantiate dg, which is a DungeonGeneration.DungeonGenerator
      * object. By instantiating dg, there now exists a 2d array with a generated dungeon that can be assigned
-     * to the "dungeon" 2d Room array. This will later be referenced while the GUI is being built. From there,
-     * multiple methods are called to display rooms/hallways by interacting with the UI class. Finally, the
+     * to the "dungeon" 2d DungeonGeneration.Room array. This will later be referenced while the GUI is being built. From there,
+     * multiple methods are called to display rooms/hallways by interacting with the DungeonGeneration.UI class. Finally, the
      * GUI is set to visible, thus being displayed to the user.
      */
     public DungeonAdventure() {
@@ -58,7 +59,7 @@ public class DungeonAdventure{
     /**
      * The spawnCharacter method places the character in the starting room, aligning the center of the players base with the center
      * of the room which they occupy. The proper offsets are stored within the character class. My information regarding this can
-     * be found there. Upon character spawning, various methods become enabled within the UI class
+     * be found there. Upon character spawning, various methods become enabled within the DungeonGeneration.UI class
      */
     public void spawnCharacter() {
         int myI = 1;
@@ -72,9 +73,9 @@ public class DungeonAdventure{
      * The getRoomCode method receives two integers and uses them as coordinates to reference in room object within the dungeon array.
      * From this reference, the roomCode of the given room is returned.
      *
-     * @param theI The y coordinate of the given Room
-     * @param theJ The x coordinate of the given Room
-     * @return     The roomCode of the Room at the given coordinates.
+     * @param theI The y coordinate of the given DungeonGeneration.Room
+     * @param theJ The x coordinate of the given DungeonGeneration.Room
+     * @return     The roomCode of the DungeonGeneration.Room at the given coordinates.
      */
     public String getRoomCode(int theI, int theJ) {
         return dungeon[theI][theJ].roomCode;

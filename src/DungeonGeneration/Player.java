@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -11,11 +12,12 @@ import java.net.URL;
 public class Player extends Entity {
     public Point coords;
     public Room room;
+    public Hero heroType;
     int offSetI;
     int offSetJ;
 
     /**
-     * Player is the constructor of the player object. It accepts integers i and j so that the player object
+     * DungeonGeneration.Player is the constructor of the player object. It accepts integers i and j so that the player object
      * may store its location within a 2d array. The integer c is used to decide the class of the player;
      * knight, priestess, or thief.
      *
@@ -31,21 +33,24 @@ public class Player extends Entity {
         URL myUrl = null;
         switch (theClass) {
             case 0 -> {
-                myUrl = getClass().getResource("Assets/Knight.png");
+                myUrl = getClass().getResource("DungeonGeneration/Assets/Knight.png");
+                heroType = new Warrior();
                 height = 45;
                 width = 31;
                 offSetI = -9;
                 offSetJ = 8;
             }
             case 1 -> {
-                myUrl = getClass().getResource("Assets/Priestess.png");
+                myUrl = getClass().getResource("DungeonGeneration/Assets/Priestess.png");
+                heroType = new Priestess();
                 height = 46;
                 width = 31;
                 offSetI = -9;
                 offSetJ = 12;
             }
             case 2 -> {
-                myUrl = getClass().getResource("Assets/Thief.png");
+                myUrl = getClass().getResource("DungeonGeneration/Assets/Thief.png");
+                heroType = new Thief();
                 height = 45;
                 width = 27;
                 offSetI = -9;

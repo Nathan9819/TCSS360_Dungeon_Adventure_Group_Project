@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * The UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
+ * The DungeonGeneration.UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
  * The extension of JFrame allows the class to act as its own JFrame and the KeyListener implementation
  * allows for the user to input key commands (WASD for movement, etc.).
  * @Author Nathan Mahnke
@@ -30,11 +31,11 @@ public class UI extends JFrame implements KeyListener{
 
 
     /**
-     * This is the UI constructor. It receives a DungeonAdventure object that allows it to reference
+     * This is the DungeonGeneration.UI constructor. It receives a DungeonGeneration.DungeonAdventure object that allows it to reference
      * the 2d array within that represents the dungeon. This is vital for polling room contents when
      * displaying a room, as well as, referencing the player character and its location.
      *
-     * @param theDA The DungeonAdventure object
+     * @param theDA The DungeonGeneration.DungeonAdventure object
      */
     public UI(DungeonAdventure theDA) {
         this.da = theDA;
@@ -43,7 +44,7 @@ public class UI extends JFrame implements KeyListener{
 
 
     /**
-     * The createMainField method instantiates and sets the parameters of the JFrame which encompasses the UI class.
+     * The createMainField method instantiates and sets the parameters of the JFrame which encompasses the DungeonGeneration.UI class.
      * It also instantiates the JLayeredPane to be used in the placement of visual assets.
      */
     public void createMainField() {
@@ -61,7 +62,7 @@ public class UI extends JFrame implements KeyListener{
 
     public void mainMenu() {
         try {
-            InputStream is = getClass().getResourceAsStream("Assets/MaruMonica.ttf");
+            InputStream is = getClass().getResourceAsStream("DungeonGeneration/Assets/MaruMonica.ttf");
             titleFont = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(Font.BOLD, 70f);
             normalFont = titleFont.deriveFont(40f);
         } catch (FontFormatException | IOException e) {
@@ -108,10 +109,10 @@ public class UI extends JFrame implements KeyListener{
 
     /**
      * The spawnItem method is used in the placement of virtually all visual assets. The only exception
-     * to this is the placement of the player character's visual asset. This method receives and Entity,
+     * to this is the placement of the player character's visual asset. This method receives and DungeonGeneration.Entity,
      * two integers (x and y) for screen coordinates, and two more integers (i and j) for array coordinates.
      * Using the given information, a new JLabel is added to "labels" at the given array coordinates. Then,
-     * the Entity is referenced for its height and width data as well as the visual asset used to represent
+     * the DungeonGeneration.Entity is referenced for its height and width data as well as the visual asset used to represent
      * it. It is then placed at the given x and y coordinated on the JLayeredPane.
      *
      * @param theEntity The entity to be drawn to the screen
@@ -178,7 +179,7 @@ public class UI extends JFrame implements KeyListener{
 
 
     /**
-     * The refresh method simply repaints and revalidates the UI JFrame. This is used to update the screen
+     * The refresh method simply repaints and revalidates the DungeonGeneration.UI JFrame. This is used to update the screen
      * when any changes are made to visual aspects of the GUI.
      */
     public void refresh() {
@@ -187,7 +188,7 @@ public class UI extends JFrame implements KeyListener{
     }
 
     /**
-     * This method is unused, but required due to the implementation of KeyListener by UI
+     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.UI
      *
      * @param e The key being typed
      */
@@ -197,7 +198,7 @@ public class UI extends JFrame implements KeyListener{
     }
 
     /**
-     * The keyPressed method overrides the keyPressed method of KeyListener. This allows UI to be
+     * The keyPressed method overrides the keyPressed method of KeyListener. This allows DungeonGeneration.UI to be
      * updated upon user input. It listens for presses of the W, A, S, and D keys. These keys
      * correspond to the cardinal directions and allow the move the player character throughout the
      * dungeon. If a movement is valid, the method calls movePlayer, passing it the given direction.
@@ -235,7 +236,7 @@ public class UI extends JFrame implements KeyListener{
     }
 
     /**
-     * This method is unused, but required due to the implementation of KeyListener by UI
+     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.UI
      *
      * @param e The key being released
      */
@@ -273,8 +274,34 @@ public class UI extends JFrame implements KeyListener{
         if (!da.p.room.visited) {
             setLight(da.p.coords.x, da.p.coords.y, da.p.room);
         }
-        description.setText("You find the strength to carry on and take your first step into the dungeon");
+//        description.setText("You find the strength to carry on and take your first step into the dungeon");
+        if (da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter() != null) {
+            try {
+                doBattle();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         refresh();
+    }
+
+    public void doBattle() throws InterruptedException {
+        boolean cont = true;
+        while (cont) {
+            description.setText(da.p.heroType.attack(da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter()));
+            refresh();
+            Thread.sleep(1000);
+            if (da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter().getHP() <= 0) {
+                cont = false;
+            } else {
+                description.setText(da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter().attack(da.p.heroType));
+                refresh();
+                Thread.sleep(1000);
+                if (da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter().getHP() <= 0) {
+                    cont = false;
+                }
+            }
+        }
     }
 
     public class gameStartHandler implements ActionListener {

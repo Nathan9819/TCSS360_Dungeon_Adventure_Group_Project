@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.net.URL;
 
@@ -15,9 +16,9 @@ public class HallwayVertical extends Entity{
     private void setSprite() {
         URL myUrl;
         if(isLight) {
-            myUrl = getClass().getResource("Assets/HallwayVertical.png");
+            myUrl = getClass().getResource("DungeonGeneration/Assets/HallwayVertical.png");
         } else {
-            myUrl = getClass().getResource("Assets/DarkHallwayVertical.png");
+            myUrl = getClass().getResource("DungeonGeneration/Assets/DarkHallwayVertical.png");
         }
         assert myUrl != null;
         sprite = new ImageIcon(myUrl);

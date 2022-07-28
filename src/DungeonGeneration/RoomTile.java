@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.net.URL;
 
@@ -11,7 +12,7 @@ public class RoomTile extends Entity{
     boolean isLight;
 
     /**
-     * This is the RoomTile constructor. It sets the height and width of the room, its layer, and
+     * This is the DungeonGeneration.RoomTile constructor. It sets the height and width of the room, its layer, and
      * its visibility.
      *
      * @param theLight Whether the tile should be lit up or darkened
