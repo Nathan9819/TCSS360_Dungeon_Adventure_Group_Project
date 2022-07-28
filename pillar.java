@@ -9,7 +9,7 @@ package main;
         }
         @Override
         public void work (DungeonCharacter DungenCharacter) {
-           // System.out.println(" ");
+     
         }
     }
 
