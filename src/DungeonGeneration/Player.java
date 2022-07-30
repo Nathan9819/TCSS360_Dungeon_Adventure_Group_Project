@@ -9,12 +9,16 @@ import java.net.URL;
  * @Author Nathan Mahnke
  */
 
-public class Player extends Entity {
-    public Point coords;
-    public Room room;
-    public Hero heroType;
-    int offSetI;
-    int offSetJ;
+public class Player {
+    private int width;
+    private int height;
+    private ImageIcon sprite;
+    private Integer layer;
+    private Point coords;
+    private Room room;
+    private Hero heroType;
+    private int offSetI;
+    private int offSetJ;
 
     /**
      * DungeonGeneration.Player is the constructor of the player object. It accepts integers i and j so that the player object
@@ -56,11 +60,62 @@ public class Player extends Entity {
                 offSetI = -9;
                 offSetJ = 12;
             }
+            case 3 -> {
+                myUrl = getClass().getResource("DungeonGeneration/Assets/Gremlin.png");
+                heroType = new Thief();
+                height = 42;
+                width = 40;
+                offSetI = -6;
+                offSetJ = 7;
+            }
         }
         assert myUrl != null;
         sprite = new ImageIcon(myUrl);
         layer = 200;
-        coords = new Point(theI, theJ);
+        setCoords(new Point(theI, theJ));
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public ImageIcon getSprite() {
+        return sprite;
+    }
+
+    public Integer getLayer() {
+        return layer;
+    }
+
+    public Point getCoords() {
+        return coords;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Hero getHeroType() {
+        return heroType;
+    }
+
+    public int getOffSetI() {
+        return offSetI;
+    }
+
+    public int getOffSetJ() {
+        return offSetJ;
+    }
+
+    public void setCoords(Point coords) {
+        this.coords = coords;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 }

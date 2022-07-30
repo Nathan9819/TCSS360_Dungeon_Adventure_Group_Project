@@ -9,7 +9,7 @@ import java.awt.*;
  * @Author Nathan Mahnke
  */
 public class Room {
-    private DungeonCharacter dungeonCharacter;
+    private Monster monster;
     public String roomContents;
     public Room north, east, south, west = null;
     public Point coords;
@@ -29,14 +29,14 @@ public class Room {
         visited = false;
     }
 
-    public void setDungeonCharacter(DungeonCharacter theDungeonCharcter) {
-        dungeonCharacter = theDungeonCharcter;
+    public void setMonster(Monster theMonster) {
+        monster = theMonster;
     }
     public String getDungeonCharacterName() {
-        return dungeonCharacter.getName();
+        return monster.getName();
     }
 
-    public DungeonCharacter getDungeonCharacter() {
-        return dungeonCharacter;
+    public Monster getMonster() {
+        return monster;
     }
 }

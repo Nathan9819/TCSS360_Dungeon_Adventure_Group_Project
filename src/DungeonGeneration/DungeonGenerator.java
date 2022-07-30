@@ -59,6 +59,7 @@ public class DungeonGenerator {
         initialDungeon[1][initialDungeon[0].length / 2].roomContents = "P";
         initialDungeon[1][initialDungeon[0].length / 2].north = initialDungeon[0][initialDungeon[0].length / 2];
         initialDungeon[1][initialDungeon[0].length / 2].coords = new Point(1, initialDungeon[0].length / 2);
+        initialDungeon[1][initialDungeon[0].length / 2].setMonster(new Gremlin());
 
         int myMaxExpansions = 8;
         while (hasProspects() && count < myMaxExpansions) {
@@ -105,7 +106,7 @@ public class DungeonGenerator {
                 myNumOfExits = 2;
             }
             initialDungeon[p.x][p.y].roomContents = "S";
-            initialDungeon[p.x][p.y].setDungeonCharacter(new Ogre());
+//            initialDungeon[p.x][p.y].setDungeonCharacter(new Gremlin());
             int myRandDirection;
             myRandDirection = myRand.nextInt(3);
             while (myNumOfExits > 0) {

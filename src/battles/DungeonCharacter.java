@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.Random;
 
 public abstract class DungeonCharacter {
@@ -55,16 +56,16 @@ public abstract class DungeonCharacter {
         myHit = theHit;
     }
     public String attack(final DungeonCharacter theOther) {
-        StringBuilder attackInfo = new StringBuilder();
+        StringBuilder myAttackInfo = new StringBuilder();
         if (rand.nextDouble() <= myHit) {
             int dmg = rand.nextInt((myMaxDMG + 1) - myMinDMG) + myMinDMG;
             //theOther.takeDMG(rand.nextInt((myMaxDMG + 1) - myMinDMG) + myMinDMG);
-            attackInfo.append(myName + " rolled " + dmg + " damage!"); //FOR TESTING
-            attackInfo.append("\n" + takeDMG(dmg));
-            return attackInfo.toString(); //FOR TESTING!
+            myAttackInfo.append(myName + " rolled " + dmg + " damage!\n"); //FOR TESTING
+            myAttackInfo.append(theOther.takeDMG(dmg));
+            return myAttackInfo.toString(); //FOR TESTING!
         }
-        attackInfo.append(myName + " missed!");
-        return attackInfo.toString();
+        myAttackInfo.append(myName + " missed!");
+        return myAttackInfo.toString();
     }
     /**
      * Changes the HP of the DungeonCharacter.
@@ -76,28 +77,28 @@ public abstract class DungeonCharacter {
      * @param theDMG
      */
     public String takeDMG(final int theDMG) {
-        StringBuilder dmgInfo = new StringBuilder();
+        StringBuilder myDMGInfo = new StringBuilder();
         if (myShield > 0 && theDMG > 0) {
-            dmgInfo.append("Shield took " + theDMG + " damage!");
+            myDMGInfo.append("Shield took " + theDMG + " damage!\n");
             myShield -= theDMG;
             if (myShield < 0) { //FOR TESTING!
-                dmgInfo.append("Shield only had " + (myShield + theDMG) + " and broke!");
+                myDMGInfo.append("Shield only had " + (myShield + theDMG) + " and broke!\n");
                 myHP += myShield;
-                dmgInfo.append(myName + " took " + (0 - myShield) + " damage and has " + myHP + "HP left!");
+                myDMGInfo.append(myName + " took " + (0 - myShield) + " damage and has " + myHP + "HP left!");
                 myShield = 0;
             } else {
-                dmgInfo.append("Shield's holding with" + myShield + " durability!");
+                myDMGInfo.append("Shield's holding with" + myShield + " durability!");
             }
         } else {
             myHP -= theDMG;
             if (theDMG > 0) { //FOR TESTING!
-                dmgInfo.append(myName + " took " + theDMG + " damage and has " + myHP + "HP left!");
+                myDMGInfo.append(myName + " took " + theDMG + " damage and has " + myHP + "HP left!");
             }
         }
         if (myHP > myMaxHP) {
             myHP = myMaxHP;
         }
-        return dmgInfo.toString();
+        return myDMGInfo.toString();
     }
     public int getAtkSpd() {
         return myAtkSpd;

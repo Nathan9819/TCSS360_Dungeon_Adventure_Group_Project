@@ -1,6 +1,6 @@
 public class Automaton extends Monster {
     public Automaton() {
-        super(125, 25, 40, "Automaton", 3,  0.6, 0.0, 0, 0);
+//        super(125, 25, 40, "Automaton", 3,  0.6, 0.0, 0, 0);
         addShield(10);
     }
     public String takeDMG(final int theDMG) {

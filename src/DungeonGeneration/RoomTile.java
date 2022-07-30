@@ -18,9 +18,7 @@ public class RoomTile extends Entity{
      * @param theLight Whether the tile should be lit up or darkened
      */
     public RoomTile(boolean theLight) {
-        height = 52;
-        width = 52;
-        layer = 0;
+        super(52, 52, 0);
         isLight = theLight;
     }
 
@@ -41,7 +39,7 @@ public class RoomTile extends Entity{
             myUrl = getClass().getResource("Assets/Dark" + theRoomCode + ".png");
         }
         assert myUrl != null;
-        sprite = new ImageIcon(myUrl);
+        super.setSprite(new ImageIcon(myUrl));
     }
 
 }

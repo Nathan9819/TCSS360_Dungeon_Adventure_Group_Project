@@ -16,6 +16,7 @@ import java.io.InputStream;
  */
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
+    private boolean started = false;
     private JPanel titleScreen;
     private JLayeredPane layeredPane;
     private Font titleFont, normalFont;
@@ -25,7 +26,8 @@ public class UI extends JFrame implements KeyListener{
     private JTextArea description;
     private gameStartHandler gameStart = new gameStartHandler();
 
-    public JLabel[][] labels = new JLabel[22][22];
+    public JLabel[][] roomsAndHallways = new JLabel[22][22];
+    public JLabel[][] monsters = new JLabel[22][22];
     public JLabel player;
 
 
@@ -102,6 +104,7 @@ public class UI extends JFrame implements KeyListener{
         description.setBounds(10, 800, 1600, 400);
         description.setBackground(bgColor);
         description.setForeground(txtColor);
+//        description.setEditable(false);
         this.add(description);
         da.startGame();
     }
@@ -122,10 +125,17 @@ public class UI extends JFrame implements KeyListener{
      * @param theJ      The j-coordinate for the JLabel to be added to the JLabel array
      */
     public void spawnItem(Entity theEntity, int theX, int theY, int theI, int theJ) {
-        labels[theI][theJ] = new JLabel();
-        labels[theI][theJ].setBounds(theX,theY,theEntity.width,theEntity.height);
-        labels[theI][theJ].setIcon(theEntity.sprite);
-        layeredPane.add(labels[theI][theJ], theEntity.layer);
+        roomsAndHallways[theI][theJ] = new JLabel();
+        roomsAndHallways[theI][theJ].setBounds(theX,theY,theEntity.getWidth(),theEntity.getHeight());
+        roomsAndHallways[theI][theJ].setIcon(theEntity.getSprite());
+        layeredPane.add(roomsAndHallways[theI][theJ], theEntity.getLayer());
+    }
+
+    public void spawnMonster(Monster monster, int theX, int theY, int theI, int theJ) {
+        monsters[theI][theJ] = new JLabel();
+        monsters[theI][theJ].setBounds(theX,theY,monster.getWidth(),monster.getHeight());
+        monsters[theI][theJ].setIcon(monster.getSprite());
+        layeredPane.add(monsters[theI][theJ], monster.getLayer());
     }
 
     /**
@@ -141,10 +151,10 @@ public class UI extends JFrame implements KeyListener{
      */
     public void spawnPlayer(Player thePlayer, int theX, int theY) {
         player = new JLabel();
-        player.setBounds(theX,theY,thePlayer.width,thePlayer.height);
-        player.setIcon(thePlayer.sprite);
-        layeredPane.add(player, thePlayer.layer);
-        setLight(thePlayer.coords.x, thePlayer.coords.y, thePlayer.room);
+        player.setBounds(theX,theY,thePlayer.getWidth(),thePlayer.getHeight());
+        player.setIcon(thePlayer.getSprite());
+        layeredPane.add(player, thePlayer.getLayer());
+        setLight(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
     }
 
     public void setLight(int theI, int theJ, Room theRoom) {
@@ -152,28 +162,28 @@ public class UI extends JFrame implements KeyListener{
         myLightRoom.setRoomImage(da.getRoomCode(theI, theJ));
         HallwayHorizontal myLightHH = new HallwayHorizontal(true);
         HallwayVertical myLightHV = new HallwayVertical(true);
-        labels[theI][theJ].setIcon(myLightRoom.sprite);
+        roomsAndHallways[theI][theJ].setIcon(myLightRoom.getSprite());
         if (theRoom.north != null) {
-            labels[theI - 1][theJ].setIcon(myLightHV.sprite);
+            roomsAndHallways[theI - 1][theJ].setIcon(myLightHV.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI - 2, theJ));
-            labels[theI - 2][theJ].setIcon(myLightRoom.sprite);
+            roomsAndHallways[theI - 2][theJ].setIcon(myLightRoom.getSprite());
         }
         if (theRoom.east != null) {
-            labels[theI][theJ + 1].setIcon(myLightHH.sprite);
+            roomsAndHallways[theI][theJ + 1].setIcon(myLightHH.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI, theJ + 2));
-            labels[theI][theJ + 2].setIcon(myLightRoom.sprite);
+            roomsAndHallways[theI][theJ + 2].setIcon(myLightRoom.getSprite());
         }
         if (theRoom.west != null) {
-            labels[theI][theJ - 1].setIcon(myLightHH.sprite);
+            roomsAndHallways[theI][theJ - 1].setIcon(myLightHH.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI, theJ - 2));
-            labels[theI][theJ - 2].setIcon(myLightRoom.sprite);
+            roomsAndHallways[theI][theJ - 2].setIcon(myLightRoom.getSprite());
         }
         if (theRoom.south != null) {
-            labels[theI + 1][theJ].setIcon(myLightHV.sprite);
+            roomsAndHallways[theI + 1][theJ].setIcon(myLightHV.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI + 2, theJ));
-            labels[theI + 2][theJ].setIcon(myLightRoom.sprite);
+            roomsAndHallways[theI + 2][theJ].setIcon(myLightRoom.getSprite());
         }
-        da.p.room.visited = true;
+        da.p.getRoom().visited = true;
         refresh();
     }
 
@@ -207,31 +217,33 @@ public class UI extends JFrame implements KeyListener{
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        switch(e.getKeyChar()) {
-            case 'w' :
-                if (da.p.room.north != null) {
-                    movePlayer(0);
-                    System.out.println("w pressed");
-                }
-                break;
-            case 'd' :
-                if (da.p.room.east != null) {
-                    movePlayer(1);
-                    System.out.println("d pressed");
-                }
-                break;
-            case 's' :
-                if (da.p.room.south != null) {
-                    movePlayer(2);
-                    System.out.println("s pressed");
-                }
-                break;
-            case 'a' :
-                if (da.p.room.west != null) {
-                    movePlayer(3);
-                    System.out.println("a pressed");
-                }
-                break;
+        if (started) {
+            switch (e.getKeyChar()) {
+                case 'w':
+                    if (da.p.getRoom().north != null) {
+                        movePlayer(0);
+                        System.out.println("w pressed");
+                    }
+                    break;
+                case 'd':
+                    if (da.p.getRoom().east != null) {
+                        movePlayer(1);
+                        System.out.println("d pressed");
+                    }
+                    break;
+                case 's':
+                    if (da.p.getRoom().south != null) {
+                        movePlayer(2);
+                        System.out.println("s pressed");
+                    }
+                    break;
+                case 'a':
+                    if (da.p.getRoom().west != null) {
+                        movePlayer(3);
+                        System.out.println("a pressed");
+                    }
+                    break;
+            }
         }
     }
 
@@ -263,24 +275,32 @@ public class UI extends JFrame implements KeyListener{
             case 3 -> myOffsetJ = -2;
         }
 
-        player.setBounds((((int) Math.ceil(((double)da.p.coords.y + myOffsetJ)/ 2) * 26) + (((da.p.coords.y + myOffsetJ)/ 2) * 51) + da.p.offSetJ),
-                            (((int) Math.ceil(((double)da.p.coords.x + myOffsetI)/2) * 20) + ((((da.p.coords.x + myOffsetI) / 2)) * 51) + da.p.offSetI), da.p.width, da.p.height);
-        da.p.coords = new Point(da.p.coords.x + myOffsetI, da.p.coords.y + myOffsetJ);
-        if (theDirection < 2) {
-            da.p.room = theDirection == 0 ? da.p.room.north : da.p.room.east;
-        } else {
-            da.p.room = theDirection == 2 ? da.p.room.south : da.p.room.west;
+        player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y + myOffsetJ)/ 2) * 26) + (((da.p.getCoords().y + myOffsetJ)/ 2) * 51) + da.p.getOffSetJ()),
+                            (((int) Math.ceil(((double) da.p.getCoords().x + myOffsetI)/2) * 20) + ((((da.p.getCoords().x + myOffsetI) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
+        da.p.setCoords(new Point(da.p.getCoords().x + myOffsetI, da.p.getCoords().y + myOffsetJ));
+        this.update(this.getGraphics());
+        switch (theDirection) {
+            case 0 -> da.p.setRoom(da.p.getRoom().north);
+            case 1 -> da.p.setRoom(da.p.getRoom().east);
+            case 2 -> da.p.setRoom(da.p.getRoom().south);
+            case 3 -> da.p.setRoom(da.p.getRoom().west);
         }
-        if (!da.p.room.visited) {
-            setLight(da.p.coords.x, da.p.coords.y, da.p.room);
-        }
-//        description.setText("You find the strength to carry on and take your first step into the dungeon");
-        if (da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter() != null) {
+        Monster monster = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster();
+        if (monster != null) {
+            Player myPlayer = da.p;
+            player.setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + myPlayer.getOffSetJ() - 16),
+                    (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myPlayer.getOffSetI()), myPlayer.getWidth(), myPlayer.getHeight());
+            monsters[myPlayer.getCoords().x][myPlayer.getCoords().y].setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + monster.getOffSetJ() + 16),
+                    (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + monster.getOffSetI()), monster.getWidth(), monster.getHeight());
+            this.update(this.getGraphics());
             try {
                 doBattle();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+        if (!da.p.getRoom().visited) {
+            setLight(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
         }
         refresh();
     }
@@ -288,19 +308,34 @@ public class UI extends JFrame implements KeyListener{
     public void doBattle() throws InterruptedException {
         boolean cont = true;
         while (cont) {
-            description.setText(da.p.heroType.attack(da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter()));
-            refresh();
+            String myText = da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster());
+            System.out.println(myText);
+            description.setText(myText);
+            description.update(description.getGraphics());
             Thread.sleep(1000);
-            if (da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter().getHP() <= 0) {
+            if (da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHP() <= 0) {
                 cont = false;
+                description.setText("The beast is slane!");
+                monsters[da.p.getCoords().x][da.p.getCoords().y].setVisible(false);
+                player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.p.getOffSetJ()),
+                        (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
+                this.update(this.getGraphics());
             } else {
-                description.setText(da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter().attack(da.p.heroType));
-                refresh();
+                myText = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType());
+                System.out.println(myText);
+                description.setText(myText);
+                description.update(description.getGraphics());
                 Thread.sleep(1000);
-                if (da.dungeon[da.p.coords.x][da.p.coords.y].getDungeonCharacter().getHP() <= 0) {
+                if (da.p.getHeroType().getHP() <= 0) {
                     cont = false;
+                    description.setText("The hero was felled!");
+                    player.setVisible(false);
+                    monsters[da.p.getCoords().x][da.p.getCoords().y].setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetJ()),
+                            (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetI()), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getWidth(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHeight());
+                    this.update(this.getGraphics());
                 }
             }
+
         }
     }
 
@@ -309,6 +344,7 @@ public class UI extends JFrame implements KeyListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             startGame();
+            started = true;
         }
     }
 }

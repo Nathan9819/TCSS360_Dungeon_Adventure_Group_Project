@@ -6,9 +6,7 @@ public class HallwayVertical extends Entity{
     private final boolean isLight;
 
     public HallwayVertical(boolean theLight) {
-        height = 27;
-        width = 24;
-        layer = 100;
+        super(24, 27, 100);
         isLight = theLight;
         setSprite();
     }
@@ -21,7 +19,7 @@ public class HallwayVertical extends Entity{
             myUrl = getClass().getResource("DungeonGeneration/Assets/DarkHallwayVertical.png");
         }
         assert myUrl != null;
-        sprite = new ImageIcon(myUrl);
+        super.setSprite(new ImageIcon(myUrl));
     }
 
 }

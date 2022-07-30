@@ -8,7 +8,40 @@ import javax.swing.*;
  */
 
 public class Entity {
-    public int width, height;
-    ImageIcon sprite;
-    Integer layer;
+    private int width, height;
+    private ImageIcon sprite;
+    private Integer layer;
+
+    public Entity(int theWidth, int theHeight, ImageIcon theSprite, Integer theLayer) {
+        width = theWidth;
+        height = theHeight;
+        sprite = theSprite;
+        layer = theLayer;
+    }
+
+    public Entity(int theWidth, int theHeight, Integer theLayer) {
+        width = theWidth;
+        height = theHeight;
+        layer = theLayer;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public ImageIcon getSprite() {
+        return sprite;
+    }
+
+    public Integer getLayer() {
+        return layer;
+    }
+
+    public void setSprite(ImageIcon theSprite) {
+        this.sprite = theSprite;
+    }
 }

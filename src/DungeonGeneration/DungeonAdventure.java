@@ -27,6 +27,7 @@ public class DungeonAdventure{
 
     public void startGame() {
         spawnDungeon();
+        spawnDungeonEntities();
         spawnCharacter();
     }
 
@@ -56,6 +57,19 @@ public class DungeonAdventure{
         }
     }
 
+    public void spawnDungeonEntities() {
+        Gremlin gremlin = new Gremlin();
+        for (int i = 0; i < dungeon.length; i++) {
+            for (int j = 0; j < dungeon[0].length; j++) {
+                if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].roomContents.equals("S") && dungeon[i][j].getMonster() != null) {
+                    if (dungeon[i][j].getDungeonCharacterName().equals("Gremlin")) {
+                        ui.spawnMonster(gremlin, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51) + gremlin.getOffSetJ()), (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51) + gremlin.getOffSetI()), i, j);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * The spawnCharacter method places the character in the starting room, aligning the center of the players base with the center
      * of the room which they occupy. The proper offsets are stored within the character class. My information regarding this can
@@ -64,9 +78,9 @@ public class DungeonAdventure{
     public void spawnCharacter() {
         int myI = 1;
         int myJ = 7;
-        p = new Player(myI, myJ, 0);
-        p.room = dungeon[myI][myJ];
-        ui.spawnPlayer(p, (((int) Math.ceil((double)p.coords.y/ 2) * 26) + ((p.coords.y / 2) * 51) + p.offSetJ), (((int) Math.ceil((double)p.coords.x/2) * 20) + ((p.coords.x / 2) * 51) + p.offSetI));
+        p = new Player(myI, myJ, 1);
+        p.setRoom(dungeon[myI][myJ]);
+        ui.spawnPlayer(p, (((int) Math.ceil((double) p.getCoords().y/ 2) * 26) + ((p.getCoords().y / 2) * 51) + p.getOffSetJ()), (((int) Math.ceil((double) p.getCoords().x/2) * 20) + ((p.getCoords().x / 2) * 51) + p.getOffSetI()));
     }
 
     /**
