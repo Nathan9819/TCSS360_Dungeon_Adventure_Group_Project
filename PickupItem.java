@@ -1,17 +1,17 @@
-package main;
 public abstract class PickupItem {
-    private String player;
-    protected DungeonGenerator Dungeon;
-    public abstract void work (DungeonCharacter dungeonCharacter);
-    public PickupItem(String player, DungeonGenerator dungeon) {
-        this.player = player;
-        this.Dungeon = dungeon;
-    }
-    public String getName() {
-        return this.player;
+
+    protected String itemDescription;
+    protected String itemName;
+    protected char symbol;
+
+    PickupItem(String itemDescription, String itemName, char symbol){
+        this.itemDescription = itemDescription;
+        this.itemName = itemName;
+        this.symbol = symbol;
     }
 
-    public String toString() {
-        return this.getName();
-    }
+//    protected PickupItem() {
+//    }
+    //public static void use(Hero dungeoncharacter) {};
+    //public static void use(Hero dungencharacter){};
 }
