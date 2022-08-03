@@ -166,11 +166,11 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.add(roomsAndHallways[theI][theJ], theEntity.getLayer());
     }
 
-    public void spawnMonster(Monster monster, int theX, int theY, int theI, int theJ) {
+    public void spawnMonster(Monster theMonster, int theI, int theJ) {
         monsters[theI][theJ] = new JLabel();
-        monsters[theI][theJ].setBounds(theX,theY,monster.getWidth(),monster.getHeight());
-        monsters[theI][theJ].setIcon(monster.getSprite());
-        layeredPane.add(monsters[theI][theJ], monster.getLayer());
+        monsters[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theMonster.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theMonster.getOffSetI()), theMonster.getWidth(), theMonster.getHeight());
+        monsters[theI][theJ].setIcon(theMonster.getSprite());
+        layeredPane.add(monsters[theI][theJ], theMonster.getLayer());
     }
 
     /**
@@ -189,10 +189,10 @@ public class UI extends JFrame implements KeyListener{
         player.setBounds(theX,theY,thePlayer.getWidth(),thePlayer.getHeight());
         player.setIcon(thePlayer.getSprite());
         layeredPane.add(player, thePlayer.getLayer());
-        setLight(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
+        updateRoom(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
     }
 
-    public void setLight(int theI, int theJ, Room theRoom) {
+    public void updateRoom(int theI, int theJ, Room theRoom) {
         RoomTile myLightRoom = new RoomTile(true);
         myLightRoom.setRoomImage(da.getRoomCode(theI, theJ));
         HallwayHorizontal myLightHH = new HallwayHorizontal(true);
@@ -202,21 +202,33 @@ public class UI extends JFrame implements KeyListener{
             roomsAndHallways[theI - 1][theJ].setIcon(myLightHV.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI - 2, theJ));
             roomsAndHallways[theI - 2][theJ].setIcon(myLightRoom.getSprite());
+            if (da.dungeon[theI - 2][theJ].getMonster() != null) {
+                spawnMonster(da.dungeon[theI - 2][theJ].getMonster(), theI - 2, theJ);
+            }
         }
         if (theRoom.east != null) {
             roomsAndHallways[theI][theJ + 1].setIcon(myLightHH.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI, theJ + 2));
             roomsAndHallways[theI][theJ + 2].setIcon(myLightRoom.getSprite());
+            if (da.dungeon[theI][theJ + 2].getMonster() != null) {
+                spawnMonster(da.dungeon[theI][theJ + 2].getMonster(), theI, theJ + 2);
+            }
         }
         if (theRoom.west != null) {
             roomsAndHallways[theI][theJ - 1].setIcon(myLightHH.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI, theJ - 2));
             roomsAndHallways[theI][theJ - 2].setIcon(myLightRoom.getSprite());
+            if (da.dungeon[theI][theJ - 2].getMonster() != null) {
+                spawnMonster(da.dungeon[theI][theJ - 2].getMonster(), theI, theJ - 2);
+            }
         }
         if (theRoom.south != null) {
             roomsAndHallways[theI + 1][theJ].setIcon(myLightHV.getSprite());
             myLightRoom.setRoomImage(da.getRoomCode(theI + 2, theJ));
             roomsAndHallways[theI + 2][theJ].setIcon(myLightRoom.getSprite());
+            if (da.dungeon[theI + 2][theJ].getMonster() != null) {
+                spawnMonster(da.dungeon[theI + 2][theJ].getMonster(), theI + 2, theJ);
+            }
         }
         da.p.getRoom().visited = true;
         refresh();
@@ -335,7 +347,7 @@ public class UI extends JFrame implements KeyListener{
             }
         }
         if (!da.p.getRoom().visited) {
-            setLight(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
+            updateRoom(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
         }
         refresh();
     }
@@ -352,6 +364,7 @@ public class UI extends JFrame implements KeyListener{
                 cont = false;
                 description.setText("The beast is slane!");
                 monsters[da.p.getCoords().x][da.p.getCoords().y].setVisible(false);
+                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].killMonster();
                 player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.p.getOffSetJ()),
                         (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
                 this.update(this.getGraphics());

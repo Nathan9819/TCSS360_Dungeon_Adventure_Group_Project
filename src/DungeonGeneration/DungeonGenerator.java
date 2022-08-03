@@ -1,6 +1,7 @@
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -14,6 +15,7 @@ import java.util.Random;
  * @Author Nathan Mahnke
  */
 public class DungeonGenerator {
+    private int floor = 1;
     private static Room[][] initialDungeon;
     public static Room[][] finalDungeon;
     private int count = 0;
@@ -29,6 +31,8 @@ public class DungeonGenerator {
         finalDungeon = new Room[initialDungeon.length * 2][initialDungeon[0].length * 2];
         fillDungeon(initialDungeon);
         startGame();
+        cleanUpDungeon();
+        placeEntities();
         finalizeDungeon();
         displayDungeon(initialDungeon);
         displayDungeon(finalDungeon);
@@ -59,12 +63,12 @@ public class DungeonGenerator {
         initialDungeon[1][initialDungeon[0].length / 2].roomContents = "P";
         initialDungeon[1][initialDungeon[0].length / 2].north = initialDungeon[0][initialDungeon[0].length / 2];
         initialDungeon[1][initialDungeon[0].length / 2].coords = new Point(1, initialDungeon[0].length / 2);
-        initialDungeon[1][initialDungeon[0].length / 2].setMonster(new Gremlin());
 
         int myMaxExpansions = 8;
         while (hasProspects() && count < myMaxExpansions) {
             generateRooms();
         }
+        floor++;
     }
 
     /**
@@ -106,6 +110,7 @@ public class DungeonGenerator {
                 myNumOfExits = 2;
             }
             initialDungeon[p.x][p.y].roomContents = "S";
+//            spawnMonster(p.x, p.y);
 //            initialDungeon[p.x][p.y].setDungeonCharacter(new Gremlin());
             int myRandDirection;
             myRandDirection = myRand.nextInt(3);
@@ -123,6 +128,43 @@ public class DungeonGenerator {
         }
     }
 
+    public void placeEntities() {
+        int myEnemyCount = 0, myEmptyCount = 0, myItemOCount = 0, myNextSpawn = 0;
+        Random myRand = new Random();
+        ArrayList<Point> myRooms = getRooms();
+        for (Point p : myRooms) {
+            myNextSpawn = myRand.nextInt(2);
+            switch (myNextSpawn) {
+                case 0 :
+                    if (myEnemyCount < myRooms.size() / 3) {
+                        int myMonster = myRand.nextInt(2);
+                        switch (myMonster) {
+                            case 0 -> initialDungeon[p.x][p.y].setMonster(new Gremlin());
+                            case 1 -> initialDungeon[p.x][p.y].setMonster(new Skeleton());
+                            case 2 -> initialDungeon[p.x][p.y].setMonster(new Ogre());
+                        }
+                        myEnemyCount++;
+                    }
+                case 1 :
+                    System.out.println("item would be spawned");
+                    myItemOCount++;
+                case 2 :
+                    myEmptyCount++;
+            }
+        }
+    }
+
+    private ArrayList<Point> getRooms() {
+        ArrayList<Point> myArrayList = new ArrayList<>();
+        for (int row = 0; row < initialDungeon.length; row++) {
+            for (int col = 0; col < initialDungeon[0].length; col++) {
+                if (initialDungeon[row][col].roomContents.equals("S")) {
+                    myArrayList.add(new Point(row, col));
+                }
+            }
+        }
+        return myArrayList;
+    }
 
     /**
      * The createRoom method is used for the placement of a new room. It accepts a point to be
@@ -209,8 +251,8 @@ public class DungeonGenerator {
      * the connections between rooms added which happens when the method calls generateConnections.
      */
     public void finalizeDungeon() {
-        cleanUpDungeon();
         addRoomCodes(initialDungeon);
+        initialDungeon[0][initialDungeon[0].length / 2].killMonster();
         int myDunRow = 0;
         int myDunCol = 0;
         for (int i = 0; i < finalDungeon.length; i++) {
