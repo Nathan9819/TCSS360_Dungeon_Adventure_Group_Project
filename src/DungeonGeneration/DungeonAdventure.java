@@ -8,6 +8,7 @@
  * @Author Nathan Mahnke
  */
 public class DungeonAdventure{
+    private int playerClass;
     DungeonGenerator dg;
     protected Player p;
     Room[][] dungeon;
@@ -23,6 +24,7 @@ public class DungeonAdventure{
     public DungeonAdventure() {
         dg = new DungeonGenerator();
         dungeon = dg.getDungeon();
+        playerClass = -1;
     }
 
     public void startGame() {
@@ -78,7 +80,7 @@ public class DungeonAdventure{
     public void spawnCharacter() {
         int myI = 1;
         int myJ = 7;
-        p = new Player(myI, myJ, 1);
+        p = new Player(myI, myJ, playerClass);
         p.setRoom(dungeon[myI][myJ]);
         ui.spawnPlayer(p, (((int) Math.ceil((double) p.getCoords().y/ 2) * 26) + ((p.getCoords().y / 2) * 51) + p.getOffSetJ()), (((int) Math.ceil((double) p.getCoords().x/2) * 20) + ((p.getCoords().x / 2) * 51) + p.getOffSetI()));
     }
@@ -93,5 +95,14 @@ public class DungeonAdventure{
      */
     public String getRoomCode(int theI, int theJ) {
         return dungeon[theI][theJ].roomCode;
+    }
+
+    public void setPlayerClass(final int theClass) {
+        playerClass = theClass;
+        System.out.println(playerClass);
+    }
+
+    public int getPlayerClass() {
+        return playerClass;
     }
 }

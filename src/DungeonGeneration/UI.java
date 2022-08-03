@@ -17,12 +17,13 @@ import java.io.InputStream;
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
     private boolean started = false;
-    private JPanel titleScreen;
+    private int screenWidth, screenHeight;
+    private JLayeredPane titleScreen;
     private JLayeredPane layeredPane;
     private Font titleFont, normalFont;
     private Color bgColor, txtColor;
     private JLabel titleLabel;
-    private JButton startButton;
+    private JButton startButton, knightButton, priestessButton, thiefButton;
     private JTextArea description;
     private gameStartHandler gameStart = new gameStartHandler();
 
@@ -50,8 +51,10 @@ public class UI extends JFrame implements KeyListener{
      * It also instantiates the JLayeredPane to be used in the placement of visual assets.
      */
     public void createMainField() {
+        screenWidth = 1600;
+        screenHeight = 1200;
         this.setTitle("Dungeon Adventure");
-        this.setPreferredSize(new Dimension(1600, 1200));
+        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         bgColor = new Color(115, 62, 57);
         this.getContentPane().setBackground(bgColor);
@@ -71,16 +74,18 @@ public class UI extends JFrame implements KeyListener{
             e.printStackTrace();
             System.out.println("Font error!");
         }
-        titleScreen = new JPanel(new GridLayout(0, 2));
-        layeredPane = new JLayeredPane();
-        layeredPane.setBounds(0, 0, 1600, 800);
-        this.add(layeredPane);
+        titleScreen = new JLayeredPane();
+        titleScreen.setBounds(0, 0, screenWidth, screenHeight);
+        this.add(titleScreen);
+//        layeredPane = new JLayeredPane();
+//        layeredPane.setBounds(0, 0, screenWidth, screenHeight - (screenHeight/3));
+//        this.add(layeredPane);
         titleLabel = new JLabel("DUNGEON ADVENTURE", SwingConstants.CENTER);
         txtColor = new Color(62,39,49);
         titleLabel.setForeground(txtColor);
         titleLabel.setFont(titleFont);
-        titleLabel.setBounds(500, 400, 600, 150);
-        layeredPane.add(titleLabel, 1);
+        titleLabel.setBounds(screenWidth/4, (int) ((double) screenHeight/6), (int) ((double) screenWidth/2.5), screenHeight/8);
+        titleScreen.add(titleLabel, 0);
 
 
         startButton = new JButton("START");
@@ -88,20 +93,50 @@ public class UI extends JFrame implements KeyListener{
         startButton.setForeground(txtColor);
         startButton.setBackground(null);
         startButton.addActionListener(gameStart);
-        startButton.setBounds(700, 700, 200, 100);
+        startButton.setBounds((int) ((double) screenWidth/2.2) - screenWidth/16, (int) ((double) screenHeight/1.5), screenWidth/8, screenHeight/12);
         startButton.setAlignmentX(JLayeredPane.CENTER_ALIGNMENT);
-        layeredPane.add(startButton, 0);
+        titleScreen.add(startButton, 0);
+
+        Player myKnight = new Player(0, 0, 0);
+        knightButton = new JButton("KNIGHT", new ImageIcon(myKnight.getSprite().getImage().getScaledInstance(myKnight.getWidth()*2, myKnight.getHeight()*2, Image.SCALE_SMOOTH)));
+        knightButton.setFont(normalFont);
+        knightButton.setForeground(txtColor);
+        knightButton.setBackground(null);
+        knightButton.setBounds(0, (int) ((double) screenHeight/2.3), screenWidth/3, screenHeight/12);
+        knightButton.addActionListener(gameStart);
+        titleScreen.add(knightButton, 0);
+
+        Player myPriestess = new Player(0, 0, 1);
+        priestessButton = new JButton("Priestess", new ImageIcon(myPriestess.getSprite().getImage().getScaledInstance(myPriestess.getWidth()*2, myPriestess.getHeight()*2, Image.SCALE_SMOOTH)));
+        priestessButton.setFont(normalFont);
+        priestessButton.setForeground(txtColor);
+        priestessButton.setBackground(null);
+        priestessButton.setBounds(screenWidth/3, (int) ((double) screenHeight/2.3), screenWidth/3, screenHeight/12);
+        priestessButton.addActionListener(gameStart);
+        titleScreen.add(priestessButton, 0);
+
+        Player myThief = new Player(0, 0, 2);
+        thiefButton = new JButton("THIEF", new ImageIcon(myThief.getSprite().getImage().getScaledInstance(myThief.getWidth()*2, myThief.getHeight()*2, Image.SCALE_SMOOTH)));
+        thiefButton.setFont(normalFont);
+        thiefButton.setForeground(txtColor);
+        thiefButton.setBackground(null);
+        thiefButton.setBounds((screenWidth/3) * 2, (int) ((double) screenHeight/2.3), screenWidth/3, screenHeight/12);
+        thiefButton.addActionListener(gameStart);
+        titleScreen.add(thiefButton, 0);
+
         this.setVisible(true);
     }
 
     public void startGame() {
-        titleLabel.setVisible(false);
-        startButton.setVisible(false);
+        layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0, 0, screenWidth, screenHeight - (screenHeight/3));
+        this.add(layeredPane);
+        titleScreen.setVisible(false);
         description = new JTextArea("You find yourself lost and alone. The only way out . . . is through!");
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
         description.setFont(normalFont);
-        description.setBounds(10, 800, 1600, 400);
+        description.setBounds(10, screenHeight - (screenHeight/3), screenWidth, screenHeight/3);
         description.setBackground(bgColor);
         description.setForeground(txtColor);
 //        description.setEditable(false);
@@ -343,8 +378,19 @@ public class UI extends JFrame implements KeyListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            startGame();
-            started = true;
+            Object source = e.getSource();
+            if (knightButton.equals(source)) {
+                da.setPlayerClass(0);
+            } else if (priestessButton.equals(source)) {
+                da.setPlayerClass(1);
+            } else if (thiefButton.equals(source)) {
+                da.setPlayerClass(2);
+            } else if (startButton.equals(source)){
+                if (da.getPlayerClass() != -1) {
+                    startGame();
+                    started = true;
+                }
+            }
         }
     }
 }
