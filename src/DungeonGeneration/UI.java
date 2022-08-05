@@ -17,9 +17,9 @@ import java.io.InputStream;
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
     private boolean started = false;
+    private int currentAction = 0;
     private int screenWidth, screenHeight;
-    private JLayeredPane titleScreen;
-    private JLayeredPane layeredPane;
+    private JLayeredPane titleScreen, layeredPane, combatButtons;
     private Font titleFont, normalFont;
     private Color bgColor, txtColor;
     private JLabel titleLabel;
@@ -136,26 +136,46 @@ public class UI extends JFrame implements KeyListener{
      * adding the game board (JlayeredPane) as well as text area.
      */
     public void startGame() {
+        titleScreen.setVisible(false);
         layeredPane = new JLayeredPane();
         layeredPane.setBounds(10, 10, screenWidth - 10, screenHeight - (screenHeight/3));
         layeredPane.setDoubleBuffered(true);
         layeredPane.setBackground(bgColor);
         this.add(layeredPane);
-        titleScreen.setVisible(false);
         description = new JTextArea("You find yourself lost and alone. The only way out . . . is through!");
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
         description.setFont(normalFont);
-        description.setBounds(10, screenHeight - (screenHeight/3), screenWidth, screenHeight/4);
+        description.setBounds(10, screenHeight - (screenHeight/3), screenWidth, screenHeight/6);
         description.setBackground(bgColor);
         description.setForeground(txtColor);
         description.setEditable(false);
+        this.add(description);
+
+        combatButtons = new JLayeredPane();
+        combatButtons.setBounds(10, screenHeight - (screenHeight/8), screenWidth - 10, screenHeight - (screenHeight/12));
+        combatButtons.setDoubleBuffered(true);
+        combatButtons.setBackground(bgColor);
 
         attackButton = new JButton("ATTACK");
         attackButton.setFont(normalFont);
         attackButton.setForeground(txtColor);
-//        description.setEditable(false);
-        this.add(description);
+        attackButton.setBackground(bgColor);
+        attackButton.setBounds(10, 0, screenWidth/5, screenHeight/12);
+        attackButton.addActionListener(gameStart);
+        combatButtons.add(attackButton);
+
+        specialButton = new JButton("SPECIAL");
+        specialButton.setFont(normalFont);
+        specialButton.setForeground(txtColor);
+        specialButton.setBackground(bgColor);
+        specialButton.setBounds(20 + screenWidth/5, 0, screenWidth/5, screenHeight/12);
+        specialButton.addActionListener(gameStart);
+        combatButtons.add(specialButton);
+
+        this.add(combatButtons);
+        combatButtons.setVisible(false);
+
         da.startGame();
     }
 
@@ -279,7 +299,7 @@ public class UI extends JFrame implements KeyListener{
     }
 
     /**
-     * The keyPressed method overrides the keyPressed method of KeyListener. This allows DungeonGeneration.UI to be
+     * The keyPressed method overrides the keyPressed method of KeyListener. This allows UI to be
      * updated upon user input. It listens for presses of the W, A, S, and D keys. These keys
      * correspond to the cardinal directions and allow the move the player character throughout the
      * dungeon. If a movement is valid, the method calls movePlayer, passing it the given direction.
@@ -293,25 +313,21 @@ public class UI extends JFrame implements KeyListener{
                 case 'w':
                     if (da.p.getRoom().north != null) {
                         movePlayer(0);
-                        System.out.println("w pressed");
                     }
                     break;
                 case 'd':
                     if (da.p.getRoom().east != null) {
                         movePlayer(1);
-                        System.out.println("d pressed");
                     }
                     break;
                 case 's':
                     if (da.p.getRoom().south != null) {
                         movePlayer(2);
-                        System.out.println("s pressed");
                     }
                     break;
                 case 'a':
                     if (da.p.getRoom().west != null) {
                         movePlayer(3);
-                        System.out.println("a pressed");
                     }
                     break;
             }
@@ -336,7 +352,7 @@ public class UI extends JFrame implements KeyListener{
      *
      * @param theDirection The direction for the player to be moved
      */
-    public void movePlayer (int theDirection) {
+    private void movePlayer (int theDirection) {
         int myOffsetJ = 0;
         int myOffsetI = 0;
         switch (theDirection) {
@@ -357,20 +373,16 @@ public class UI extends JFrame implements KeyListener{
             case 2 -> da.p.setRoom(da.p.getRoom().south);
             case 3 -> da.p.setRoom(da.p.getRoom().west);
         }
-        Monster monster = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster();
-        if (monster != null) {
+        Monster myMonster = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster();
+        if (myMonster != null) {
             Player myPlayer = da.p;
             player.setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + myPlayer.getOffSetJ() - 16),
                     (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myPlayer.getOffSetI()), myPlayer.getWidth(), myPlayer.getHeight());
-            monsters[myPlayer.getCoords().x][myPlayer.getCoords().y].setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + monster.getOffSetJ() + 16),
-                    (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + monster.getOffSetI()), monster.getWidth(), monster.getHeight());
-//            this.update(this.getGraphics());
+            monsters[myPlayer.getCoords().x][myPlayer.getCoords().y].setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + myMonster.getOffSetJ() + 16),
+                    (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myMonster.getOffSetI()), myMonster.getWidth(), myMonster.getHeight());
             layeredPane.update(layeredPane.getGraphics());
-            try {
-                doBattle();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            combatButtons.setVisible(true);
+            setCurrentAction(myPlayer.getHeroType(), myMonster);
         }
         if (!da.p.getRoom().visited) {
             updateRooms(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
@@ -378,13 +390,13 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.update(layeredPane.getGraphics());
     }
 
-    public void doBattle() throws InterruptedException {
+    private void doBattle() throws InterruptedException {
         boolean cont = true;
         while (cont) {
             String myText = da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster());
             System.out.println(myText);
             description.setText(myText);
-            description.update(description.getGraphics());
+//            description.update(description.getGraphics());
             Thread.sleep(1000);
             if (da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHP() <= 0) {
                 cont = false;
@@ -413,7 +425,55 @@ public class UI extends JFrame implements KeyListener{
         }
     }
 
-    public class gameStartHandler implements ActionListener {
+    private void setCurrentAction(Hero thePlayer, Monster theMonster) {
+        int atk = thePlayer.getAtkSpd() % theMonster.getAtkSpd();
+        if (atk <= 0) {
+            atk = 1;
+        }
+        currentAction = atk;
+    }
+
+    private void battle(final int attackType) throws InterruptedException {
+        if (attackType > 1 || attackType < 0) {
+            return;
+        }
+        if (attackType == 0) {
+            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()));
+        } else {
+//            description.setText(da.p.getHeroType().special(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()));
+            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()));
+            System.out.println("special was used");
+        }
+        description.update(description.getGraphics());
+        currentAction--;
+        Thread.sleep(1250);
+        if (da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHP() <= 0) {
+            description.setText("THE " + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName() + " WAS DEFEATED!");
+            description.update(description.getGraphics());
+        } else {
+            if (currentAction <= 0) {
+                description.setText(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType()));
+                description.update(description.getGraphics());
+                if (da.p.getHeroType().getHP() <= 0) {
+                    Thread.sleep(1250);
+                    description.setText("THE " + da.p.getHeroType().getName() + " WAS DEFEATED!");
+                    description.update(description.getGraphics());
+                    currentAction = 0;
+                    combatButtons.setVisible(false);
+                }
+            } else {
+                description.setText("THE " + da.p.getHeroType().getName() + " WAS FASTER THAN "
+                        + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName() + " AND GETS IN AN EXTRA ACTION");
+                description.update(description.getGraphics());
+            }
+        }
+        if (currentAction == 0) {
+            setCurrentAction(da.p.getHeroType(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster());
+        }
+    }
+
+
+    private class gameStartHandler implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -432,7 +492,15 @@ public class UI extends JFrame implements KeyListener{
                     }
                 }
             } else {
-
+                try {
+                    if (attackButton.equals(source)) {
+                        battle(0);
+                    } else if (specialButton.equals(source)) {
+                        battle(1);
+                    }
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
