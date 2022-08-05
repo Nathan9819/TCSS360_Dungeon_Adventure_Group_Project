@@ -24,9 +24,9 @@ public class UI extends JFrame implements KeyListener{
     private Color bgColor, txtColor;
     private JLabel titleLabel;
     private JButton startButton, knightButton, priestessButton, thiefButton;
+    private JButton attackButton, specialButton;
     private JTextArea description;
     private gameStartHandler gameStart = new gameStartHandler();
-
     public JLabel[][] roomsAndHallways = new JLabel[22][22];
     public JLabel[][] monsters = new JLabel[22][22];
     public JLabel player;
@@ -65,6 +65,11 @@ public class UI extends JFrame implements KeyListener{
         mainMenu();
     }
 
+
+    /**
+     * The mainMenu method is called upon the creation of a UI object. It creates the title screen and places button/visuals
+     * in their appropriate locations.
+     */
     public void mainMenu() {
         try {
             InputStream is = getClass().getResourceAsStream("DungeonGeneration/Assets/MaruMonica.ttf");
@@ -86,8 +91,6 @@ public class UI extends JFrame implements KeyListener{
         titleLabel.setFont(titleFont);
         titleLabel.setBounds(screenWidth/4, (int) ((double) screenHeight/6), (int) ((double) screenWidth/2.5), screenHeight/8);
         titleScreen.add(titleLabel, 0);
-
-
         startButton = new JButton("START");
         startButton.setFont(normalFont);
         startButton.setForeground(txtColor);
@@ -127,18 +130,30 @@ public class UI extends JFrame implements KeyListener{
         this.setVisible(true);
     }
 
+
+    /**
+     * The startGame method is called once the user selects a class and clicks start. The method handles removing the title menu UI and
+     * adding the game board (JlayeredPane) as well as text area.
+     */
     public void startGame() {
         layeredPane = new JLayeredPane();
-        layeredPane.setBounds(0, 0, screenWidth, screenHeight - (screenHeight/3));
+        layeredPane.setBounds(10, 10, screenWidth - 10, screenHeight - (screenHeight/3));
+        layeredPane.setDoubleBuffered(true);
+        layeredPane.setBackground(bgColor);
         this.add(layeredPane);
         titleScreen.setVisible(false);
         description = new JTextArea("You find yourself lost and alone. The only way out . . . is through!");
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
         description.setFont(normalFont);
-        description.setBounds(10, screenHeight - (screenHeight/3), screenWidth, screenHeight/3);
+        description.setBounds(10, screenHeight - (screenHeight/3), screenWidth, screenHeight/4);
         description.setBackground(bgColor);
         description.setForeground(txtColor);
+        description.setEditable(false);
+
+        attackButton = new JButton("ATTACK");
+        attackButton.setFont(normalFont);
+        attackButton.setForeground(txtColor);
 //        description.setEditable(false);
         this.add(description);
         da.startGame();
@@ -166,6 +181,15 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.add(roomsAndHallways[theI][theJ], theEntity.getLayer());
     }
 
+    /**
+     * The spawnMonster method is used when the player move to/spawns in a room that is adjacent to a room containing a monster.
+     * The contents of a room is only to be revealed when the player comes close enough, so this method is called by the updateRooms
+     * method after the player moves.
+     *
+     * @param theMonster
+     * @param theI
+     * @param theJ
+     */
     public void spawnMonster(Monster theMonster, int theI, int theJ) {
         monsters[theI][theJ] = new JLabel();
         monsters[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theMonster.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theMonster.getOffSetI()), theMonster.getWidth(), theMonster.getHeight());
@@ -189,10 +213,10 @@ public class UI extends JFrame implements KeyListener{
         player.setBounds(theX,theY,thePlayer.getWidth(),thePlayer.getHeight());
         player.setIcon(thePlayer.getSprite());
         layeredPane.add(player, thePlayer.getLayer());
-        updateRoom(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
+        updateRooms(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
     }
 
-    public void updateRoom(int theI, int theJ, Room theRoom) {
+    public void updateRooms(int theI, int theJ, Room theRoom) {
         RoomTile myLightRoom = new RoomTile(true);
         myLightRoom.setRoomImage(da.getRoomCode(theI, theJ));
         HallwayHorizontal myLightHH = new HallwayHorizontal(true);
@@ -231,18 +255,18 @@ public class UI extends JFrame implements KeyListener{
             }
         }
         da.p.getRoom().visited = true;
-        refresh();
+        layeredPane.update(layeredPane.getGraphics());
     }
 
 
-    /**
-     * The refresh method simply repaints and revalidates the DungeonGeneration.UI JFrame. This is used to update the screen
-     * when any changes are made to visual aspects of the GUI.
-     */
-    public void refresh() {
-        this.repaint();
-        this.revalidate();
-    }
+//    /**
+//     * The refresh method simply repaints and revalidates the DungeonGeneration.UI JFrame. This is used to update the screen
+//     * when any changes are made to visual aspects of the GUI.
+//     */
+//    public void refresh() {
+//        this.repaint();
+//        this.revalidate();
+//    }
 
     /**
      * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.UI
@@ -325,7 +349,8 @@ public class UI extends JFrame implements KeyListener{
         player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y + myOffsetJ)/ 2) * 26) + (((da.p.getCoords().y + myOffsetJ)/ 2) * 51) + da.p.getOffSetJ()),
                             (((int) Math.ceil(((double) da.p.getCoords().x + myOffsetI)/2) * 20) + ((((da.p.getCoords().x + myOffsetI) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
         da.p.setCoords(new Point(da.p.getCoords().x + myOffsetI, da.p.getCoords().y + myOffsetJ));
-        this.update(this.getGraphics());
+//        this.update(this.getGraphics());
+        layeredPane.update(layeredPane.getGraphics());
         switch (theDirection) {
             case 0 -> da.p.setRoom(da.p.getRoom().north);
             case 1 -> da.p.setRoom(da.p.getRoom().east);
@@ -339,7 +364,8 @@ public class UI extends JFrame implements KeyListener{
                     (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myPlayer.getOffSetI()), myPlayer.getWidth(), myPlayer.getHeight());
             monsters[myPlayer.getCoords().x][myPlayer.getCoords().y].setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + monster.getOffSetJ() + 16),
                     (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + monster.getOffSetI()), monster.getWidth(), monster.getHeight());
-            this.update(this.getGraphics());
+//            this.update(this.getGraphics());
+            layeredPane.update(layeredPane.getGraphics());
             try {
                 doBattle();
             } catch (InterruptedException e) {
@@ -347,9 +373,9 @@ public class UI extends JFrame implements KeyListener{
             }
         }
         if (!da.p.getRoom().visited) {
-            updateRoom(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
+            updateRooms(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
         }
-        refresh();
+        layeredPane.update(layeredPane.getGraphics());
     }
 
     public void doBattle() throws InterruptedException {
@@ -367,7 +393,7 @@ public class UI extends JFrame implements KeyListener{
                 da.dungeon[da.p.getCoords().x][da.p.getCoords().y].killMonster();
                 player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.p.getOffSetJ()),
                         (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
-                this.update(this.getGraphics());
+                layeredPane.update(layeredPane.getGraphics());
             } else {
                 myText = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType());
                 System.out.println(myText);
@@ -380,7 +406,7 @@ public class UI extends JFrame implements KeyListener{
                     player.setVisible(false);
                     monsters[da.p.getCoords().x][da.p.getCoords().y].setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetJ()),
                             (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetI()), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getWidth(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHeight());
-                    this.update(this.getGraphics());
+                    layeredPane.update(layeredPane.getGraphics());
                 }
             }
 
@@ -392,17 +418,21 @@ public class UI extends JFrame implements KeyListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
-            if (knightButton.equals(source)) {
-                da.setPlayerClass(0);
-            } else if (priestessButton.equals(source)) {
-                da.setPlayerClass(1);
-            } else if (thiefButton.equals(source)) {
-                da.setPlayerClass(2);
-            } else if (startButton.equals(source)){
-                if (da.getPlayerClass() != -1) {
-                    startGame();
-                    started = true;
+            if (!started) {
+                if (knightButton.equals(source)) {
+                    da.setPlayerClass(0);
+                } else if (priestessButton.equals(source)) {
+                    da.setPlayerClass(1);
+                } else if (thiefButton.equals(source)) {
+                    da.setPlayerClass(2);
+                } else if (startButton.equals(source)) {
+                    if (da.getPlayerClass() != -1) {
+                        startGame();
+                        started = true;
+                    }
                 }
+            } else {
+
             }
         }
     }

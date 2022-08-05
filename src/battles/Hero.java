@@ -4,7 +4,7 @@ public abstract class Hero extends DungeonCharacter {
     private double myBlock;
     private Random rand = new Random();
 
-    public Hero() {
+    protected Hero() {
         super();
         setBlock(0.2);
     }
@@ -23,9 +23,12 @@ public abstract class Hero extends DungeonCharacter {
         super(theMaxHP, theMinDMG, theMaxDMG, theName, theAtkSpd, theHit);
         setBlock(theBlock);
     }
+
     protected void setBlock(final double theBlock) {
         myBlock = theBlock;
     }
+
+    @Override
     public String takeDMG(final int theDMG) {
         StringBuilder dmgInfo = new StringBuilder();
         if (rand.nextDouble() <= myBlock) {
