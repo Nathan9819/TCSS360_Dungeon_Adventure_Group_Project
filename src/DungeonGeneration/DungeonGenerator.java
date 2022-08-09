@@ -130,25 +130,52 @@ public class DungeonGenerator {
     public void placeEntities() {
         int myEnemyCount = 0, myEmptyCount = 0, myItemOCount = 0, myNextSpawn = 0;
         Random myRand = new Random();
+        ArrayList<Point> myEmptyRooms = new ArrayList<>();
         ArrayList<Point> myRooms = getRooms();
+        Point myStartRoom = new Point(0, initialDungeon[0].length / 2);
         for (Point p : myRooms) {
-            myNextSpawn = myRand.nextInt(2);
-            switch (myNextSpawn) {
-                case 0 :
-                    if (myEnemyCount < myRooms.size() / 3) {
-                        int myMonster = myRand.nextInt(2);
-                        switch (myMonster) {
-                            case 0 -> initialDungeon[p.x][p.y].setMonster(new Gremlin());
-                            case 1 -> initialDungeon[p.x][p.y].setMonster(new Skeleton());
-                            case 2 -> initialDungeon[p.x][p.y].setMonster(new Ogre());
+            if (p != myStartRoom) {
+                myNextSpawn = myRand.nextInt(2);
+                switch (myNextSpawn) {
+                    case 0:
+                        if (myEnemyCount < myRooms.size() / 3) {
+                            int myMonster = myRand.nextInt(6);
+                            switch (myMonster) {
+                                case 0, 1, 2 -> initialDungeon[p.x][p.y].setMonster(new Gremlin());
+                                case 3, 4 -> initialDungeon[p.x][p.y].setMonster(new Skeleton());
+                                case 5 -> initialDungeon[p.x][p.y].setMonster(new Ogre());
+                            }
+                            myEnemyCount++;
                         }
-                        myEnemyCount++;
-                    }
-                case 1 :
-                    System.out.println("item would be spawned");
-                    myItemOCount++;
-                case 2 :
-                    myEmptyCount++;
+                    case 1:
+                        System.out.println("item would be spawned");
+                        myItemOCount++;
+                    case 2:
+                        myEmptyCount++;
+                        myEmptyRooms.add(p);
+                }
+            }
+        }
+        spawnKey(myEmptyRooms);
+    }
+
+    private void spawnKey(ArrayList<Point> theEmptyRooms) {
+        Random myRand = new Random();
+        final int myKey = myRand.nextInt(theEmptyRooms.size());
+        int myCount = 0;
+        for (Point p : theEmptyRooms) {
+            if (myCount == myKey) {
+                String myColor = "";
+                switch (floor) {
+                    case 0 -> myColor = "Blue";
+                    case 1 -> myColor = "Red";
+                    case 2 -> myColor = "Yellow";
+                    case 3 -> myColor = "Green";
+                }
+                initialDungeon[p.x][p.y].setItem(new Key(myColor, floor));
+                break;
+            } else {
+                myCount++;
             }
         }
     }

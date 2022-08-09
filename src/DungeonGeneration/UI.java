@@ -28,7 +28,7 @@ public class UI extends JFrame implements KeyListener{
     private JTextArea description;
     private gameStartHandler gameStart = new gameStartHandler();
     public JLabel[][] roomsAndHallways = new JLabel[22][22];
-    public JLabel[][] monsters = new JLabel[22][22];
+    public JLabel[][] entities = new JLabel[22][22];
     public JLabel player;
 
 
@@ -194,11 +194,18 @@ public class UI extends JFrame implements KeyListener{
      * @param theI      The i-coordinate for the JLabel to be added to the JLabel array
      * @param theJ      The j-coordinate for the JLabel to be added to the JLabel array
      */
-    public void spawnItem(Entity theEntity, int theX, int theY, int theI, int theJ) {
+    public void spawnRoomOrHallway(Entity theEntity, int theX, int theY, int theI, int theJ) {
         roomsAndHallways[theI][theJ] = new JLabel();
         roomsAndHallways[theI][theJ].setBounds(theX,theY,theEntity.getWidth(),theEntity.getHeight());
         roomsAndHallways[theI][theJ].setIcon(theEntity.getSprite());
         layeredPane.add(roomsAndHallways[theI][theJ], theEntity.getLayer());
+    }
+
+    public void spawnEntity(Entity theEntity, int theI, int theJ) {
+        entities[theI][theJ] = new JLabel();
+        entities[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theEntity.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theEntity.getOffSetI()), theEntity.getWidth(), theEntity.getHeight());
+        entities[theI][theJ].setIcon(theEntity.getSprite());
+        layeredPane.add(entities[theI][theJ], theEntity.getLayer());
     }
 
     /**
@@ -211,10 +218,10 @@ public class UI extends JFrame implements KeyListener{
      * @param theJ
      */
     public void spawnMonster(Monster theMonster, int theI, int theJ) {
-        monsters[theI][theJ] = new JLabel();
-        monsters[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theMonster.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theMonster.getOffSetI()), theMonster.getWidth(), theMonster.getHeight());
-        monsters[theI][theJ].setIcon(theMonster.getSprite());
-        layeredPane.add(monsters[theI][theJ], theMonster.getLayer());
+        entities[theI][theJ] = new JLabel();
+        entities[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theMonster.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theMonster.getOffSetI()), theMonster.getWidth(), theMonster.getHeight());
+        entities[theI][theJ].setIcon(theMonster.getSprite());
+        layeredPane.add(entities[theI][theJ], theMonster.getLayer());
     }
 
     /**
@@ -249,6 +256,9 @@ public class UI extends JFrame implements KeyListener{
             if (da.dungeon[theI - 2][theJ].getMonster() != null) {
                 spawnMonster(da.dungeon[theI - 2][theJ].getMonster(), theI - 2, theJ);
             }
+            if (da.dungeon[theI - 2][theJ].getItem() != null) {
+                spawnEntity(da.dungeon[theI - 2][theJ].getItem(), theI - 2, theJ);
+            }
         }
         if (theRoom.east != null) {
             roomsAndHallways[theI][theJ + 1].setIcon(myLightHH.getSprite());
@@ -256,6 +266,9 @@ public class UI extends JFrame implements KeyListener{
             roomsAndHallways[theI][theJ + 2].setIcon(myLightRoom.getSprite());
             if (da.dungeon[theI][theJ + 2].getMonster() != null) {
                 spawnMonster(da.dungeon[theI][theJ + 2].getMonster(), theI, theJ + 2);
+            }
+            if (da.dungeon[theI][theJ + 2].getItem() != null) {
+                spawnEntity(da.dungeon[theI][theJ + 2].getItem(), theI, theJ + 2);
             }
         }
         if (theRoom.west != null) {
@@ -265,6 +278,9 @@ public class UI extends JFrame implements KeyListener{
             if (da.dungeon[theI][theJ - 2].getMonster() != null) {
                 spawnMonster(da.dungeon[theI][theJ - 2].getMonster(), theI, theJ - 2);
             }
+            if (da.dungeon[theI][theJ - 2].getItem() != null) {
+                spawnEntity(da.dungeon[theI][theJ - 2].getItem(), theI, theJ - 2);
+            }
         }
         if (theRoom.south != null) {
             roomsAndHallways[theI + 1][theJ].setIcon(myLightHV.getSprite());
@@ -272,6 +288,9 @@ public class UI extends JFrame implements KeyListener{
             roomsAndHallways[theI + 2][theJ].setIcon(myLightRoom.getSprite());
             if (da.dungeon[theI + 2][theJ].getMonster() != null) {
                 spawnMonster(da.dungeon[theI + 2][theJ].getMonster(), theI + 2, theJ);
+            }
+            if (da.dungeon[theI + 2][theJ].getItem() != null) {
+                spawnEntity(da.dungeon[theI + 2][theJ].getItem(), theI + 2, theJ);
             }
         }
         da.p.getRoom().visited = true;
@@ -378,7 +397,7 @@ public class UI extends JFrame implements KeyListener{
             Player myPlayer = da.p;
             player.setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + myPlayer.getOffSetJ() - 16),
                     (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myPlayer.getOffSetI()), myPlayer.getWidth(), myPlayer.getHeight());
-            monsters[myPlayer.getCoords().x][myPlayer.getCoords().y].setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + myMonster.getOffSetJ() + 16),
+            entities[myPlayer.getCoords().x][myPlayer.getCoords().y].setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y)/ 2) * 26) + (((myPlayer.getCoords().y)/ 2) * 51) + myMonster.getOffSetJ() + 16),
                     (((int) Math.ceil(((double) myPlayer.getCoords().x)/2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myMonster.getOffSetI()), myMonster.getWidth(), myMonster.getHeight());
             layeredPane.update(layeredPane.getGraphics());
             combatButtons.setVisible(true);
@@ -388,41 +407,6 @@ public class UI extends JFrame implements KeyListener{
             updateRooms(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
         }
         layeredPane.update(layeredPane.getGraphics());
-    }
-
-    private void doBattle() throws InterruptedException {
-        boolean cont = true;
-        while (cont) {
-            String myText = da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster());
-            System.out.println(myText);
-            description.setText(myText);
-//            description.update(description.getGraphics());
-            Thread.sleep(1000);
-            if (da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHP() <= 0) {
-                cont = false;
-                description.setText("The beast is slane!");
-                monsters[da.p.getCoords().x][da.p.getCoords().y].setVisible(false);
-                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].killMonster();
-                player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.p.getOffSetJ()),
-                        (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
-                layeredPane.update(layeredPane.getGraphics());
-            } else {
-                myText = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType());
-                System.out.println(myText);
-                description.setText(myText);
-                description.update(description.getGraphics());
-                Thread.sleep(1000);
-                if (da.p.getHeroType().getHP() <= 0) {
-                    cont = false;
-                    description.setText("The hero was felled!");
-                    player.setVisible(false);
-                    monsters[da.p.getCoords().x][da.p.getCoords().y].setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetJ()),
-                            (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetI()), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getWidth(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHeight());
-                    layeredPane.update(layeredPane.getGraphics());
-                }
-            }
-
-        }
     }
 
     private void setCurrentAction(Hero thePlayer, Monster theMonster) {
@@ -438,36 +422,47 @@ public class UI extends JFrame implements KeyListener{
             return;
         }
         if (attackType == 0) {
-            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()));
+            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()).toUpperCase());
         } else {
 //            description.setText(da.p.getHeroType().special(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()));
-            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()));
+            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()).toUpperCase());
             System.out.println("special was used");
         }
         description.update(description.getGraphics());
         currentAction--;
         Thread.sleep(1250);
         if (da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHP() <= 0) {
-            description.setText("THE " + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName() + " WAS DEFEATED!");
+            description.setText("THE " + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName().toUpperCase() + " WAS DEFEATED!");
+            entities[da.p.getCoords().x][da.p.getCoords().y].setVisible(false);
+            da.dungeon[da.p.getCoords().x][da.p.getCoords().y].killMonster();
+            player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.p.getOffSetJ()),
+                    (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
             description.update(description.getGraphics());
+            currentAction = 0;
+            combatButtons.setVisible(false);
         } else {
             if (currentAction <= 0) {
-                description.setText(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType()));
+                description.setText(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType()).toUpperCase());
                 description.update(description.getGraphics());
                 if (da.p.getHeroType().getHP() <= 0) {
                     Thread.sleep(1250);
-                    description.setText("THE " + da.p.getHeroType().getName() + " WAS DEFEATED!");
+                    description.setText("THE " + da.p.getHeroType().getName().toUpperCase() + " WAS DEFEATED!");
+                    player.setVisible(false);
+                    entities[da.p.getCoords().x][da.p.getCoords().y].setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetJ()),
+                            (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetI()),
+                            da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getWidth(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHeight());
                     description.update(description.getGraphics());
+                    // setGameOverScreen();
                     currentAction = 0;
                     combatButtons.setVisible(false);
                 }
             } else {
-                description.setText("THE " + da.p.getHeroType().getName() + " WAS FASTER THAN "
-                        + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName() + " AND GETS IN AN EXTRA ACTION");
+                description.setText("THE " + da.p.getHeroType().getName().toUpperCase() + " WAS FASTER THAN "
+                        + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName().toUpperCase() + " AND GETS IN AN EXTRA ACTION");
                 description.update(description.getGraphics());
             }
         }
-        if (currentAction == 0) {
+        if (currentAction == 0 && da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster() != null) {
             setCurrentAction(da.p.getHeroType(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster());
         }
     }

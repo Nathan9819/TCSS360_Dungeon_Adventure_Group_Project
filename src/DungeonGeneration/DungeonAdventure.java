@@ -46,13 +46,13 @@ public class DungeonAdventure{
             for (int j = 0; j < dungeon[0].length; j++) {
                 if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].roomContents.equals("S")) {
                     myDarkRoom.setRoomImage(dungeon[i][j].roomCode);
-                    ui.spawnItem(myDarkRoom, (((int) Math.ceil((double)j / 2) * 26) + ((j / 2) * 51)), (((int) Math.ceil((double)i/2) * 20) + ((i / 2) * 51)), i, j);
+                    ui.spawnRoomOrHallway(myDarkRoom, (((int) Math.ceil((double)j / 2) * 26) + ((j / 2) * 51)), (((int) Math.ceil((double)i/2) * 20) + ((i / 2) * 51)), i, j);
                 }
                 if (dungeon[i][j].roomContents.equals("|")) {
-                    ui.spawnItem(myHV, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)) + 14, (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) - 6, i, j);
+                    ui.spawnRoomOrHallway(myHV, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)) + 14, (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) - 6, i, j);
                 }
                 if (dungeon[i][j].roomContents.equals("-")) {
-                    ui.spawnItem(myHH, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)), (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) + 11, i, j);
+                    ui.spawnRoomOrHallway(myHH, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)), (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) + 11, i, j);
                 }
             }
         }
@@ -82,6 +82,8 @@ public class DungeonAdventure{
         p = new Player(myI, myJ, playerClass);
         p.setRoom(dungeon[myI][myJ]);
         ui.spawnPlayer(p, (((int) Math.ceil((double) p.getCoords().y/ 2) * 26) + ((p.getCoords().y / 2) * 51) + p.getOffSetJ()), (((int) Math.ceil((double) p.getCoords().x/2) * 20) + ((p.getCoords().x / 2) * 51) + p.getOffSetI()));
+        Key myKey = new Key("Blue", 0);
+        ui.spawnEntity(myKey, myI, myJ);
     }
 
     /**

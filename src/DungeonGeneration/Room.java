@@ -10,6 +10,7 @@ import java.awt.*;
  */
 public class Room {
     private Monster monster;
+    private Entity item;
     public String roomContents;
     public Room north, east, south, west = null;
     public Point coords;
@@ -42,5 +43,13 @@ public class Room {
 
     public void killMonster() {
         monster = null;
+    }
+
+    public Entity getItem() {
+        return item;
+    }
+
+    public void setItem(Entity theItem) {
+        item = theItem;
     }
 }

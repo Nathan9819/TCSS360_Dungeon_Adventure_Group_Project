@@ -11,12 +11,15 @@ public class Entity {
     private int width, height;
     private ImageIcon sprite;
     private Integer layer;
+    private int offSetI, offSetJ;
 
-    public Entity(int theWidth, int theHeight, ImageIcon theSprite, Integer theLayer) {
+    public Entity(final int theWidth, final int theHeight, final ImageIcon theSprite, final Integer theLayer, final int theOffSetI, final int theOffSetJ) {
         width = theWidth;
         height = theHeight;
         sprite = theSprite;
         layer = theLayer;
+        offSetI = theOffSetI;
+        offSetJ = theOffSetJ;
     }
 
     public Entity(int theWidth, int theHeight, Integer theLayer) {
@@ -43,5 +46,21 @@ public class Entity {
 
     public void setSprite(ImageIcon theSprite) {
         this.sprite = theSprite;
+    }
+
+    public int getOffSetI() {
+        return offSetI;
+    }
+
+    public void setOffSetI(int theOffSetI) {
+        offSetI = theOffSetI;
+    }
+
+    public int getOffSetJ() {
+        return offSetJ;
+    }
+
+    public void setOffSetJ(int theOffsetJ) {
+        offSetJ = theOffsetJ;
     }
 }

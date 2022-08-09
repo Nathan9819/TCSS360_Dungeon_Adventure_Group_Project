@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class Warrior extends Hero {
     public Warrior() {
-        super(125, 35, 60, "Warrior", 4, 0.8, 0.2);
+        super(125, 99, 100, "Warrior", 4, 1, 0.2);
     }
     public void special(final Monster theOther) {
         System.out.println(super.getName() + " performed Crushing Blow!");

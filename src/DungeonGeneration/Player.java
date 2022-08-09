@@ -10,6 +10,7 @@ import java.net.URL;
  */
 
 public class Player {
+    private Key[] keys;
     private int width;
     private int height;
     private ImageIcon sprite;
