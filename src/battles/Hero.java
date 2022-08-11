@@ -37,5 +37,5 @@ public abstract class Hero extends DungeonCharacter {
         }
         return super.takeDMG(theDMG);
     }
-    public abstract void special(final Monster theOther);
+    public abstract String special(final Monster theOther);
 }

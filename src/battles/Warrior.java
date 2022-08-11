@@ -4,14 +4,16 @@ public class Warrior extends Hero {
     public Warrior() {
         super(125, 99, 100, "Warrior", 4, 1, 0.2);
     }
-    public void special(final Monster theOther) {
-        System.out.println(super.getName() + " performed Crushing Blow!");
+    public String special(final Monster theOther) {
+        StringBuilder myAtkInfo = new StringBuilder();
+        myAtkInfo.append(super.getName() + " performed Crushing Blow!\n");
         Random rand = new Random();
         if (rand.nextDouble() < 0.4) {
-            theOther.takeDMG(rand.nextInt(101) + 75);
+            myAtkInfo.append(theOther.takeDMG(rand.nextInt(101) + 75));
         } else {
-            System.out.println(super.getName() + " missed!");
+            myAtkInfo.append(super.getName() + " missed!");
         }
+        return myAtkInfo.toString();
     }
 
 }

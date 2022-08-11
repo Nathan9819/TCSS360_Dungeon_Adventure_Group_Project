@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * The DungeonGeneration.UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
+ * The DungeonGeneration. UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
  * The extension of JFrame allows the class to act as its own JFrame and the KeyListener implementation
  * allows for the user to input key commands (WASD for movement, etc.).
  * @Author Nathan Mahnke
@@ -22,11 +22,10 @@ public class UI extends JFrame implements KeyListener{
     private JLayeredPane titleScreen, layeredPane, combatButtons;
     private Font titleFont, normalFont;
     private Color bgColor, txtColor;
-    private JLabel titleLabel;
     private JButton startButton, knightButton, priestessButton, thiefButton;
     private JButton attackButton, specialButton;
     private JTextArea description;
-    private gameStartHandler gameStart = new gameStartHandler();
+    private final gameStartHandler gameStart = new gameStartHandler();
     public JLabel[][] roomsAndHallways = new JLabel[22][22];
     public JLabel[][] entities = new JLabel[22][22];
     public JLabel player;
@@ -34,7 +33,7 @@ public class UI extends JFrame implements KeyListener{
 
 
     /**
-     * This is the DungeonGeneration.UI constructor. It receives a DungeonGeneration.DungeonAdventure object that allows it to reference
+     * This is the DungeonGeneration. UI constructor. It receives a DungeonGeneration.DungeonAdventure object that allows it to reference
      * the 2d array within that represents the dungeon. This is vital for polling room contents when
      * displaying a room, as well as, referencing the player character and its location.
      *
@@ -47,7 +46,7 @@ public class UI extends JFrame implements KeyListener{
 
 
     /**
-     * The createMainField method instantiates and sets the parameters of the JFrame which encompasses the DungeonGeneration.UI class.
+     * The createMainField method instantiates and sets the parameters of the JFrame which encompasses the DungeonGeneration. UI class.
      * It also instantiates the JLayeredPane to be used in the placement of visual assets.
      */
     public void createMainField() {
@@ -82,10 +81,7 @@ public class UI extends JFrame implements KeyListener{
         titleScreen = new JLayeredPane();
         titleScreen.setBounds(0, 0, screenWidth, screenHeight);
         this.add(titleScreen);
-//        layeredPane = new JLayeredPane();
-//        layeredPane.setBounds(0, 0, screenWidth, screenHeight - (screenHeight/3));
-//        this.add(layeredPane);
-        titleLabel = new JLabel("DUNGEON ADVENTURE", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("DUNGEON ADVENTURE", SwingConstants.CENTER);
         txtColor = new Color(62,39,49);
         titleLabel.setForeground(txtColor);
         titleLabel.setFont(titleFont);
@@ -297,18 +293,8 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.update(layeredPane.getGraphics());
     }
 
-
-//    /**
-//     * The refresh method simply repaints and revalidates the DungeonGeneration.UI JFrame. This is used to update the screen
-//     * when any changes are made to visual aspects of the GUI.
-//     */
-//    public void refresh() {
-//        this.repaint();
-//        this.revalidate();
-//    }
-
     /**
-     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.UI
+     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.
      *
      * @param e The key being typed
      */
@@ -354,7 +340,7 @@ public class UI extends JFrame implements KeyListener{
     }
 
     /**
-     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.UI
+     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.
      *
      * @param e The key being released
      */
@@ -392,6 +378,17 @@ public class UI extends JFrame implements KeyListener{
             case 2 -> da.p.setRoom(da.p.getRoom().south);
             case 3 -> da.p.setRoom(da.p.getRoom().west);
         }
+        Entity myItem = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getItem();
+        if (myItem != null) {
+            description.setText(myItem.getName().toUpperCase() + " COLLECTED!");
+            if (myItem instanceof Key) {
+                da.p.addKey((Key) myItem);
+            } else {
+                // Handle adding items to inventory
+            }
+            da.dungeon[da.p.getCoords().x][da.p.getCoords().y].setItem(null);
+            entities[da.p.getCoords().x][da.p.getCoords().y].setVisible(false);
+        }
         Monster myMonster = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster();
         if (myMonster != null) {
             Player myPlayer = da.p;
@@ -424,13 +421,11 @@ public class UI extends JFrame implements KeyListener{
         if (attackType == 0) {
             description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()).toUpperCase());
         } else {
-//            description.setText(da.p.getHeroType().special(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()));
-            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()).toUpperCase());
-            System.out.println("special was used");
+            description.setText(da.p.getHeroType().special(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()).toUpperCase());
         }
         description.update(description.getGraphics());
         currentAction--;
-        Thread.sleep(1250);
+        Thread.sleep(2000);
         if (da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHP() <= 0) {
             description.setText("THE " + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName().toUpperCase() + " WAS DEFEATED!");
             entities[da.p.getCoords().x][da.p.getCoords().y].setVisible(false);
@@ -445,7 +440,7 @@ public class UI extends JFrame implements KeyListener{
                 description.setText(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType()).toUpperCase());
                 description.update(description.getGraphics());
                 if (da.p.getHeroType().getHP() <= 0) {
-                    Thread.sleep(1250);
+                    Thread.sleep(2000);
                     description.setText("THE " + da.p.getHeroType().getName().toUpperCase() + " WAS DEFEATED!");
                     player.setVisible(false);
                     entities[da.p.getCoords().x][da.p.getCoords().y].setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetJ()),
@@ -462,6 +457,7 @@ public class UI extends JFrame implements KeyListener{
                 description.update(description.getGraphics());
             }
         }
+        Thread.sleep(2000);
         if (currentAction == 0 && da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster() != null) {
             setCurrentAction(da.p.getHeroType(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster());
         }

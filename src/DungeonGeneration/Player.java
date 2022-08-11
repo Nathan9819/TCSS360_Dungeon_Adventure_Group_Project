@@ -2,6 +2,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * This class represents the player. It contains information regarding the player character's
@@ -10,7 +11,7 @@ import java.net.URL;
  */
 
 public class Player {
-    private Key[] keys;
+    private ArrayList<Key> keys = new ArrayList<>();
     private int width;
     private int height;
     private ImageIcon sprite;
@@ -118,5 +119,13 @@ public class Player {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public void addKey(Key theKey) {
+        if (theKey != null) {
+            keys.add(theKey);
+        } else {
+            System.out.println("Null key");
+        }
     }
 }

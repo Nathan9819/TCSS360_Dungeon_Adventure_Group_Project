@@ -12,8 +12,10 @@ public class Entity {
     private ImageIcon sprite;
     private Integer layer;
     private int offSetI, offSetJ;
+    private String itemName;
 
-    public Entity(final int theWidth, final int theHeight, final ImageIcon theSprite, final Integer theLayer, final int theOffSetI, final int theOffSetJ) {
+    public Entity(final String theItemName, final int theWidth, final int theHeight, final ImageIcon theSprite, final Integer theLayer, final int theOffSetI, final int theOffSetJ) {
+        itemName = theItemName;
         width = theWidth;
         height = theHeight;
         sprite = theSprite;
@@ -62,5 +64,13 @@ public class Entity {
 
     public void setOffSetJ(int theOffsetJ) {
         offSetJ = theOffsetJ;
+    }
+
+    public String getName() {
+        if (itemName != null) {
+            return itemName;
+        } else {
+            return "Room or Hallway Object";
+        }
     }
 }

@@ -8,7 +8,7 @@ public class Key extends Entity{
     public Key (String theColor, final int theFloor) {
         // Concat string name of sprite with color string received
         // placeholder potion used while art is in the works
-        super(17, 17, new ImageIcon(HallwayVertical.class.getResource("DungeonGeneration/Assets/PotionFull.png")), 200, 17, 17);
+        super(theColor + " key", 17, 17, new ImageIcon(HallwayVertical.class.getResource("DungeonGeneration/Assets/PotionFull.png")), 200, 17, 17);
         color = theColor;
         floor = theFloor;
     }
