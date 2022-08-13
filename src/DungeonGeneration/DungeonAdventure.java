@@ -44,14 +44,14 @@ public class DungeonAdventure{
         RoomTile myDarkRoom = new RoomTile(false);
         for (int i = 0; i < dungeon.length; i++) {
             for (int j = 0; j < dungeon[0].length; j++) {
-                if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].roomContents.equals("S")) {
-                    myDarkRoom.setRoomImage(dungeon[i][j].roomCode);
+                if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].getRoomContents().equals("S")) {
+                    myDarkRoom.setRoomImage(dungeon[i][j].getRoomCode());
                     ui.spawnRoomOrHallway(myDarkRoom, (((int) Math.ceil((double)j / 2) * 26) + ((j / 2) * 51)), (((int) Math.ceil((double)i/2) * 20) + ((i / 2) * 51)), i, j);
                 }
-                if (dungeon[i][j].roomContents.equals("|")) {
+                if (dungeon[i][j].getRoomContents().equals("|")) {
                     ui.spawnRoomOrHallway(myHV, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)) + 14, (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) - 6, i, j);
                 }
-                if (dungeon[i][j].roomContents.equals("-")) {
+                if (dungeon[i][j].getRoomContents().equals("-")) {
                     ui.spawnRoomOrHallway(myHH, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)), (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) + 11, i, j);
                 }
             }
@@ -95,7 +95,7 @@ public class DungeonAdventure{
      * @return     The roomCode of the DungeonGeneration.Room at the given coordinates.
      */
     public String getRoomCode(int theI, int theJ) {
-        return dungeon[theI][theJ].roomCode;
+        return dungeon[theI][theJ].getRoomCode();
     }
 
     public void setPlayerClass(final int theClass) {

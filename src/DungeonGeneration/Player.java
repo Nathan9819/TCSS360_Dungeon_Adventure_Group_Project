@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 public class Player {
     private ArrayList<Key> keys = new ArrayList<>();
+    private ArrayList<Potion> potions = new ArrayList<>();
+//    private ArrayList<Bomb> bombs = new ArrayList<>();
     private int width;
     private int height;
     private ImageIcon sprite;
@@ -126,6 +128,21 @@ public class Player {
             keys.add(theKey);
         } else {
             System.out.println("Null key");
+        }
+    }
+
+    public void addPotion(Potion thePotion) {
+        if (thePotion != null) {
+            potions.add(thePotion);
+        } else {
+            System.out.println("Null potion");
+        }
+    }
+
+    public void usePotion() {
+        if (!potions.isEmpty()) {
+            potions.remove(potions.size() - 1);
+//            heroType.usePotion();
         }
     }
 }

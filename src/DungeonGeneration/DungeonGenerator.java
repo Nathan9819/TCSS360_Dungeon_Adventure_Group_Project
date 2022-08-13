@@ -56,12 +56,12 @@ public class DungeonGenerator {
      * to begin the expansion process.
      */
     public void startGame() {
-        initialDungeon[0][initialDungeon[0].length / 2].roomContents = "S";
-        initialDungeon[0][initialDungeon[0].length / 2].south = initialDungeon[1][initialDungeon[0].length / 2];
-        initialDungeon[0][initialDungeon[0].length / 2].coords = new Point(0, initialDungeon[0].length / 2);
-        initialDungeon[1][initialDungeon[0].length / 2].roomContents = "P";
-        initialDungeon[1][initialDungeon[0].length / 2].north = initialDungeon[0][initialDungeon[0].length / 2];
-        initialDungeon[1][initialDungeon[0].length / 2].coords = new Point(1, initialDungeon[0].length / 2);
+        initialDungeon[0][initialDungeon[0].length / 2].setRoomContents("S");
+        initialDungeon[0][initialDungeon[0].length / 2].setSouth(initialDungeon[1][initialDungeon[0].length / 2]);
+        initialDungeon[0][initialDungeon[0].length / 2].setCoords(new Point(0, initialDungeon[0].length / 2));
+        initialDungeon[1][initialDungeon[0].length / 2].setRoomContents("P");
+        initialDungeon[1][initialDungeon[0].length / 2].setNorth(initialDungeon[0][initialDungeon[0].length / 2]);
+        initialDungeon[1][initialDungeon[0].length / 2].setCoords(new Point(1, initialDungeon[0].length / 2));
 
         int myMaxExpansions = 8;
         while (hasProspects() && count < myMaxExpansions) {
@@ -78,7 +78,7 @@ public class DungeonGenerator {
     public boolean hasProspects() {
         for (Room[] rooms : initialDungeon) {
             for (int col = 0; col < initialDungeon[0].length; col++) {
-                if (rooms[col].roomContents.equals("P")) {
+                if (rooms[col].getRoomContents().equals("P")) {
                     return true;
                 }
             }
@@ -108,7 +108,7 @@ public class DungeonGenerator {
             if (myRoomsGenerated < 3 && myNumOfExits < 2) {
                 myNumOfExits = 2;
             }
-            initialDungeon[p.x][p.y].roomContents = "S";
+            initialDungeon[p.x][p.y].setRoomContents("S");
 //            spawnMonster(p.x, p.y);
 //            initialDungeon[p.x][p.y].setDungeonCharacter(new Gremlin());
             int myRandDirection;
@@ -146,13 +146,17 @@ public class DungeonGenerator {
                                 case 5 -> initialDungeon[p.x][p.y].setMonster(new Ogre());
                             }
                             myEnemyCount++;
+                            break;
                         }
                     case 1:
-                        System.out.println("item would be spawned");
-                        myItemOCount++;
-                    case 2:
                         myEmptyCount++;
                         myEmptyRooms.add(p);
+                        break;
+
+                    case 2:
+                        System.out.println("item would be spawned");
+                        myItemOCount++;
+                        break;
                 }
             }
         }
@@ -172,7 +176,7 @@ public class DungeonGenerator {
                     case 2 -> myColor = "Yellow";
                     case 3 -> myColor = "Green";
                 }
-                initialDungeon[p.x][p.y].setItem(new Key(myColor, floor));
+                initialDungeon[p.x][p.y].setKey(new Key(myColor, floor));
                 break;
             } else {
                 myCount++;
@@ -184,7 +188,7 @@ public class DungeonGenerator {
         ArrayList<Point> myArrayList = new ArrayList<>();
         for (int row = 0; row < initialDungeon.length; row++) {
             for (int col = 0; col < initialDungeon[0].length; col++) {
-                if (initialDungeon[row][col].roomContents.equals("S")) {
+                if (initialDungeon[row][col].getRoomContents().equals("S")) {
                     myArrayList.add(new Point(row, col));
                 }
             }
@@ -206,21 +210,21 @@ public class DungeonGenerator {
      */
     public void createRoom(Point thePoint, int theDirection) {
         if (theDirection == 0) {
-            initialDungeon[thePoint.x][thePoint.y].north = initialDungeon[thePoint.x - 1][thePoint.y];
-            initialDungeon[thePoint.x - 1][thePoint.y].roomContents = "P";
-            initialDungeon[thePoint.x - 1][thePoint.y].south = initialDungeon[thePoint.x][thePoint.y];
+            initialDungeon[thePoint.x][thePoint.y].setNorth(initialDungeon[thePoint.x - 1][thePoint.y]);
+            initialDungeon[thePoint.x - 1][thePoint.y].setRoomContents("P");
+            initialDungeon[thePoint.x - 1][thePoint.y].setSouth(initialDungeon[thePoint.x][thePoint.y]);
         } else if (theDirection == 1) {
-            initialDungeon[thePoint.x][thePoint.y].east = initialDungeon[thePoint.x][thePoint.y + 1];
-            initialDungeon[thePoint.x][thePoint.y + 1].roomContents = "P";
-            initialDungeon[thePoint.x][thePoint.y + 1].west = initialDungeon[thePoint.x][thePoint.y];
+            initialDungeon[thePoint.x][thePoint.y].setEast(initialDungeon[thePoint.x][thePoint.y + 1]);
+            initialDungeon[thePoint.x][thePoint.y + 1].setRoomContents("P");
+            initialDungeon[thePoint.x][thePoint.y + 1].setWest(initialDungeon[thePoint.x][thePoint.y]);
         } else if (theDirection == 2) {
-            initialDungeon[thePoint.x][thePoint.y].south = initialDungeon[thePoint.x + 1][thePoint.y];
-            initialDungeon[thePoint.x + 1][thePoint.y].roomContents = "P";
-            initialDungeon[thePoint.x + 1][thePoint.y].north = initialDungeon[thePoint.x][thePoint.y];
+            initialDungeon[thePoint.x][thePoint.y].setSouth(initialDungeon[thePoint.x + 1][thePoint.y]);
+            initialDungeon[thePoint.x + 1][thePoint.y].setRoomContents("P");
+            initialDungeon[thePoint.x + 1][thePoint.y].setNorth(initialDungeon[thePoint.x][thePoint.y]);
         } else if (theDirection == 3) {
-            initialDungeon[thePoint.x][thePoint.y].west = initialDungeon[thePoint.x][thePoint.y - 1];
-            initialDungeon[thePoint.x][thePoint.y - 1].roomContents = "P";
-            initialDungeon[thePoint.x][thePoint.y - 1].east = initialDungeon[thePoint.x][thePoint.y];
+            initialDungeon[thePoint.x][thePoint.y].setWest(initialDungeon[thePoint.x][thePoint.y - 1]);
+            initialDungeon[thePoint.x][thePoint.y - 1].setRoomContents("P");
+            initialDungeon[thePoint.x][thePoint.y - 1].setEast(initialDungeon[thePoint.x][thePoint.y]);
         }
     }
 
@@ -235,17 +239,17 @@ public class DungeonGenerator {
      */
     public boolean validMove(Room theRoom, int theDirection) {
         // If the move is north
-        if (theDirection == 0 && theRoom.coords.x - 1 >= 0) {
-            return initialDungeon[theRoom.coords.x - 1][theRoom.coords.y].roomContents.equals(" ");
+        if (theDirection == 0 && theRoom.getCoords().x - 1 >= 0) {
+            return initialDungeon[theRoom.getCoords().x - 1][theRoom.getCoords().y].getRoomContents().equals(" ");
         // If the move is east
-        } else if (theDirection == 1 && theRoom.coords.y + 1 < initialDungeon[0].length) {
-            return initialDungeon[theRoom.coords.x][theRoom.coords.y + 1].roomContents.equals(" ");
+        } else if (theDirection == 1 && theRoom.getCoords().y + 1 < initialDungeon[0].length) {
+            return initialDungeon[theRoom.getCoords().x][theRoom.getCoords().y + 1].getRoomContents().equals(" ");
         // If the move is south
-        } else if (theDirection == 2 && theRoom.coords.x + 1 < initialDungeon.length) {
-            return initialDungeon[theRoom.coords.x + 1][theRoom.coords.y].roomContents.equals(" ");
+        } else if (theDirection == 2 && theRoom.getCoords().x + 1 < initialDungeon.length) {
+            return initialDungeon[theRoom.getCoords().x + 1][theRoom.getCoords().y].getRoomContents().equals(" ");
         // If the move is west
-        } else if (theDirection == 3 && theRoom.coords.y - 1 >= 0) {
-            return initialDungeon[theRoom.coords.x][theRoom.coords.y - 1].roomContents.equals(" ");
+        } else if (theDirection == 3 && theRoom.getCoords().y - 1 >= 0) {
+            return initialDungeon[theRoom.getCoords().x][theRoom.getCoords().y - 1].getRoomContents().equals(" ");
         // DungeonGeneration.Room was on edge of board and thus could not move off it
         } else {
             return false;
@@ -262,7 +266,7 @@ public class DungeonGenerator {
         ArrayList<Point> myPoints = new ArrayList<>();
         for (int row = 0; row < initialDungeon.length; row++) {
             for (int col = 0; col < initialDungeon[0].length; col++) {
-                if (initialDungeon[row][col].roomContents.equals("P")) {
+                if (initialDungeon[row][col].getRoomContents().equals("P")) {
                     myPoints.add(new Point(row, col));
                 }
             }
@@ -285,7 +289,7 @@ public class DungeonGenerator {
             for (int j = 0; j < finalDungeon[0].length; j++) {
                 if (j % 2 == 1 && i % 2 == 1) {
                     finalDungeon[i][j] = initialDungeon[myDunRow][myDunCol];
-                    initialDungeon[myDunRow][myDunCol].coords = new Point(i, j);
+                    initialDungeon[myDunRow][myDunCol].setCoords(new Point(i, j));
                     myDunCol++;
                     if (myDunCol == initialDungeon[0].length) {
                         myDunCol = 0;
@@ -317,7 +321,7 @@ public class DungeonGenerator {
         for (int i = 0; i < theRooms.length; i++) {
             System.out.print(i + "\t| ");
             for (int j = 0; j < theRooms[0].length; j++) {
-                System.out.print(theRooms[i][j].roomContents);
+                System.out.print(theRooms[i][j].getRoomContents());
                 System.out.print("   ");
             }
             System.out.print("\n");
@@ -337,13 +341,13 @@ public class DungeonGenerator {
             for (int j = 0; j < theRooms[0].length; j++) {
                 if (i % 2 == 1 && j % 2 == 1) {
                     if (i < theRooms.length - 1) {
-                        if (theRooms[i][j].south == theRooms[i + 2][j]) {
-                            theRooms[i + 1][j].roomContents = "|";
+                        if (theRooms[i][j].getSouth() == theRooms[i + 2][j]) {
+                            theRooms[i + 1][j].setRoomContents("|");
                         }
                     }
                     if (j < theRooms[0].length - 1) {
-                        if (theRooms[i][j].east == theRooms[i][j + 2]) {
-                            theRooms[i][j + 1].roomContents = "-";
+                        if (theRooms[i][j].getEast() == theRooms[i][j + 2]) {
+                            theRooms[i][j + 1].setRoomContents("-");
                         }
                     }
                 }
@@ -361,15 +365,15 @@ public class DungeonGenerator {
     public void cleanUpDungeon() {
         for (int i = 0; i < initialDungeon.length; i++) {
             for (int j = 0; j < initialDungeon[0].length; j++) {
-                if(initialDungeon[i][j].roomContents.equals("P")) {
-                    if (initialDungeon[i][j].north != null) {
-                        initialDungeon[i - 1][j].south = null;
-                    } else if (initialDungeon[i][j].east != null) {
-                        initialDungeon[i][j + 1].west = null;
-                    } else if (initialDungeon[i][j].south != null) {
-                        initialDungeon[i + 1][j].north = null;
-                    } else if (initialDungeon[i][j].west != null) {
-                        initialDungeon[i][j - 1].east = null;
+                if(initialDungeon[i][j].getRoomContents().equals("P")) {
+                    if (initialDungeon[i][j].getNorth() != null) {
+                        initialDungeon[i - 1][j].setSouth(null);
+                    } else if (initialDungeon[i][j].getEast() != null) {
+                        initialDungeon[i][j + 1].setWest(null);
+                    } else if (initialDungeon[i][j].getSouth() != null) {
+                        initialDungeon[i + 1][j].setNorth(null);
+                    } else if (initialDungeon[i][j].getWest() != null) {
+                        initialDungeon[i][j - 1].setEast(null);
                     }
                     initialDungeon[i][j] = new Room(" ", new Point(i, j));
                 }
@@ -391,12 +395,12 @@ public class DungeonGenerator {
         StringBuilder myRoomExits = new StringBuilder();
         for (Room[] theRoom : theRooms) {
             for (int j = 0; j < theRooms[0].length; j++) {
-                if (theRoom[j].roomContents.equals("S")) {
-                    myRoomExits.append(theRoom[j].north == null ? 0 : 1);
-                    myRoomExits.append(theRoom[j].east == null ? 0 : 1);
-                    myRoomExits.append(theRoom[j].south == null ? 0 : 1);
-                    myRoomExits.append(theRoom[j].west == null ? 0 : 1);
-                    theRoom[j].roomCode = myRoomExits.toString();
+                if (theRoom[j].getRoomContents().equals("S")) {
+                    myRoomExits.append(theRoom[j].getNorth() == null ? 0 : 1);
+                    myRoomExits.append(theRoom[j].getEast() == null ? 0 : 1);
+                    myRoomExits.append(theRoom[j].getSouth() == null ? 0 : 1);
+                    myRoomExits.append(theRoom[j].getWest() == null ? 0 : 1);
+                    theRoom[j].setRoomCode(myRoomExits.toString());
                     myRoomExits.setLength(0);
                 }
             }
