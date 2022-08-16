@@ -325,7 +325,9 @@ public class UI extends JFrame implements KeyListener{
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        if (started && !combatButtons.isVisible()) {
+        if (started
+//                && !combatButtons.isVisible()
+        ) {
             switch (e.getKeyChar()) {
                 case 'w':
                     if (da.p.getRoom().getNorth() != null) {
@@ -480,8 +482,9 @@ public class UI extends JFrame implements KeyListener{
     }
 
     public void addToInventory(final int theX, final int theY) {
-        entities[theX][theY].setLocation(0, 0);
-//        entities[theX][theY].setBounds(screenWidth - 30 - (inventorySize * 20), 40, entities[theX][theY].getWidth(), entities[theX][theY].getHeight());
+        entities[theX][theY].setIcon(new ImageIcon(((ImageIcon) entities[theX][theY].getIcon()).getImage().getScaledInstance(entities[theX][theY].getWidth()*2, entities[theX][theY].getHeight()*2, Image.SCALE_SMOOTH)));
+        entities[theX][theY].setSize(entities[theX][theY].getWidth()*2, entities[theX][theY].getHeight()*2);
+        entities[theX][theY].setLocation(layeredPane.getWidth() - 80 - (inventorySize * 25), 40);
         layeredPane.update(layeredPane.getGraphics());
     }
 

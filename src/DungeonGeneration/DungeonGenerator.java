@@ -33,8 +33,8 @@ public class DungeonGenerator {
         cleanUpDungeon();
         placeEntities();
         finalizeDungeon();
-        displayDungeon(initialDungeon);
-        displayDungeon(finalDungeon);
+//        displayDungeon(initialDungeon);
+//        displayDungeon(finalDungeon);
     }
 
     /**
@@ -172,11 +172,10 @@ public class DungeonGenerator {
                 String myColor = "";
                 switch (floor) {
                     case 0 -> myColor = "Blue";
-                    case 1 -> myColor = "Red";
-                    case 2 -> myColor = "Yellow";
-                    case 3 -> myColor = "Green";
+                    case 1 -> myColor = "Yellow";
+                    case 2 -> myColor = "Green";
                 }
-                initialDungeon[p.x][p.y].setKey(new Key(myColor, floor));
+                initialDungeon[p.x][p.y].setKey(new Key(myColor));
                 break;
             } else {
                 myCount++;
