@@ -112,4 +112,8 @@ public abstract class DungeonCharacter {
     public int getShield() {
         return myShield;
     }
+    public void cheatsActivated() {
+        setDMGRange(1000, 1001);
+        setHit(1);
+    }
 }

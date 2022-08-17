@@ -7,34 +7,38 @@ import java.util.Random;
 /**
  * This class generates a 2d array of room objects representing a dungeon. This is achieved by rounds of expansion from a starting room.
  * Each room contains information regarding the connections with its neighbors, its location, and its contents, as well as its visibility
- * and if it's been visited. A room is denoted by "S" and a prospective room is denoted by "P". For each round of expansion, the 2d array is
- * iterated over. All rooms containing "P" are considered eligible for generation. These rooms are then turned into an "S" and between 0
+ * and if it's been visited. A room is denoted by "Room" and a prospective room is denoted by "Prospective". For each round of expansion, the 2d array is
+ * iterated over. All rooms containing "Prospective" are considered eligible for generation. These rooms are then turned into an "Room" and between 0
  * and 3 the adjacent rooms become P's. Precautions are taken to insure rooms are not generated atop one another nor is there ever zero
  * rooms generated during a round of expansion.
  * @Author Nathan Mahnke
  */
 public class DungeonGenerator {
-    private int floor = 1;
+    private int floor = 0;
     private static Room[][] initialDungeon;
     public static Room[][] finalDungeon;
     private int count = 0;
 
     /**
      * This is the DungeonGeneration.DungeonGenerator constructor. It instantiates the initial dungeon as well as the final dungeon.
-     * The initial dungeon will hold only room objects with the contents "S" or "P" representing their current state.
+     * The initial dungeon will hold only room objects with the contents "Room" or "Prospective" representing their current state.
      * This initial dungeon will be 12 by 12 and the final dungeon will be 2 times the size of the initial dungeon in
      * both dimensions. After the initialization of the arrays, various methods are called to generate and refine the dungeon.
      */
     public DungeonGenerator() {
+        generateNewDungeon();
+    }
+
+    public void generateNewDungeon() {
+        count = 0;
         initialDungeon = new Room[7][7];
         finalDungeon = new Room[initialDungeon.length * 2][initialDungeon[0].length * 2];
         fillDungeon(initialDungeon);
         startGame();
         cleanUpDungeon();
-        placeEntities();
+        displayDungeon(initialDungeon);
         finalizeDungeon();
-//        displayDungeon(initialDungeon);
-//        displayDungeon(finalDungeon);
+        placeEntities();
     }
 
     /**
@@ -56,10 +60,10 @@ public class DungeonGenerator {
      * to begin the expansion process.
      */
     public void startGame() {
-        initialDungeon[0][initialDungeon[0].length / 2].setRoomContents("S");
+        initialDungeon[0][initialDungeon[0].length / 2].setRoomContents("Room");
         initialDungeon[0][initialDungeon[0].length / 2].setSouth(initialDungeon[1][initialDungeon[0].length / 2]);
         initialDungeon[0][initialDungeon[0].length / 2].setCoords(new Point(0, initialDungeon[0].length / 2));
-        initialDungeon[1][initialDungeon[0].length / 2].setRoomContents("P");
+        initialDungeon[1][initialDungeon[0].length / 2].setRoomContents("Prospective");
         initialDungeon[1][initialDungeon[0].length / 2].setNorth(initialDungeon[0][initialDungeon[0].length / 2]);
         initialDungeon[1][initialDungeon[0].length / 2].setCoords(new Point(1, initialDungeon[0].length / 2));
 
@@ -67,18 +71,17 @@ public class DungeonGenerator {
         while (hasProspects() && count < myMaxExpansions) {
             generateRooms();
         }
-        floor++;
     }
 
     /**
-     * This method iterates over initialDungeon. It returns true if and when it finds a room with the contents "P".
+     * This method iterates over initialDungeon. It returns true if and when it finds a room with the contents "Prospective".
      *
-     * @return true if a room within initialDungeon contains "P" otherwise, false
+     * @return true if a room within initialDungeon contains "Prospective" otherwise, false
      */
     public boolean hasProspects() {
         for (Room[] rooms : initialDungeon) {
             for (int col = 0; col < initialDungeon[0].length; col++) {
-                if (rooms[col].getRoomContents().equals("P")) {
+                if (rooms[col].getRoomContents().equals("Prospective")) {
                     return true;
                 }
             }
@@ -89,12 +92,12 @@ public class DungeonGenerator {
 
     /**
      * The generateRoom method is responsible for the generation of rooms throughout the dungeon.
-     * It iterates over all rooms with the contents "P" within initialDungeon. For each of these
+     * It iterates over all rooms with the contents "Prospective" within initialDungeon. For each of these
      * rooms, it randomly decides how many exits the room should have (between 0 and 3), the attempts to
      * generate these rooms beginning at a randomly decided direction. For each direction it polls the
      * validMove method for the validity of the rooms generation and continues if allowed. All of these
-     * new rooms have their contents set to "P" and the room from which the were generated has its contents
-     * set to "S". This prepares the board for the next round of generations. As a small precaution, if less
+     * new rooms have their contents set to "Prospective" and the room from which the were generated has its contents
+     * set to "Room". This prepares the board for the next round of generations. As a small precaution, if less
      * than 3 rooms have been generated for a given expansion, while this remains true, every room will attempt
      * to generate at least 2 exits.
      */
@@ -108,9 +111,7 @@ public class DungeonGenerator {
             if (myRoomsGenerated < 3 && myNumOfExits < 2) {
                 myNumOfExits = 2;
             }
-            initialDungeon[p.x][p.y].setRoomContents("S");
-//            spawnMonster(p.x, p.y);
-//            initialDungeon[p.x][p.y].setDungeonCharacter(new Gremlin());
+            initialDungeon[p.x][p.y].setRoomContents("Room");
             int myRandDirection;
             myRandDirection = myRand.nextInt(3);
             while (myNumOfExits > 0) {
@@ -130,42 +131,46 @@ public class DungeonGenerator {
     public void placeEntities() {
         int myEnemyCount = 0, myEmptyCount = 0, myItemOCount = 0, myNextSpawn = 0;
         Random myRand = new Random();
-        ArrayList<Point> myEmptyRooms = new ArrayList<>();
         ArrayList<Point> myRooms = getRooms();
-        Point myStartRoom = new Point(0, initialDungeon[0].length / 2);
+//        System.out.println("Num of rooms = " + myRooms.size());
+        ArrayList<Point> myEmptyRooms = getRooms();
+        Point myStartRoom = new Point(0, 7);
         for (Point p : myRooms) {
             if (p != myStartRoom) {
-                myNextSpawn = myRand.nextInt(2);
+                myNextSpawn = myRand.nextInt(3);
                 switch (myNextSpawn) {
                     case 0:
                         if (myEnemyCount < myRooms.size() / 3) {
                             int myMonster = myRand.nextInt(6);
                             switch (myMonster) {
-                                case 0, 1, 2 -> initialDungeon[p.x][p.y].setMonster(new Gremlin());
-                                case 3, 4 -> initialDungeon[p.x][p.y].setMonster(new Skeleton());
-                                case 5 -> initialDungeon[p.x][p.y].setMonster(new Ogre());
+                                case 0, 1, 2 -> finalDungeon[p.x][p.y].setMonster(new Gremlin());
+                                case 3, 4 -> finalDungeon[p.x][p.y].setMonster(new Skeleton());
+                                case 5 -> finalDungeon[p.x][p.y].setMonster(new Ogre());
                             }
                             myEnemyCount++;
-                            break;
+                            myEmptyRooms.remove(p);
                         }
                     case 1:
                         myEmptyCount++;
-                        myEmptyRooms.add(p);
+//                        myEmptyRooms.add(p);
                         break;
-
                     case 2:
-                        System.out.println("item would be spawned");
-                        myItemOCount++;
+                        if (myItemOCount < myRooms.size() / 3) {
+                            finalDungeon[p.x][p.y].setPotion(new Potion());
+                            myItemOCount++;
+                            myEmptyRooms.remove(p);
+                        }
                         break;
                 }
             }
         }
-        spawnKey(myEmptyRooms);
+        spawnKeysAndStairs(myEmptyRooms);
     }
 
-    private void spawnKey(ArrayList<Point> theEmptyRooms) {
+    private void spawnKeysAndStairs(ArrayList<Point> theEmptyRooms) {
+        System.out.println("Number of empty rooms: " + theEmptyRooms.size());
         Random myRand = new Random();
-        final int myKey = myRand.nextInt(theEmptyRooms.size());
+        int myKey = myRand.nextInt(theEmptyRooms.size());
         int myCount = 0;
         for (Point p : theEmptyRooms) {
             if (myCount == myKey) {
@@ -175,19 +180,61 @@ public class DungeonGenerator {
                     case 1 -> myColor = "Yellow";
                     case 2 -> myColor = "Green";
                 }
-                initialDungeon[p.x][p.y].setKey(new Key(myColor));
+                finalDungeon[p.x][p.y].setKey(new Key(myColor));
+                System.out.println(myColor + " key spawned at: " + p.x + ", " + p.y);
+                theEmptyRooms.remove(p);
                 break;
             } else {
                 myCount++;
+            }
+        }
+
+        myCount = 0;
+        myKey = myRand.nextInt(theEmptyRooms.size());
+        for (Point p : theEmptyRooms) {
+            if (myCount == myKey) {
+                finalDungeon[p.x][p.y].setKey(new Key("Grey"));
+                System.out.println("Grey key spawned at: " + p.x + ", " + p.y);
+                theEmptyRooms.remove(p);
+                break;
+            } else {
+                myCount++;
+            }
+        }
+
+        if (floor != 2) {
+            myCount = 0;
+            myKey = myRand.nextInt(theEmptyRooms.size());
+            for (Point p : theEmptyRooms) {
+                if (myCount == myKey) {
+                    finalDungeon[p.x][p.y].setTrapDoor(new TrapDoor(false));
+                    System.out.println("Trap door spawned at: " + p.x + ", " + p.y);
+                    break;
+                } else {
+                    myCount++;
+                }
+            }
+            floor++;
+        } else {
+            myCount = 0;
+            myKey = myRand.nextInt(theEmptyRooms.size());
+            for (Point p : theEmptyRooms) {
+                if (myCount == myKey) {
+                    finalDungeon[p.x][p.y].setPortal(new Portal(false));
+                    System.out.println("Portal spawned");
+                    break;
+                } else {
+                    myCount++;
+                }
             }
         }
     }
 
     private ArrayList<Point> getRooms() {
         ArrayList<Point> myArrayList = new ArrayList<>();
-        for (int row = 0; row < initialDungeon.length; row++) {
-            for (int col = 0; col < initialDungeon[0].length; col++) {
-                if (initialDungeon[row][col].getRoomContents().equals("S")) {
+        for (int row = 0; row < finalDungeon.length; row++) {
+            for (int col = 0; col < finalDungeon[0].length; col++) {
+                if (finalDungeon[row][col].getRoomContents().equals("Room")) {
                     myArrayList.add(new Point(row, col));
                 }
             }
@@ -200,8 +247,8 @@ public class DungeonGenerator {
      * used as the coordinates and an integer to be used as the direction of generation. The
      * point represents the room from which the new room has been generated and the int is the
      * direction from the original room for this new room to be generated. The room at the point
-     * has its contents set to "S" and the room in the proper direction given the integer has its
-     * contents set to "P". As well, these two rooms become linked via references to each other
+     * has its contents set to "Room" and the room in the proper direction given the integer has its
+     * contents set to "Prospective". As well, these two rooms become linked via references to each other
      * stored within the room object. This is used for later traversal of the dungeon.
      *
      * @param thePoint         The coordinates of the room from which the new room is to be generated
@@ -210,19 +257,19 @@ public class DungeonGenerator {
     public void createRoom(Point thePoint, int theDirection) {
         if (theDirection == 0) {
             initialDungeon[thePoint.x][thePoint.y].setNorth(initialDungeon[thePoint.x - 1][thePoint.y]);
-            initialDungeon[thePoint.x - 1][thePoint.y].setRoomContents("P");
+            initialDungeon[thePoint.x - 1][thePoint.y].setRoomContents("Prospective");
             initialDungeon[thePoint.x - 1][thePoint.y].setSouth(initialDungeon[thePoint.x][thePoint.y]);
         } else if (theDirection == 1) {
             initialDungeon[thePoint.x][thePoint.y].setEast(initialDungeon[thePoint.x][thePoint.y + 1]);
-            initialDungeon[thePoint.x][thePoint.y + 1].setRoomContents("P");
+            initialDungeon[thePoint.x][thePoint.y + 1].setRoomContents("Prospective");
             initialDungeon[thePoint.x][thePoint.y + 1].setWest(initialDungeon[thePoint.x][thePoint.y]);
         } else if (theDirection == 2) {
             initialDungeon[thePoint.x][thePoint.y].setSouth(initialDungeon[thePoint.x + 1][thePoint.y]);
-            initialDungeon[thePoint.x + 1][thePoint.y].setRoomContents("P");
+            initialDungeon[thePoint.x + 1][thePoint.y].setRoomContents("Prospective");
             initialDungeon[thePoint.x + 1][thePoint.y].setNorth(initialDungeon[thePoint.x][thePoint.y]);
         } else if (theDirection == 3) {
             initialDungeon[thePoint.x][thePoint.y].setWest(initialDungeon[thePoint.x][thePoint.y - 1]);
-            initialDungeon[thePoint.x][thePoint.y - 1].setRoomContents("P");
+            initialDungeon[thePoint.x][thePoint.y - 1].setRoomContents("Prospective");
             initialDungeon[thePoint.x][thePoint.y - 1].setEast(initialDungeon[thePoint.x][thePoint.y]);
         }
     }
@@ -257,15 +304,15 @@ public class DungeonGenerator {
 
     /**
      * The getProspects method iterates over the board and returns an arrayList of points which
-     * represent the locations of all rooms which have the contents "P".
+     * represent the locations of all rooms which have the contents "Prospective".
      *
-     * @return An arrayList of all points which correspond to rooms which have the contents "P"
+     * @return An arrayList of all points which correspond to rooms which have the contents "Prospective"
      */
     public List<Point> getProspects() {
         ArrayList<Point> myPoints = new ArrayList<>();
         for (int row = 0; row < initialDungeon.length; row++) {
             for (int col = 0; col < initialDungeon[0].length; col++) {
-                if (initialDungeon[row][col].getRoomContents().equals("P")) {
+                if (initialDungeon[row][col].getRoomContents().equals("Prospective")) {
                     myPoints.add(new Point(row, col));
                 }
             }
@@ -356,15 +403,15 @@ public class DungeonGenerator {
     }
 
     /**
-     * The cleanUpDungeon method snips any connections between Rooms with the contents "P" and any other rooms. Rooms
-     * marked "P" are only used in the generation process to denote rooms which could be generated and, at this point,
+     * The cleanUpDungeon method snips any connections between Rooms with the contents "Prospective" and any other rooms. Rooms
+     * marked "Prospective" are only used in the generation process to denote rooms which could be generated and, at this point,
      * no longer serve purpose and are thus removed. This is done by iterating over the initial dungeon and setting
-     * appropriate connections between rooms to null and setting the Rooms containing "P" to contain " ".
+     * appropriate connections between rooms to null and setting the Rooms containing "Prospective" to contain " ".
      */
     public void cleanUpDungeon() {
         for (int i = 0; i < initialDungeon.length; i++) {
             for (int j = 0; j < initialDungeon[0].length; j++) {
-                if(initialDungeon[i][j].getRoomContents().equals("P")) {
+                if(initialDungeon[i][j].getRoomContents().equals("Prospective")) {
                     if (initialDungeon[i][j].getNorth() != null) {
                         initialDungeon[i - 1][j].setSouth(null);
                     } else if (initialDungeon[i][j].getEast() != null) {
@@ -394,7 +441,7 @@ public class DungeonGenerator {
         StringBuilder myRoomExits = new StringBuilder();
         for (Room[] theRoom : theRooms) {
             for (int j = 0; j < theRooms[0].length; j++) {
-                if (theRoom[j].getRoomContents().equals("S")) {
+                if (theRoom[j].getRoomContents().equals("Room")) {
                     myRoomExits.append(theRoom[j].getNorth() == null ? 0 : 1);
                     myRoomExits.append(theRoom[j].getEast() == null ? 0 : 1);
                     myRoomExits.append(theRoom[j].getSouth() == null ? 0 : 1);
@@ -409,7 +456,7 @@ public class DungeonGenerator {
 //    public void placeMonsters(Room[][] theDungeon) {
 //        for (int i = 0; i < theDungeon.length; i++) {
 //            for (int j = 0; j < theDungeon[0].length; j++) {
-//                if (theDungeon[i][j].roomContents.equals("S"))
+//                if (theDungeon[i][j].roomContents.equals("Room"))
 //            }
 //        }
 //    }

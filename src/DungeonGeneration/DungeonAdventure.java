@@ -23,11 +23,16 @@ public class DungeonAdventure{
      */
     public DungeonAdventure() {
         dg = new DungeonGenerator();
-        dungeon = dg.getDungeon();
         playerClass = -1;
     }
 
+    public void generateNewDungeon() {
+        dg.generateNewDungeon();
+        startGame();
+    }
+
     public void startGame() {
+        dungeon = dg.getDungeon();
         spawnDungeon();
         spawnCharacter();
     }
@@ -44,7 +49,7 @@ public class DungeonAdventure{
         RoomTile myDarkRoom = new RoomTile(false);
         for (int i = 0; i < dungeon.length; i++) {
             for (int j = 0; j < dungeon[0].length; j++) {
-                if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].getRoomContents().equals("S")) {
+                if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].getRoomContents().equals("Room")) {
                     myDarkRoom.setRoomImage(dungeon[i][j].getRoomCode());
                     ui.spawnRoomOrHallway(myDarkRoom, (((int) Math.ceil((double)j / 2) * 26) + ((j / 2) * 51)),
                                                       (((int) Math.ceil((double)i/2) * 20) + ((i / 2) * 51)), i, j);
@@ -60,19 +65,6 @@ public class DungeonAdventure{
             }
         }
     }
-
-//    public void spawnDungeonEntities() {
-//        Gremlin gremlin = new Gremlin();
-//        for (int i = 0; i < dungeon.length; i++) {
-//            for (int j = 0; j < dungeon[0].length; j++) {
-//                if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].roomContents.equals("S") && dungeon[i][j].getMonster() != null) {
-//                    if (dungeon[i][j].getDungeonCharacterName().equals("Gremlin")) {
-//                        ui.spawnMonster(gremlin, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51) + gremlin.getOffSetJ()), (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51) + gremlin.getOffSetI()), i, j);
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     /**
      * The spawnCharacter method places the character in the starting room, aligning the center of the players base with the center

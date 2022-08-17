@@ -1,4 +1,6 @@
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * The DungeonGeneration. UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
@@ -16,16 +19,20 @@ import java.io.InputStream;
  */
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
-    private boolean started, inCombat;
+    private boolean started, cheatsActivated;
     private int currentAction, screenWidth, screenHeight, inventorySize;
-    private JLayeredPane titleScreen, layeredPane, combatButtons;
+    private JLayeredPane titleScreen, layeredPane, combatButtons, interactButtons;
     private Font titleFont, normalFont;
     private Color bgColor, txtColor;
-    private JButton startButton, knightButton, priestessButton, thiefButton, attackButton, specialButton;
+    private JButton startButton, knightButton, priestessButton, thiefButton, attackButton, specialButton, acceptButton, declineButton;
     private JTextArea description;
     private final gameStartHandler gameStart;
-    public JLabel[][] roomsAndHallways, entities;
-    public JLabel player;
+    private final combatHandler combat;
+    private final interactionHandler interaction;
+    private JLabel[][] roomsAndHallways, entities;
+    private JLabel player;
+    private JLabel[][] inventory;
+    private Key[] keys;
 
 
 
@@ -40,11 +47,13 @@ public class UI extends JFrame implements KeyListener{
         this.da = theDA;
         roomsAndHallways = new JLabel[22][22];
         entities = new JLabel[22][22];
+        inventory = new JLabel[3][10];
+        keys = new Key[10];
         gameStart = new gameStartHandler();
+        combat = new combatHandler();
+        interaction = new interactionHandler();
         currentAction = 0;
-        inventorySize = 0;
         started = false;
-        inCombat = false;
         createMainField();
     }
 
@@ -142,7 +151,7 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.setDoubleBuffered(true);
         layeredPane.setBackground(bgColor);
         this.add(layeredPane);
-        description = new JTextArea("You find yourself lost and alone. The only way out . . . is through!");
+        description = new JTextArea("YOU FIND YOURSELF LOST AND ALONE. THE ONLY WAY OUT . . . IS THROUGH!");
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
         description.setFont(normalFont);
@@ -162,7 +171,7 @@ public class UI extends JFrame implements KeyListener{
         attackButton.setForeground(txtColor);
         attackButton.setBackground(bgColor);
         attackButton.setBounds(10, 0, screenWidth/5, screenHeight/12);
-        attackButton.addActionListener(gameStart);
+        attackButton.addActionListener(combat);
         combatButtons.add(attackButton);
 
         specialButton = new JButton("SPECIAL");
@@ -170,11 +179,35 @@ public class UI extends JFrame implements KeyListener{
         specialButton.setForeground(txtColor);
         specialButton.setBackground(bgColor);
         specialButton.setBounds(20 + screenWidth/5, 0, screenWidth/5, screenHeight/12);
-        specialButton.addActionListener(gameStart);
+        specialButton.addActionListener(combat);
         combatButtons.add(specialButton);
 
         this.add(combatButtons);
         combatButtons.setVisible(false);
+
+        interactButtons = new JLayeredPane();
+        interactButtons.setBounds(10, screenHeight - (screenHeight/8), screenWidth - 10, screenHeight - (screenHeight/12));
+        interactButtons.setDoubleBuffered(true);
+        interactButtons.setBackground(bgColor);
+
+        acceptButton = new JButton("YES");
+        acceptButton.setFont(normalFont);
+        acceptButton.setForeground(txtColor);
+        acceptButton.setBackground(bgColor);
+        acceptButton.setBounds(10, 0, screenWidth/5, screenHeight/12);
+        acceptButton.addActionListener(interaction);
+        interactButtons.add(acceptButton);
+
+        declineButton = new JButton("NO");
+        declineButton.setFont(normalFont);
+        declineButton.setForeground(txtColor);
+        declineButton.setBackground(bgColor);
+        declineButton.setBounds(20 + screenWidth/5, 0, screenWidth/5, screenHeight/12);
+        declineButton.addActionListener(interaction);
+        interactButtons.add(declineButton);
+
+        this.add(interactButtons);
+//        interactButtons.setVisible(false);
 
         da.startGame();
     }
@@ -240,6 +273,9 @@ public class UI extends JFrame implements KeyListener{
         player.setBounds(theX,theY,thePlayer.getWidth(),thePlayer.getHeight());
         player.setIcon(thePlayer.getSprite());
         layeredPane.add(player, thePlayer.getLayer());
+        RoomTile myLightRoom = new RoomTile(true);
+        myLightRoom.setRoomImage(da.getRoomCode(thePlayer.getCoords().x, thePlayer.getCoords().y));
+        roomsAndHallways[thePlayer.getCoords().x][thePlayer.getCoords().y].setIcon(myLightRoom.getSprite());
         updateRooms(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
     }
 
@@ -248,7 +284,6 @@ public class UI extends JFrame implements KeyListener{
         myLightRoom.setRoomImage(da.getRoomCode(theI, theJ));
         HallwayHorizontal myLightHH = new HallwayHorizontal(true);
         HallwayVertical myLightHV = new HallwayVertical(true);
-        roomsAndHallways[theI][theJ].setIcon(myLightRoom.getSprite());
         if (theRoom.getNorth() != null) {
             if (!theRoom.getNorth().isVisited()) {
                 roomsAndHallways[theI - 1][theJ].setIcon(myLightHV.getSprite());
@@ -259,6 +294,15 @@ public class UI extends JFrame implements KeyListener{
                 }
                 if (da.dungeon[theI - 2][theJ].hasItem()) {
                     spawnEntity(da.dungeon[theI - 2][theJ].getItem(), theI - 2, theJ);
+                }
+                if (da.dungeon[theI - 2][theJ].hasItem()) {
+                    spawnEntity(da.dungeon[theI - 2][theJ].getItem(), theI - 2, theJ);
+                }
+                if (da.dungeon[theI - 2][theJ].getPortal() != null) {
+                    spawnEntity(da.dungeon[theI - 2][theJ].getPortal(), theI - 2, theJ);
+                }
+                if (da.dungeon[theI - 2][theJ].getTrapDoor() != null) {
+                    spawnEntity(da.dungeon[theI - 2][theJ].getTrapDoor(), theI - 2, theJ);
                 }
             }
         }
@@ -273,6 +317,12 @@ public class UI extends JFrame implements KeyListener{
                 if (da.dungeon[theI][theJ + 2].hasItem()) {
                     spawnEntity(da.dungeon[theI][theJ + 2].getItem(), theI, theJ + 2);
                 }
+                if (da.dungeon[theI][theJ + 2].getPortal() != null) {
+                    spawnEntity(da.dungeon[theI][theJ + 2].getPortal(), theI, theJ + 2);
+                }
+                if (da.dungeon[theI][theJ + 2].getTrapDoor() != null) {
+                    spawnEntity(da.dungeon[theI][theJ + 2].getTrapDoor(), theI, theJ + 2);
+                }
             }
         }
         if (theRoom.getWest() != null) {
@@ -286,6 +336,12 @@ public class UI extends JFrame implements KeyListener{
                 if (da.dungeon[theI][theJ - 2].hasItem()) {
                     spawnEntity(da.dungeon[theI][theJ - 2].getItem(), theI, theJ - 2);
                 }
+                if (da.dungeon[theI][theJ - 2].getPortal() != null) {
+                    spawnEntity(da.dungeon[theI][theJ - 2].getPortal(), theI, theJ - 2);
+                }
+                if (da.dungeon[theI][theJ - 2].getTrapDoor() != null) {
+                    spawnEntity(da.dungeon[theI][theJ - 2].getTrapDoor(), theI, theJ - 2);
+                }
             }
         }
         if (theRoom.getSouth() != null) {
@@ -298,6 +354,12 @@ public class UI extends JFrame implements KeyListener{
                 }
                 if (da.dungeon[theI + 2][theJ].hasItem()) {
                     spawnEntity(da.dungeon[theI + 2][theJ].getItem(), theI + 2, theJ);
+                }
+                if (da.dungeon[theI + 2][theJ].getPortal() != null) {
+                    spawnEntity(da.dungeon[theI + 2][theJ].getPortal(), theI + 2, theJ);
+                }
+                if (da.dungeon[theI + 2][theJ].getTrapDoor() != null) {
+                    spawnEntity(da.dungeon[theI + 2][theJ].getTrapDoor(), theI + 2, theJ);
                 }
             }
         }
@@ -325,30 +387,61 @@ public class UI extends JFrame implements KeyListener{
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        if (started
-//                && !combatButtons.isVisible()
-        ) {
-            switch (e.getKeyChar()) {
-                case 'w':
-                    if (da.p.getRoom().getNorth() != null) {
-                        movePlayer(0);
+        if (started) {
+            if (e.getKeyChar() == '`') {
+                da.p.getHeroType().cheatsActivated();
+                description.setText("Cheats Activated");
+                description.update(description.getGraphics());
+                cheatsActivated = true;
+            }
+            if (!cheatsActivated) {
+                if (!combatButtons.isVisible() && !interactButtons.isVisible()) {
+                    switch (e.getKeyChar()) {
+                        case 'w':
+                            if (da.p.getRoom().getNorth() != null) {
+                                movePlayer(0);
+                            }
+                            break;
+                        case 'd':
+                            if (da.p.getRoom().getEast() != null) {
+                                movePlayer(1);
+                            }
+                            break;
+                        case 's':
+                            if (da.p.getRoom().getSouth() != null) {
+                                movePlayer(2);
+                            }
+                            break;
+                        case 'a':
+                            if (da.p.getRoom().getWest() != null) {
+                                movePlayer(3);
+                            }
+                            break;
                     }
-                    break;
-                case 'd':
-                    if (da.p.getRoom().getEast() != null) {
-                        movePlayer(1);
-                    }
-                    break;
-                case 's':
-                    if (da.p.getRoom().getSouth() != null) {
-                        movePlayer(2);
-                    }
-                    break;
-                case 'a':
-                    if (da.p.getRoom().getWest() != null) {
-                        movePlayer(3);
-                    }
-                    break;
+                }
+            } else {
+                switch (e.getKeyChar()) {
+                    case 'w':
+                        if (da.p.getRoom().getNorth() != null) {
+                            movePlayer(0);
+                        }
+                        break;
+                    case 'd':
+                        if (da.p.getRoom().getEast() != null) {
+                            movePlayer(1);
+                        }
+                        break;
+                    case 's':
+                        if (da.p.getRoom().getSouth() != null) {
+                            movePlayer(2);
+                        }
+                        break;
+                    case 'a':
+                        if (da.p.getRoom().getWest() != null) {
+                            movePlayer(3);
+                        }
+                        break;
+                }
             }
         }
     }
@@ -371,7 +464,8 @@ public class UI extends JFrame implements KeyListener{
      *
      * @param theDirection The direction for the player to be moved
      */
-    private void movePlayer (int theDirection) {
+    private void movePlayer (int theDirection){
+        description.setText("");
         int myOffsetJ = 0;
         int myOffsetI = 0;
         switch (theDirection) {
@@ -392,24 +486,63 @@ public class UI extends JFrame implements KeyListener{
             case 2 -> da.p.setRoom(da.p.getRoom().getSouth());
             case 3 -> da.p.setRoom(da.p.getRoom().getWest());
         }
+        System.out.println(da.p.getCoords().x + " : " + da.p.getCoords().y);
         // If the room contains a Key
         Key myKey = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getKey();
         Potion myPotion = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getPotion();
         Monster myMonster = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster();
+        TrapDoor myTrapDoor = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getTrapDoor();
+        Portal myPortal = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getPortal();
+
+        if (myTrapDoor != null) {
+            description.setText("AT YOUR FEET, YOU DISCOVER A TRAP DOOR!\n");
+            if (myTrapDoor.isOpened()) {
+                description.append("DESCEND?");
+            } else {
+                description.append("IT'S LOCKED TIGHT. IT LOOKS LIKE A GREY KEY COULD FIT THE LOCK");
+            }
+            boolean myTest = false;
+            for (int i = 0; i < keys.length; i++) {
+                if (keys[i] != null){
+                    if (keys[i].getColor().equals("Grey")) {
+                        description.append("\nYOU HAVE THE KEY TO OPEN THIS DOOR.\nUSE KEY?");
+                        interactButtons.setVisible(true);
+                        myTest = true;
+                        break;
+                    }
+                }
+            }
+            if (!myTest) {
+                System.out.println("No grey key in inventory");
+            }
+        }
+
         if (!da.p.getRoom().isVisited()) {
+            // If the room contains a key
             if (myKey != null) {
                 description.setText(myKey.getName().toUpperCase() + " COLLECTED!");
-                da.p.addKey(myKey);
-                addToInventory(da.p.getCoords().x, da.p.getCoords().y);
-                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].setKey(null);
+                for (int i = 0; i < keys.length; i++) {
+                    if (keys[i] == null) {
+                        keys[i] = myKey;
+                        break;
+                    }
+                }
+                addToInventory(da.p.getCoords().x, da.p.getCoords().y, 0);
+                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].removeKey();
                 // If the room contains a potion
             } else if (myPotion != null) {
                 description.setText(myPotion.getName().toUpperCase() + " COLLECTED!");
                 da.p.addPotion(myPotion);
-                addToInventory(da.p.getCoords().x, da.p.getCoords().y);
-                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].setKey(null);
-                // If the room contains a monster
+                if (inventory[1][9] == null) {
+                    addToInventory(da.p.getCoords().x, da.p.getCoords().y, 1);
+                } else {
+                    description.setText("YOU TRY TO FIT THE POTION INTO YOUR OVERFLOWING BAG,\nBREAKING IT IN THE PROCESS");
+                }
+                entities[da.p.getCoords().x][da.p.getCoords().y] = null;
+                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].removePotion();
+            // If the room contains a monster
             } else if (myMonster != null) {
+                description.setText("YOU ENCOUNTER A MONSTER!");
                 Player myPlayer = da.p;
                 player.setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y) / 2) * 26) + (((myPlayer.getCoords().y) / 2) * 51) + myPlayer.getOffSetJ() - 16),
                         (((int) Math.ceil(((double) myPlayer.getCoords().x) / 2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myPlayer.getOffSetI()), myPlayer.getWidth(), myPlayer.getHeight());
@@ -481,11 +614,77 @@ public class UI extends JFrame implements KeyListener{
         }
     }
 
-    public void addToInventory(final int theX, final int theY) {
+    public void addToInventory(final int theX, final int theY, int theRow) {
         entities[theX][theY].setIcon(new ImageIcon(((ImageIcon) entities[theX][theY].getIcon()).getImage().getScaledInstance(entities[theX][theY].getWidth()*2, entities[theX][theY].getHeight()*2, Image.SCALE_SMOOTH)));
         entities[theX][theY].setSize(entities[theX][theY].getWidth()*2, entities[theX][theY].getHeight()*2);
-        entities[theX][theY].setLocation(layeredPane.getWidth() - 80 - (inventorySize * 25), 40);
+        for (int i = 0; i < inventory[theRow].length; i++) {
+            if (inventory[theRow][i] == null) {
+                inventory[theRow][i] = entities[theX][theY];
+                inventory[theRow][i].setLocation(layeredPane.getWidth() - 80 - (i * 52), 40 + (58 * theRow));
+                i = inventory[theRow].length;
+            }
+        }
+        entities[theX][theY] = null;
         layeredPane.update(layeredPane.getGraphics());
+    }
+
+    public void removeFromInventory(final int theCol, final int theRow) {
+        int myCount = 0;
+        keys[theCol] = null;
+        inventory[theRow][theCol] = null;
+        if (theCol < keys.length - 1) {
+            for (int i = theCol; i < keys.length; i++) {
+                if (keys[i + 1] != null ) {
+                    keys[i] = keys[i + 1];
+                    inventory[0][i] = inventory[0][i + 1];
+                    if (inventory[0][i] != null) {
+                        inventory[0][i].setLocation(layeredPane.getWidth() - 80 - (i * 52), 40 + (58 * theRow));
+                    }
+                } else {
+                    keys[i] = null;
+                    inventory[0][i] = null;
+                    break;
+                }
+            }
+        }
+
+//        if (myCount < 10) {
+//            while (keys[myCount + 1] != null) {
+//                keys[myCount] = keys[myCount + 1];
+//
+//                inventory[0][myCount] = inventory[0][myCount + 1];
+//                if (inventory[0][myCount] != null) {
+//                    inventory[0][myCount].setLocation(layeredPane.getWidth() - 80 - (myCount * 52), 40);
+//                }
+//                myCount++;
+//                if (myCount == 9) {
+//                    break;
+//                }
+//            }
+//        }
+
+    }
+
+    private void descend(final int theKey) {
+        removeFromInventory(theKey, 0);
+        roomsAndHallways = new JLabel[22][22];
+        entities = new JLabel[22][22];
+        layeredPane.removeAll();
+        for (int i = 0; i < inventory.length; i++) {
+            for (int j = 0; j < inventory[0].length; j++) {
+                if (inventory[i][j] != null) {
+                    layeredPane.add(inventory[i][j]);
+                }
+            }
+        }
+        layeredPane.update(layeredPane.getGraphics());
+        da.generateNewDungeon();
+        this.add(layeredPane);
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i] != null) {
+                System.out.println(keys[i].getColor());
+            }
+        }
     }
 
     private class gameStartHandler implements ActionListener {
@@ -506,17 +705,54 @@ public class UI extends JFrame implements KeyListener{
                         started = true;
                     }
                 }
-            } else {
-                try {
-                    if (attackButton.equals(source)) {
-                        battle(0);
-                    } else if (specialButton.equals(source)) {
-                        battle(1);
-                    }
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
             }
         }
     }
+
+    private class interactionHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object source = e.getSource();
+            if (acceptButton.equals(source)) {
+                boolean myHasKey = false;
+                int myCount = 0;
+                for (int i = 0; i < keys.length; i++) {
+                    if (keys[i] != null) {
+                        if (keys[i].getColor().equals("Grey")) {
+                            myHasKey = true;
+                            myCount = i;
+                            break;
+                        }
+                    }
+                }
+                if (myHasKey) {
+                    descend(myCount);
+                    interactButtons.setVisible(false);
+                    description.setText("");
+                } else {
+                    description.setText("YOU HAVE NOT FOUND A GREY KEY YET");
+                }
+            } else {
+                interactButtons.setVisible(false);
+                description.setText("");
+            }
+        }
+    }
+
+    private class combatHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object source = e.getSource();
+            try {
+                if (attackButton.equals(source)) {
+                    battle(0);
+                } else if (specialButton.equals(source)) {
+                    battle(1);
+                }
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
 }
