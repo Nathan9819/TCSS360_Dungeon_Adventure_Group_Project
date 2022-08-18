@@ -16,7 +16,7 @@ public class HallwayHorizontal extends Entity{
      *
      * @param theLight Whether the tile should be lit up or darkened
      */
-    public HallwayHorizontal(boolean theLight) {
+    public HallwayHorizontal(final boolean theLight) {
         super(27, 32, 100);
         isLight = theLight;
         URL myUrl = getClass().getResource(isLight ? "DungeonGeneration/Assets/HallwayHorizontal.png" : "DungeonGeneration/Assets/DarkHallwayHorizontal.png");

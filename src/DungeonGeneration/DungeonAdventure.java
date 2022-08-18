@@ -9,10 +9,10 @@
  */
 public class DungeonAdventure{
     private int playerClass;
-    DungeonGenerator dg;
-    protected Player p;
-    Room[][] dungeon;
-    UI ui = new UI(this);
+    private DungeonGenerator dg;
+    private Player p;
+    private Room[][] dungeon;
+    private UI ui = new UI(this);
 
     /**
      * This is the DungeonGeneration.DungeonAdventure constructor. It is used to instantiate dg, which is a DungeonGeneration.DungeonGenerator
@@ -47,18 +47,18 @@ public class DungeonAdventure{
         HallwayVertical myHV = new HallwayVertical(false);
         HallwayHorizontal myHH = new HallwayHorizontal(false);
         RoomTile myDarkRoom = new RoomTile(false);
-        for (int i = 0; i < dungeon.length; i++) {
-            for (int j = 0; j < dungeon[0].length; j++) {
-                if (j % 2 == 1 && i % 2 == 1 && dungeon[i][j].getRoomContents().equals("Room")) {
-                    myDarkRoom.setRoomImage(dungeon[i][j].getRoomCode());
+        for (int i = 0; i < getDungeon().length; i++) {
+            for (int j = 0; j < getDungeon()[0].length; j++) {
+                if (j % 2 == 1 && i % 2 == 1 && getDungeon()[i][j].getRoomContents().equals("Room")) {
+                    myDarkRoom.setRoomImage(getDungeon()[i][j].getRoomCode());
                     ui.spawnRoomOrHallway(myDarkRoom, (((int) Math.ceil((double)j / 2) * 26) + ((j / 2) * 51)),
                                                       (((int) Math.ceil((double)i/2) * 20) + ((i / 2) * 51)), i, j);
                 }
-                if (dungeon[i][j].getRoomContents().equals("|")) {
+                if (getDungeon()[i][j].getRoomContents().equals("|")) {
                     ui.spawnRoomOrHallway(myHV, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)) + 14,
                                                 (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) - 6, i, j);
                 }
-                if (dungeon[i][j].getRoomContents().equals("-")) {
+                if (getDungeon()[i][j].getRoomContents().equals("-")) {
                     ui.spawnRoomOrHallway(myHH, (((int) Math.ceil((double) j / 2) * 26) + ((j / 2) * 51)),
                                            (((int) Math.ceil((double) i / 2) * 20) + ((i / 2) * 51)) + 11, i, j);
                 }
@@ -75,9 +75,9 @@ public class DungeonAdventure{
         int myI = 1;
         int myJ = 7;
         p = new Player(myI, myJ, playerClass);
-        p.setRoom(dungeon[myI][myJ]);
-        ui.spawnPlayer(p, (((int) Math.ceil((double) p.getCoords().y/ 2) * 26) + ((p.getCoords().y / 2) * 51) + p.getOffSetJ()),
-                          (((int) Math.ceil((double) p.getCoords().x/2) * 20) + ((p.getCoords().x / 2) * 51) + p.getOffSetI()));
+        getPlayer().setRoom(getDungeon()[myI][myJ]);
+        ui.spawnPlayer(getPlayer(), (((int) Math.ceil((double) getPlayer().getCoords().y/ 2) * 26) + ((getPlayer().getCoords().y / 2) * 51) + getPlayer().getOffSetJ()),
+                          (((int) Math.ceil((double) getPlayer().getCoords().x/2) * 20) + ((getPlayer().getCoords().x / 2) * 51) + getPlayer().getOffSetI()));
     }
 
     /**
@@ -89,7 +89,7 @@ public class DungeonAdventure{
      * @return     The roomCode of the DungeonGeneration.Room at the given coordinates.
      */
     public String getRoomCode(int theI, int theJ) {
-        return dungeon[theI][theJ].getRoomCode();
+        return getDungeon()[theI][theJ].getRoomCode();
     }
 
     public void setPlayerClass(final int theClass) {
@@ -99,5 +99,13 @@ public class DungeonAdventure{
 
     public int getPlayerClass() {
         return playerClass;
+    }
+
+    public Room[][] getDungeon() {
+        return dungeon;
+    }
+
+    public Player getPlayer() {
+        return p;
     }
 }

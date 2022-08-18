@@ -1,6 +1,3 @@
-
-import jdk.swing.interop.SwingInterOpUtils;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 /**
  * The DungeonGeneration. UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
@@ -43,7 +39,7 @@ public class UI extends JFrame implements KeyListener{
      *
      * @param theDA The DungeonGeneration.DungeonAdventure object
      */
-    public UI(DungeonAdventure theDA) {
+    public UI(final DungeonAdventure theDA) {
         this.da = theDA;
         roomsAndHallways = new JLabel[22][22];
         entities = new JLabel[22][22];
@@ -84,8 +80,8 @@ public class UI extends JFrame implements KeyListener{
      */
     public void mainMenu() {
         try {
-            InputStream is = getClass().getResourceAsStream("DungeonGeneration/Assets/MaruMonica.ttf");
-            titleFont = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(Font.BOLD, 70f);
+            InputStream myIS = getClass().getResourceAsStream("DungeonGeneration/Assets/MaruMonica.ttf");
+            titleFont = Font.createFont(Font.TRUETYPE_FONT, myIS).deriveFont(Font.BOLD, 70f);
             normalFont = titleFont.deriveFont(40f);
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
@@ -94,12 +90,12 @@ public class UI extends JFrame implements KeyListener{
         titleScreen = new JLayeredPane();
         titleScreen.setBounds(0, 0, screenWidth, screenHeight);
         this.add(titleScreen);
-        JLabel titleLabel = new JLabel("DUNGEON ADVENTURE", SwingConstants.CENTER);
+        JLabel myTitleLabel = new JLabel("DUNGEON ADVENTURE", SwingConstants.CENTER);
         txtColor = new Color(62,39,49);
-        titleLabel.setForeground(txtColor);
-        titleLabel.setFont(titleFont);
-        titleLabel.setBounds(screenWidth/4, (int) ((double) screenHeight/6), (int) ((double) screenWidth/2.5), screenHeight/8);
-        titleScreen.add(titleLabel, 0);
+        myTitleLabel.setForeground(txtColor);
+        myTitleLabel.setFont(titleFont);
+        myTitleLabel.setBounds(screenWidth/4, (int) ((double) screenHeight/6), (int) ((double) screenWidth/2.5), screenHeight/8);
+        titleScreen.add(myTitleLabel, 0);
         startButton = new JButton("START");
         startButton.setFont(normalFont);
         startButton.setForeground(txtColor);
@@ -207,7 +203,7 @@ public class UI extends JFrame implements KeyListener{
         interactButtons.add(declineButton);
 
         this.add(interactButtons);
-//        interactButtons.setVisible(false);
+        interactButtons.setVisible(false);
 
         da.startGame();
     }
@@ -227,14 +223,14 @@ public class UI extends JFrame implements KeyListener{
      * @param theI      The i-coordinate for the JLabel to be added to the JLabel array
      * @param theJ      The j-coordinate for the JLabel to be added to the JLabel array
      */
-    public void spawnRoomOrHallway(Entity theEntity, int theX, int theY, int theI, int theJ) {
+    public void spawnRoomOrHallway(final Entity theEntity, final int theX, final int theY, final int theI, final int theJ) {
         roomsAndHallways[theI][theJ] = new JLabel();
         roomsAndHallways[theI][theJ].setBounds(theX,theY,theEntity.getWidth(),theEntity.getHeight());
         roomsAndHallways[theI][theJ].setIcon(theEntity.getSprite());
         layeredPane.add(roomsAndHallways[theI][theJ], theEntity.getLayer());
     }
 
-    public void spawnEntity(Entity theEntity, int theI, int theJ) {
+    public void spawnEntity(final Entity theEntity, final int theI, final int theJ) {
         entities[theI][theJ] = new JLabel();
         entities[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theEntity.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theEntity.getOffSetI()), theEntity.getWidth(), theEntity.getHeight());
         entities[theI][theJ].setIcon(theEntity.getSprite());
@@ -250,7 +246,7 @@ public class UI extends JFrame implements KeyListener{
      * @param theI
      * @param theJ
      */
-    public void spawnMonster(Monster theMonster, int theI, int theJ) {
+    public void spawnMonster(final Monster theMonster, final int theI, final int theJ) {
         entities[theI][theJ] = new JLabel();
         entities[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theMonster.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theMonster.getOffSetI()), theMonster.getWidth(), theMonster.getHeight());
         entities[theI][theJ].setIcon(theMonster.getSprite());
@@ -268,7 +264,7 @@ public class UI extends JFrame implements KeyListener{
      * @param theX      The x-coordinate for the player to be drawn onscreen
      * @param theY      The y-coordinate for the player to be drawn onscreen
      */
-    public void spawnPlayer(Player thePlayer, int theX, int theY) {
+    public void spawnPlayer(final Player thePlayer, final int theX, final int theY) {
         player = new JLabel();
         player.setBounds(theX,theY,thePlayer.getWidth(),thePlayer.getHeight());
         player.setIcon(thePlayer.getSprite());
@@ -279,7 +275,7 @@ public class UI extends JFrame implements KeyListener{
         updateRooms(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
     }
 
-    public void updateRooms(int theI, int theJ, Room theRoom) {
+    public void updateRooms(final int theI, final int theJ, final Room theRoom) {
         RoomTile myLightRoom = new RoomTile(true);
         myLightRoom.setRoomImage(da.getRoomCode(theI, theJ));
         HallwayHorizontal myLightHH = new HallwayHorizontal(true);
@@ -289,20 +285,20 @@ public class UI extends JFrame implements KeyListener{
                 roomsAndHallways[theI - 1][theJ].setIcon(myLightHV.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI - 2, theJ));
                 roomsAndHallways[theI - 2][theJ].setIcon(myLightRoom.getSprite());
-                if (da.dungeon[theI - 2][theJ].getMonster() != null) {
-                    spawnMonster(da.dungeon[theI - 2][theJ].getMonster(), theI - 2, theJ);
+                if (da.getDungeon()[theI - 2][theJ].getMonster() != null) {
+                    spawnMonster(da.getDungeon()[theI - 2][theJ].getMonster(), theI - 2, theJ);
                 }
-                if (da.dungeon[theI - 2][theJ].hasItem()) {
-                    spawnEntity(da.dungeon[theI - 2][theJ].getItem(), theI - 2, theJ);
+                if (da.getDungeon()[theI - 2][theJ].hasItem()) {
+                    spawnEntity(da.getDungeon()[theI - 2][theJ].getItem(), theI - 2, theJ);
                 }
-                if (da.dungeon[theI - 2][theJ].hasItem()) {
-                    spawnEntity(da.dungeon[theI - 2][theJ].getItem(), theI - 2, theJ);
+                if (da.getDungeon()[theI - 2][theJ].hasItem()) {
+                    spawnEntity(da.getDungeon()[theI - 2][theJ].getItem(), theI - 2, theJ);
                 }
-                if (da.dungeon[theI - 2][theJ].getPortal() != null) {
-                    spawnEntity(da.dungeon[theI - 2][theJ].getPortal(), theI - 2, theJ);
+                if (da.getDungeon()[theI - 2][theJ].getPortal() != null) {
+                    spawnEntity(da.getDungeon()[theI - 2][theJ].getPortal(), theI - 2, theJ);
                 }
-                if (da.dungeon[theI - 2][theJ].getTrapDoor() != null) {
-                    spawnEntity(da.dungeon[theI - 2][theJ].getTrapDoor(), theI - 2, theJ);
+                if (da.getDungeon()[theI - 2][theJ].getTrapDoor() != null) {
+                    spawnEntity(da.getDungeon()[theI - 2][theJ].getTrapDoor(), theI - 2, theJ);
                 }
             }
         }
@@ -311,17 +307,17 @@ public class UI extends JFrame implements KeyListener{
                 roomsAndHallways[theI][theJ + 1].setIcon(myLightHH.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI, theJ + 2));
                 roomsAndHallways[theI][theJ + 2].setIcon(myLightRoom.getSprite());
-                if (da.dungeon[theI][theJ + 2].getMonster() != null) {
-                    spawnMonster(da.dungeon[theI][theJ + 2].getMonster(), theI, theJ + 2);
+                if (da.getDungeon()[theI][theJ + 2].getMonster() != null) {
+                    spawnMonster(da.getDungeon()[theI][theJ + 2].getMonster(), theI, theJ + 2);
                 }
-                if (da.dungeon[theI][theJ + 2].hasItem()) {
-                    spawnEntity(da.dungeon[theI][theJ + 2].getItem(), theI, theJ + 2);
+                if (da.getDungeon()[theI][theJ + 2].hasItem()) {
+                    spawnEntity(da.getDungeon()[theI][theJ + 2].getItem(), theI, theJ + 2);
                 }
-                if (da.dungeon[theI][theJ + 2].getPortal() != null) {
-                    spawnEntity(da.dungeon[theI][theJ + 2].getPortal(), theI, theJ + 2);
+                if (da.getDungeon()[theI][theJ + 2].getPortal() != null) {
+                    spawnEntity(da.getDungeon()[theI][theJ + 2].getPortal(), theI, theJ + 2);
                 }
-                if (da.dungeon[theI][theJ + 2].getTrapDoor() != null) {
-                    spawnEntity(da.dungeon[theI][theJ + 2].getTrapDoor(), theI, theJ + 2);
+                if (da.getDungeon()[theI][theJ + 2].getTrapDoor() != null) {
+                    spawnEntity(da.getDungeon()[theI][theJ + 2].getTrapDoor(), theI, theJ + 2);
                 }
             }
         }
@@ -330,17 +326,17 @@ public class UI extends JFrame implements KeyListener{
                 roomsAndHallways[theI][theJ - 1].setIcon(myLightHH.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI, theJ - 2));
                 roomsAndHallways[theI][theJ - 2].setIcon(myLightRoom.getSprite());
-                if (da.dungeon[theI][theJ - 2].getMonster() != null) {
-                    spawnMonster(da.dungeon[theI][theJ - 2].getMonster(), theI, theJ - 2);
+                if (da.getDungeon()[theI][theJ - 2].getMonster() != null) {
+                    spawnMonster(da.getDungeon()[theI][theJ - 2].getMonster(), theI, theJ - 2);
                 }
-                if (da.dungeon[theI][theJ - 2].hasItem()) {
-                    spawnEntity(da.dungeon[theI][theJ - 2].getItem(), theI, theJ - 2);
+                if (da.getDungeon()[theI][theJ - 2].hasItem()) {
+                    spawnEntity(da.getDungeon()[theI][theJ - 2].getItem(), theI, theJ - 2);
                 }
-                if (da.dungeon[theI][theJ - 2].getPortal() != null) {
-                    spawnEntity(da.dungeon[theI][theJ - 2].getPortal(), theI, theJ - 2);
+                if (da.getDungeon()[theI][theJ - 2].getPortal() != null) {
+                    spawnEntity(da.getDungeon()[theI][theJ - 2].getPortal(), theI, theJ - 2);
                 }
-                if (da.dungeon[theI][theJ - 2].getTrapDoor() != null) {
-                    spawnEntity(da.dungeon[theI][theJ - 2].getTrapDoor(), theI, theJ - 2);
+                if (da.getDungeon()[theI][theJ - 2].getTrapDoor() != null) {
+                    spawnEntity(da.getDungeon()[theI][theJ - 2].getTrapDoor(), theI, theJ - 2);
                 }
             }
         }
@@ -349,31 +345,31 @@ public class UI extends JFrame implements KeyListener{
                 roomsAndHallways[theI + 1][theJ].setIcon(myLightHV.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI + 2, theJ));
                 roomsAndHallways[theI + 2][theJ].setIcon(myLightRoom.getSprite());
-                if (da.dungeon[theI + 2][theJ].getMonster() != null) {
-                    spawnMonster(da.dungeon[theI + 2][theJ].getMonster(), theI + 2, theJ);
+                if (da.getDungeon()[theI + 2][theJ].getMonster() != null) {
+                    spawnMonster(da.getDungeon()[theI + 2][theJ].getMonster(), theI + 2, theJ);
                 }
-                if (da.dungeon[theI + 2][theJ].hasItem()) {
-                    spawnEntity(da.dungeon[theI + 2][theJ].getItem(), theI + 2, theJ);
+                if (da.getDungeon()[theI + 2][theJ].hasItem()) {
+                    spawnEntity(da.getDungeon()[theI + 2][theJ].getItem(), theI + 2, theJ);
                 }
-                if (da.dungeon[theI + 2][theJ].getPortal() != null) {
-                    spawnEntity(da.dungeon[theI + 2][theJ].getPortal(), theI + 2, theJ);
+                if (da.getDungeon()[theI + 2][theJ].getPortal() != null) {
+                    spawnEntity(da.getDungeon()[theI + 2][theJ].getPortal(), theI + 2, theJ);
                 }
-                if (da.dungeon[theI + 2][theJ].getTrapDoor() != null) {
-                    spawnEntity(da.dungeon[theI + 2][theJ].getTrapDoor(), theI + 2, theJ);
+                if (da.getDungeon()[theI + 2][theJ].getTrapDoor() != null) {
+                    spawnEntity(da.getDungeon()[theI + 2][theJ].getTrapDoor(), theI + 2, theJ);
                 }
             }
         }
-        da.p.getRoom().setVisited();
+        da.getPlayer().getRoom().setVisited();
         layeredPane.update(layeredPane.getGraphics());
     }
 
     /**
      * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.
      *
-     * @param e The key being typed
+     * @param theE The key being typed
      */
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent theE) {
         // Not being used
     }
 
@@ -383,61 +379,61 @@ public class UI extends JFrame implements KeyListener{
      * correspond to the cardinal directions and allow the move the player character throughout the
      * dungeon. If a movement is valid, the method calls movePlayer, passing it the given direction.
      *
-     * @param e The key being pressed
+     * @param theE The key being pressed
      */
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent theE) {
         if (started) {
-            if (e.getKeyChar() == '`') {
-                da.p.getHeroType().cheatsActivated();
+            if (theE.getKeyChar() == '`') {
+                da.getPlayer().getHeroType().cheatsActivated();
                 description.setText("Cheats Activated");
                 description.update(description.getGraphics());
                 cheatsActivated = true;
             }
             if (!cheatsActivated) {
                 if (!combatButtons.isVisible() && !interactButtons.isVisible()) {
-                    switch (e.getKeyChar()) {
+                    switch (theE.getKeyChar()) {
                         case 'w':
-                            if (da.p.getRoom().getNorth() != null) {
+                            if (da.getPlayer().getRoom().getNorth() != null) {
                                 movePlayer(0);
                             }
                             break;
                         case 'd':
-                            if (da.p.getRoom().getEast() != null) {
+                            if (da.getPlayer().getRoom().getEast() != null) {
                                 movePlayer(1);
                             }
                             break;
                         case 's':
-                            if (da.p.getRoom().getSouth() != null) {
+                            if (da.getPlayer().getRoom().getSouth() != null) {
                                 movePlayer(2);
                             }
                             break;
                         case 'a':
-                            if (da.p.getRoom().getWest() != null) {
+                            if (da.getPlayer().getRoom().getWest() != null) {
                                 movePlayer(3);
                             }
                             break;
                     }
                 }
             } else {
-                switch (e.getKeyChar()) {
+                switch (theE.getKeyChar()) {
                     case 'w':
-                        if (da.p.getRoom().getNorth() != null) {
+                        if (da.getPlayer().getRoom().getNorth() != null) {
                             movePlayer(0);
                         }
                         break;
                     case 'd':
-                        if (da.p.getRoom().getEast() != null) {
+                        if (da.getPlayer().getRoom().getEast() != null) {
                             movePlayer(1);
                         }
                         break;
                     case 's':
-                        if (da.p.getRoom().getSouth() != null) {
+                        if (da.getPlayer().getRoom().getSouth() != null) {
                             movePlayer(2);
                         }
                         break;
                     case 'a':
-                        if (da.p.getRoom().getWest() != null) {
+                        if (da.getPlayer().getRoom().getWest() != null) {
                             movePlayer(3);
                         }
                         break;
@@ -449,10 +445,10 @@ public class UI extends JFrame implements KeyListener{
     /**
      * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.
      *
-     * @param e The key being released
+     * @param theE The key being released
      */
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent theE) {
         // Not being used
     }
 
@@ -464,7 +460,7 @@ public class UI extends JFrame implements KeyListener{
      *
      * @param theDirection The direction for the player to be moved
      */
-    private void movePlayer (int theDirection){
+    private void movePlayer (final int theDirection){
         description.setText("");
         int myOffsetJ = 0;
         int myOffsetI = 0;
@@ -475,24 +471,24 @@ public class UI extends JFrame implements KeyListener{
             case 3 -> myOffsetJ = -2;
         }
 
-        player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y + myOffsetJ)/ 2) * 26) + (((da.p.getCoords().y + myOffsetJ)/ 2) * 51) + da.p.getOffSetJ()),
-                            (((int) Math.ceil(((double) da.p.getCoords().x + myOffsetI)/2) * 20) + ((((da.p.getCoords().x + myOffsetI) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
-        da.p.setCoords(new Point(da.p.getCoords().x + myOffsetI, da.p.getCoords().y + myOffsetJ));
+        player.setBounds((((int) Math.ceil(((double) da.getPlayer().getCoords().y + myOffsetJ)/ 2) * 26) + (((da.getPlayer().getCoords().y + myOffsetJ)/ 2) * 51) + da.getPlayer().getOffSetJ()),
+                            (((int) Math.ceil(((double) da.getPlayer().getCoords().x + myOffsetI)/2) * 20) + ((((da.getPlayer().getCoords().x + myOffsetI) / 2)) * 51) + da.getPlayer().getOffSetI()), da.getPlayer().getWidth(), da.getPlayer().getHeight());
+        da.getPlayer().setCoords(new Point(da.getPlayer().getCoords().x + myOffsetI, da.getPlayer().getCoords().y + myOffsetJ));
 //        this.update(this.getGraphics());
         layeredPane.update(layeredPane.getGraphics());
         switch (theDirection) {
-            case 0 -> da.p.setRoom(da.p.getRoom().getNorth());
-            case 1 -> da.p.setRoom(da.p.getRoom().getEast());
-            case 2 -> da.p.setRoom(da.p.getRoom().getSouth());
-            case 3 -> da.p.setRoom(da.p.getRoom().getWest());
+            case 0 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getNorth());
+            case 1 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getEast());
+            case 2 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getSouth());
+            case 3 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getWest());
         }
-        System.out.println(da.p.getCoords().x + " : " + da.p.getCoords().y);
+        System.out.println(da.getPlayer().getCoords().x + " : " + da.getPlayer().getCoords().y);
         // If the room contains a Key
-        Key myKey = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getKey();
-        Potion myPotion = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getPotion();
-        Monster myMonster = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster();
-        TrapDoor myTrapDoor = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getTrapDoor();
-        Portal myPortal = da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getPortal();
+        Key myKey = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getKey();
+        Potion myPotion = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getPotion();
+        Monster myMonster = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster();
+        TrapDoor myTrapDoor = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getTrapDoor();
+        Portal myPortal = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getPortal();
 
         if (myTrapDoor != null) {
             description.setText("AT YOUR FEET, YOU DISCOVER A TRAP DOOR!\n");
@@ -517,7 +513,7 @@ public class UI extends JFrame implements KeyListener{
             }
         }
 
-        if (!da.p.getRoom().isVisited()) {
+        if (!da.getPlayer().getRoom().isVisited()) {
             // If the room contains a key
             if (myKey != null) {
                 description.setText(myKey.getName().toUpperCase() + " COLLECTED!");
@@ -527,23 +523,23 @@ public class UI extends JFrame implements KeyListener{
                         break;
                     }
                 }
-                addToInventory(da.p.getCoords().x, da.p.getCoords().y, 0);
-                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].removeKey();
+                addToInventory(da.getPlayer().getCoords().x, da.getPlayer().getCoords().y, 0);
+                da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].removeKey();
                 // If the room contains a potion
             } else if (myPotion != null) {
                 description.setText(myPotion.getName().toUpperCase() + " COLLECTED!");
-                da.p.addPotion(myPotion);
+                da.getPlayer().addPotion(myPotion);
                 if (inventory[1][9] == null) {
-                    addToInventory(da.p.getCoords().x, da.p.getCoords().y, 1);
+                    addToInventory(da.getPlayer().getCoords().x, da.getPlayer().getCoords().y, 1);
                 } else {
                     description.setText("YOU TRY TO FIT THE POTION INTO YOUR OVERFLOWING BAG,\nBREAKING IT IN THE PROCESS");
                 }
-                entities[da.p.getCoords().x][da.p.getCoords().y] = null;
-                da.dungeon[da.p.getCoords().x][da.p.getCoords().y].removePotion();
+                entities[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y] = null;
+                da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].removePotion();
             // If the room contains a monster
             } else if (myMonster != null) {
                 description.setText("YOU ENCOUNTER A MONSTER!");
-                Player myPlayer = da.p;
+                Player myPlayer = da.getPlayer();
                 player.setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y) / 2) * 26) + (((myPlayer.getCoords().y) / 2) * 51) + myPlayer.getOffSetJ() - 16),
                         (((int) Math.ceil(((double) myPlayer.getCoords().x) / 2) * 20) + ((((myPlayer.getCoords().x) / 2)) * 51) + myPlayer.getOffSetI()), myPlayer.getWidth(), myPlayer.getHeight());
                 entities[myPlayer.getCoords().x][myPlayer.getCoords().y].setBounds((((int) Math.ceil(((double) myPlayer.getCoords().y) / 2) * 26) + (((myPlayer.getCoords().y) / 2) * 51) + myMonster.getOffSetJ() + 16),
@@ -552,7 +548,7 @@ public class UI extends JFrame implements KeyListener{
                 combatButtons.setVisible(true);
                 setCurrentAction(myPlayer.getHeroType(), myMonster);
             }
-            updateRooms(da.p.getCoords().x, da.p.getCoords().y, da.p.getRoom());
+            updateRooms(da.getPlayer().getCoords().x, da.getPlayer().getCoords().y, da.getPlayer().getRoom());
         }
         layeredPane.update(layeredPane.getGraphics());
     }
@@ -570,47 +566,47 @@ public class UI extends JFrame implements KeyListener{
             return;
         }
         if (attackType == 0) {
-            description.setText(da.p.getHeroType().attack(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()).toUpperCase());
+            description.setText(da.getPlayer().getHeroType().attack(da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster()).toUpperCase());
         } else {
-            description.setText(da.p.getHeroType().special(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster()).toUpperCase());
+            description.setText(da.getPlayer().getHeroType().special(da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster()).toUpperCase());
         }
         description.update(description.getGraphics());
         currentAction--;
         Thread.sleep(2000);
-        if (da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHP() <= 0) {
-            description.setText("THE " + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName().toUpperCase() + " WAS DEFEATED!");
-            entities[da.p.getCoords().x][da.p.getCoords().y].setVisible(false);
-            da.dungeon[da.p.getCoords().x][da.p.getCoords().y].killMonster();
-            player.setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.p.getOffSetJ()),
-                    (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.p.getOffSetI()), da.p.getWidth(), da.p.getHeight());
+        if (da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getHP() <= 0) {
+            description.setText("THE " + da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getName().toUpperCase() + " WAS DEFEATED!");
+            entities[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].setVisible(false);
+            da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].killMonster();
+            player.setBounds((((int) Math.ceil(((double) da.getPlayer().getCoords().y)/ 2) * 26) + (((da.getPlayer().getCoords().y)/ 2) * 51) + da.getPlayer().getOffSetJ()),
+                    (((int) Math.ceil(((double) da.getPlayer().getCoords().x)/2) * 20) + ((((da.getPlayer().getCoords().x) / 2)) * 51) + da.getPlayer().getOffSetI()), da.getPlayer().getWidth(), da.getPlayer().getHeight());
             description.update(description.getGraphics());
             currentAction = 0;
             combatButtons.setVisible(false);
         } else {
             if (currentAction <= 0) {
-                description.setText(da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().attack(da.p.getHeroType()).toUpperCase());
+                description.setText(da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().attack(da.getPlayer().getHeroType()).toUpperCase());
                 description.update(description.getGraphics());
-                if (da.p.getHeroType().getHP() <= 0) {
+                if (da.getPlayer().getHeroType().getHP() <= 0) {
                     Thread.sleep(2000);
-                    description.setText("THE " + da.p.getHeroType().getName().toUpperCase() + " WAS DEFEATED!");
+                    description.setText("THE " + da.getPlayer().getHeroType().getName().toUpperCase() + " WAS DEFEATED!");
                     player.setVisible(false);
-                    entities[da.p.getCoords().x][da.p.getCoords().y].setBounds((((int) Math.ceil(((double) da.p.getCoords().y)/ 2) * 26) + (((da.p.getCoords().y)/ 2) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetJ()),
-                            (((int) Math.ceil(((double) da.p.getCoords().x)/2) * 20) + ((((da.p.getCoords().x) / 2)) * 51) + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getOffSetI()),
-                            da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getWidth(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getHeight());
+                    entities[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].setBounds((((int) Math.ceil(((double) da.getPlayer().getCoords().y)/ 2) * 26) + (((da.getPlayer().getCoords().y)/ 2) * 51) + da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getOffSetJ()),
+                            (((int) Math.ceil(((double) da.getPlayer().getCoords().x)/2) * 20) + ((((da.getPlayer().getCoords().x) / 2)) * 51) + da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getOffSetI()),
+                            da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getWidth(), da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getHeight());
                     description.update(description.getGraphics());
                     // setGameOverScreen();
                     currentAction = 0;
                     combatButtons.setVisible(false);
                 }
             } else {
-                description.setText("THE " + da.p.getHeroType().getName().toUpperCase() + " WAS FASTER THAN "
-                        + da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster().getName().toUpperCase() + " AND GETS IN AN EXTRA ACTION");
+                description.setText("THE " + da.getPlayer().getHeroType().getName().toUpperCase() + " WAS FASTER THAN "
+                        + da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getName().toUpperCase() + " AND GETS IN AN EXTRA ACTION");
                 description.update(description.getGraphics());
             }
         }
         Thread.sleep(2000);
-        if (currentAction == 0 && da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster() != null) {
-            setCurrentAction(da.p.getHeroType(), da.dungeon[da.p.getCoords().x][da.p.getCoords().y].getMonster());
+        if (currentAction == 0 && da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster() != null) {
+            setCurrentAction(da.getPlayer().getHeroType(), da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster());
         }
     }
 
@@ -647,22 +643,6 @@ public class UI extends JFrame implements KeyListener{
                 }
             }
         }
-
-//        if (myCount < 10) {
-//            while (keys[myCount + 1] != null) {
-//                keys[myCount] = keys[myCount + 1];
-//
-//                inventory[0][myCount] = inventory[0][myCount + 1];
-//                if (inventory[0][myCount] != null) {
-//                    inventory[0][myCount].setLocation(layeredPane.getWidth() - 80 - (myCount * 52), 40);
-//                }
-//                myCount++;
-//                if (myCount == 9) {
-//                    break;
-//                }
-//            }
-//        }
-
     }
 
     private void descend(final int theKey) {
@@ -690,8 +670,8 @@ public class UI extends JFrame implements KeyListener{
     private class gameStartHandler implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
-            Object source = e.getSource();
+        public void actionPerformed(ActionEvent theE) {
+            Object source = theE.getSource();
             if (!started) {
                 if (knightButton.equals(source)) {
                     da.setPlayerClass(0);
@@ -711,8 +691,8 @@ public class UI extends JFrame implements KeyListener{
 
     private class interactionHandler implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent e) {
-            Object source = e.getSource();
+        public void actionPerformed(ActionEvent theE) {
+            Object source = theE.getSource();
             if (acceptButton.equals(source)) {
                 boolean myHasKey = false;
                 int myCount = 0;

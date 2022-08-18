@@ -27,13 +27,13 @@ public class Room {
      * @param theContents The contents of the room
      * @param theCoords   The coordinates of the room
      */
-    public Room(String theContents, Point theCoords) {
+    public Room(final String theContents, final Point theCoords) {
         roomContents = theContents;
         coords = theCoords;
         visited = false;
     }
 
-    public void setMonster(Monster theMonster) {
+    public void setMonster(final Monster theMonster) {
         if (!occupied) {
             monster = theMonster;
             occupied = true;
@@ -54,7 +54,7 @@ public class Room {
         return roomCode;
     }
 
-    public void setRoomCode(String theRoomCode) {
+    public void setRoomCode(final String theRoomCode) {
         roomCode = theRoomCode;
     }
 
@@ -62,7 +62,7 @@ public class Room {
         return roomContents;
     }
 
-    public void setRoomContents(String theContents) {
+    public void setRoomContents(final String theContents) {
         roomContents = theContents;
     }
 
@@ -70,7 +70,7 @@ public class Room {
         return key;
     }
 
-    public void setKey(Key theKey) {
+    public void setKey(final Key theKey) {
         if (!occupied) {
             key = theKey;
             occupied = true;
@@ -94,7 +94,7 @@ public class Room {
         return potion;
     }
 
-    public void setPotion(Potion thePotion) {
+    public void setPotion(final Potion thePotion) {
         if (!occupied) {
             potion = thePotion;
             occupied = true;
@@ -126,19 +126,19 @@ public class Room {
         return west;
     }
 
-    public void setNorth(Room theNorth) {
+    public void setNorth(final Room theNorth) {
         north = theNorth;
     }
 
-    public void setEast(Room theEast) {
+    public void setEast(final Room theEast) {
         east = theEast;
     }
 
-    public void setSouth(Room theSouth) {
+    public void setSouth(final Room theSouth) {
         south = theSouth;
     }
 
-    public void setWest(Room theWest) {
+    public void setWest(final Room theWest) {
         west = theWest;
     }
 
@@ -172,7 +172,7 @@ public class Room {
         return coords;
     }
 
-    public void setCoords(Point coords) {
+    public void setCoords(final Point coords) {
         this.coords = coords;
     }
 
@@ -180,7 +180,7 @@ public class Room {
         return portal;
     }
 
-    public void setPortal(Portal thePortal) {
+    public void setPortal(final Portal thePortal) {
         portal = thePortal;
     }
 
@@ -188,7 +188,7 @@ public class Room {
         return trapDoor;
     }
 
-    public void setTrapDoor(TrapDoor theTrapDoor) {
+    public void setTrapDoor(final TrapDoor theTrapDoor) {
         trapDoor = theTrapDoor;
     }
 
