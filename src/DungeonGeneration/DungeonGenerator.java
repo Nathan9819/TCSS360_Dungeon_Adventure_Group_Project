@@ -14,10 +14,10 @@ import java.util.Random;
  * @Author Nathan Mahnke
  */
 public class DungeonGenerator {
-    private int floor = 0;
+    private int floor;
     private static Room[][] initialDungeon;
-    public static Room[][] finalDungeon;
-    private int count = 0;
+    private static Room[][] finalDungeon;
+    private int count;
 
     /**
      * This is the DungeonGeneration.DungeonGenerator constructor. It instantiates the initial dungeon as well as the final dungeon.
@@ -26,18 +26,24 @@ public class DungeonGenerator {
      * both dimensions. After the initialization of the arrays, various methods are called to generate and refine the dungeon.
      */
     public DungeonGenerator() {
+        floor = -1;
+        count = 0;
         generateNewDungeon();
     }
 
     public void generateNewDungeon() {
-        count = 0;
-        initialDungeon = new Room[7][7];
-        finalDungeon = new Room[initialDungeon.length * 2][initialDungeon[0].length * 2];
-        fillDungeon(initialDungeon);
-        startGame();
-        cleanUpDungeon();
-        finalizeDungeon();
-        placeEntities();
+        floor++;
+        System.out.println("Current floor: " + floor);
+        if (floor < 3) {
+            count = 0;
+            initialDungeon = new Room[7][7];
+            finalDungeon = new Room[initialDungeon.length * 2][initialDungeon[0].length * 2];
+            fillDungeon(initialDungeon);
+            startGame();
+            cleanUpDungeon();
+            finalizeDungeon();
+            placeEntities();
+        }
     }
 
     /**
@@ -196,31 +202,31 @@ public class DungeonGenerator {
                 myCount++;
             }
         }
-
-        if (floor != 2) {
-            myCount = 0;
-            myKey = myRand.nextInt(theEmptyRooms.size());
-            for (Point p : theEmptyRooms) {
-                if (myCount == myKey) {
-                    finalDungeon[p.x][p.y].setTrapDoor(new TrapDoor(false));
-                    break;
-                } else {
-                    myCount++;
-                }
+        myCount = 0;
+        myKey = myRand.nextInt(theEmptyRooms.size());
+        for (Point p : theEmptyRooms) {
+            if (myCount == myKey) {
+                finalDungeon[p.x][p.y].setTrapDoor(new TrapDoor(false));
+                theEmptyRooms.remove(p);
+                break;
+            } else {
+                myCount++;
             }
-            floor++;
-        } else {
+        }
+        if (floor == 2) {
             myCount = 0;
             myKey = myRand.nextInt(theEmptyRooms.size());
             for (Point p : theEmptyRooms) {
                 if (myCount == myKey) {
                     finalDungeon[p.x][p.y].setPortal(new Portal(false));
+                    System.out.println("Portal spawned");
                     break;
                 } else {
                     myCount++;
                 }
             }
         }
+//        floor++;
     }
 
     private ArrayList<Point> getRooms() {
@@ -343,11 +349,11 @@ public class DungeonGenerator {
     }
 
 
-    /**
-     * The displayDungeon method acts as debugging tool to print out a DungeonGeneration.Room[][] to the console.
-     *
-     * @param theRooms The DungeonGeneration.Room[][] to be printed
-     */
+//    /**
+//     * The displayDungeon method acts as debugging tool to print out a DungeonGeneration.Room[][] to the console.
+//     *
+//     * @param theRooms The DungeonGeneration.Room[][] to be printed
+//     */
 //    public void displayDungeon(Room[][] theRooms) {
 //        System.out.print("\t ");
 //        for(int i = 0; i < theRooms.length; i++) {
@@ -448,5 +454,9 @@ public class DungeonGenerator {
 
     public Room[][] getDungeon() {
         return finalDungeon;
+    }
+
+    public int getFloor() {
+        return floor;
     }
 }

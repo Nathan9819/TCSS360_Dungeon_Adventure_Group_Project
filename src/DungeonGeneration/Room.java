@@ -18,7 +18,7 @@ public class Room {
     private Room north, east, south, west;
     private Point coords;
     private String roomCode;
-    private boolean visited, occupied, stairs;
+    private boolean visited, occupied;
 
     /**
      * This is the DungeonGeneration.Room constructor. It receives a string for the room's contents and a point for the

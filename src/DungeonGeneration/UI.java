@@ -16,15 +16,16 @@ import java.io.InputStream;
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
     private boolean started, cheatsActivated;
-    private int currentAction, screenWidth, screenHeight, inventorySize;
-    private JLayeredPane titleScreen, layeredPane, combatButtons, interactButtons;
+    private int currentAction, screenWidth, screenHeight;
+    private JLayeredPane titleScreen, layeredPane, combatButtons, interactButtons, finalButtons;
     private Font titleFont, normalFont;
     private Color bgColor, txtColor;
-    private JButton startButton, knightButton, priestessButton, thiefButton, attackButton, specialButton, acceptButton, declineButton;
+    private JButton startButton, knightButton, priestessButton, thiefButton, attackButton, specialButton, acceptButton, declineButton, quitButton, restartButton;
     private JTextArea description;
     private final gameStartHandler gameStart;
     private final combatHandler combat;
     private final interactionHandler interaction;
+    private final endOfGameHandler endOfGame;
     private JLabel[][] roomsAndHallways, entities;
     private JLabel player;
     private JLabel[][] inventory;
@@ -48,6 +49,7 @@ public class UI extends JFrame implements KeyListener{
         gameStart = new gameStartHandler();
         combat = new combatHandler();
         interaction = new interactionHandler();
+        endOfGame = new endOfGameHandler();
         currentAction = 0;
         started = false;
         createMainField();
@@ -205,6 +207,30 @@ public class UI extends JFrame implements KeyListener{
         this.add(interactButtons);
         interactButtons.setVisible(false);
 
+        finalButtons = new JLayeredPane();
+        finalButtons.setBounds(10, screenHeight - (screenHeight/8), screenWidth - 10, screenHeight - (screenHeight/12));
+        finalButtons.setDoubleBuffered(true);
+        finalButtons.setBackground(bgColor);
+
+        quitButton = new JButton("QUIT");
+        quitButton.setFont(normalFont);
+        quitButton.setForeground(txtColor);
+        quitButton.setBackground(bgColor);
+        quitButton.setBounds(10, 0, screenWidth/5, screenHeight/12);
+        quitButton.addActionListener(endOfGame);
+        finalButtons.add(quitButton);
+
+        restartButton = new JButton("RESTART");
+        restartButton.setFont(normalFont);
+        restartButton.setForeground(txtColor);
+        restartButton.setBackground(bgColor);
+        restartButton.setBounds(20 + screenWidth/5, 0, screenWidth/5, screenHeight/12);
+        restartButton.addActionListener(endOfGame);
+        finalButtons.add(restartButton);
+
+        this.add(finalButtons);
+        finalButtons.setVisible(false);
+
         da.startGame();
     }
 
@@ -265,14 +291,33 @@ public class UI extends JFrame implements KeyListener{
      * @param theY      The y-coordinate for the player to be drawn onscreen
      */
     public void spawnPlayer(final Player thePlayer, final int theX, final int theY) {
-        player = new JLabel();
-        player.setBounds(theX,theY,thePlayer.getWidth(),thePlayer.getHeight());
-        player.setIcon(thePlayer.getSprite());
-        layeredPane.add(player, thePlayer.getLayer());
+        if (da.getFloor() == 0) {
+            player = new JLabel();
+            player.setBounds(theX, theY, thePlayer.getWidth(), thePlayer.getHeight());
+            player.setIcon(thePlayer.getSprite());
+            layeredPane.add(player, thePlayer.getLayer());
+        } else {
+            player.setLocation(theX, theY);
+            layeredPane.add(player, thePlayer.getLayer());
+        }
         RoomTile myLightRoom = new RoomTile(true);
         myLightRoom.setRoomImage(da.getRoomCode(thePlayer.getCoords().x, thePlayer.getCoords().y));
         roomsAndHallways[thePlayer.getCoords().x][thePlayer.getCoords().y].setIcon(myLightRoom.getSprite());
         updateRooms(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
+        layeredPane.update(layeredPane.getGraphics());
+
+//        Key myBlueKey = new Key("Blue");
+//        Key myGreenKey = new Key("Green");
+//        Key myYellowKey = new Key("Yellow");
+//        spawnEntity(myBlueKey, 0, 0);
+//        spawnEntity(myGreenKey, 0, 1);
+//        spawnEntity(myYellowKey, 1, 0);
+//        addToInventory(0, 0, 0);
+//        addToInventory(0, 1, 0);
+//        addToInventory(1, 0, 0);
+//        keys[0] = myBlueKey;
+//        keys[1] = myGreenKey;
+//        keys[2] = myYellowKey;
     }
 
     public void updateRooms(final int theI, final int theJ, final Room theRoom) {
@@ -474,7 +519,6 @@ public class UI extends JFrame implements KeyListener{
         player.setBounds((((int) Math.ceil(((double) da.getPlayer().getCoords().y + myOffsetJ)/ 2) * 26) + (((da.getPlayer().getCoords().y + myOffsetJ)/ 2) * 51) + da.getPlayer().getOffSetJ()),
                             (((int) Math.ceil(((double) da.getPlayer().getCoords().x + myOffsetI)/2) * 20) + ((((da.getPlayer().getCoords().x + myOffsetI) / 2)) * 51) + da.getPlayer().getOffSetI()), da.getPlayer().getWidth(), da.getPlayer().getHeight());
         da.getPlayer().setCoords(new Point(da.getPlayer().getCoords().x + myOffsetI, da.getPlayer().getCoords().y + myOffsetJ));
-//        this.update(this.getGraphics());
         layeredPane.update(layeredPane.getGraphics());
         switch (theDirection) {
             case 0 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getNorth());
@@ -483,7 +527,6 @@ public class UI extends JFrame implements KeyListener{
             case 3 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getWest());
         }
         System.out.println(da.getPlayer().getCoords().x + " : " + da.getPlayer().getCoords().y);
-        // If the room contains a Key
         Key myKey = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getKey();
         Potion myPotion = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getPotion();
         Monster myMonster = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster();
@@ -509,7 +552,30 @@ public class UI extends JFrame implements KeyListener{
                 }
             }
             if (!myTest) {
-                System.out.println("No grey key in inventory");
+                System.out.println("NO GREY KEY IN INVENTORY");
+            }
+        } else if (myPortal != null) {
+            description.setText("THE FLOOR OF THIS ROOM IS COVERED IN INTRICATE CARVINGS\nYOU SEE THREE SMALL KEY HOLES. ONE BLUE, ONE YELLOW, ONE GREEN");
+            boolean myBlue = false, myGreen = false, myYellow = false;
+            for (int i = 0; i < keys.length; i++) {
+                if (keys[i] != null){
+                    if (keys[i].getColor().equals("Blue")) {
+                        myBlue = true;
+                    } else if (keys[i].getColor().equals("Green")) {
+                        myGreen = true;
+                    } else if (keys[i].getColor().equals("Yellow")) {
+                        myYellow = true;
+                    }
+                }
+            }
+            int myCount = 0;
+            while (keys[myCount] != null) {
+                System.out.println(keys[myCount].getColor());
+                myCount++;
+            }
+            if (myBlue && myGreen && myYellow) {
+                description.append("\nTHE KEYS IN YOUR POCKET BEGIN TO HUM FAINTLY\nYOU FEEL THEM PULL TOWARDS THEIR RESPECTIVE KEYHOLES\nINSERT KEYS?");
+                interactButtons.setVisible(true);
             }
         }
 
@@ -525,7 +591,7 @@ public class UI extends JFrame implements KeyListener{
                 }
                 addToInventory(da.getPlayer().getCoords().x, da.getPlayer().getCoords().y, 0);
                 da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].removeKey();
-                // If the room contains a potion
+            // If the room contains a potion
             } else if (myPotion != null) {
                 description.setText(myPotion.getName().toUpperCase() + " COLLECTED!");
                 da.getPlayer().addPotion(myPotion);
@@ -625,7 +691,6 @@ public class UI extends JFrame implements KeyListener{
     }
 
     public void removeFromInventory(final int theCol, final int theRow) {
-        int myCount = 0;
         keys[theCol] = null;
         inventory[theRow][theCol] = null;
         if (theCol < keys.length - 1) {
@@ -650,6 +715,7 @@ public class UI extends JFrame implements KeyListener{
         roomsAndHallways = new JLabel[22][22];
         entities = new JLabel[22][22];
         layeredPane.removeAll();
+        da.generateNewDungeon();
         for (int i = 0; i < inventory.length; i++) {
             for (int j = 0; j < inventory[0].length; j++) {
                 if (inventory[i][j] != null) {
@@ -658,13 +724,23 @@ public class UI extends JFrame implements KeyListener{
             }
         }
         layeredPane.update(layeredPane.getGraphics());
-        da.generateNewDungeon();
-        this.add(layeredPane);
-        for (int i = 0; i < keys.length; i++) {
-            if (keys[i] != null) {
-                System.out.println(keys[i].getColor());
+        if (da.getFloor() < 3) {
+            this.add(layeredPane);
+            for (int i = 0; i < keys.length; i++) {
+                if (keys[i] != null) {
+                    System.out.println(keys[i].getColor());
+                }
             }
+        } else {
+            this.remove(layeredPane);
+            this.update(this.getGraphics());
+            description.setText("CONGRATULATIONS! YOU'VE ESCAPED THE DUNGEON!");
+            finalButtons.setVisible(true);
         }
+    }
+
+    private void close() {
+        this.dispose();
     }
 
     private class gameStartHandler implements ActionListener {
@@ -693,28 +769,34 @@ public class UI extends JFrame implements KeyListener{
         @Override
         public void actionPerformed(ActionEvent theE) {
             Object source = theE.getSource();
-            if (acceptButton.equals(source)) {
-                boolean myHasKey = false;
-                int myCount = 0;
-                for (int i = 0; i < keys.length; i++) {
-                    if (keys[i] != null) {
-                        if (keys[i].getColor().equals("Grey")) {
-                            myHasKey = true;
-                            myCount = i;
-                            break;
+            if (da.getPlayer().getRoom().getTrapDoor() != null) {
+                if (acceptButton.equals(source)) {
+                    boolean myHasKey = false;
+                    int myCount = 0;
+                    for (int i = 0; i < keys.length; i++) {
+                        if (keys[i] != null) {
+                            if (keys[i].getColor().equals("Grey")) {
+                                myHasKey = true;
+                                myCount = i;
+                                break;
+                            }
                         }
                     }
-                }
-                if (myHasKey) {
-                    descend(myCount);
-                    interactButtons.setVisible(false);
-                    description.setText("");
+                    if (myHasKey) {
+                        descend(myCount);
+                        interactButtons.setVisible(false);
+                    } else {
+                        description.setText("YOU HAVE NOT FOUND A GREY KEY YET");
+                    }
                 } else {
-                    description.setText("YOU HAVE NOT FOUND A GREY KEY YET");
+                    interactButtons.setVisible(false);
                 }
-            } else {
-                interactButtons.setVisible(false);
-                description.setText("");
+            } else if (da.getPlayer().getRoom().getPortal() != null) {
+                if (acceptButton.equals(source)) {
+                    System.out.println("Progress to final boss");
+                } else {
+                    interactButtons.setVisible(false);
+                }
             }
         }
     }
@@ -731,6 +813,19 @@ public class UI extends JFrame implements KeyListener{
                 }
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
+            }
+        }
+    }
+
+    private class endOfGameHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object source = e.getSource();
+            if (quitButton.equals(source)) {
+                System.exit(0);
+            } else if (restartButton.equals(source)) {
+                da = new DungeonAdventure();
+                close();
             }
         }
     }

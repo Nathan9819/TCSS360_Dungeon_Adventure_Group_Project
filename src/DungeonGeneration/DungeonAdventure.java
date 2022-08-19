@@ -71,10 +71,12 @@ public class DungeonAdventure{
      * of the room which they occupy. The proper offsets are stored within the character class. My information regarding this can
      * be found there. Upon character spawning, various methods become enabled within the DungeonGeneration.UI class
      */
-    public void spawnCharacter() {
+    private void spawnCharacter() {
         int myI = 1;
         int myJ = 7;
-        p = new Player(myI, myJ, playerClass);
+        if (getFloor() == 0) {
+            p = new Player(myI, myJ, playerClass);
+        }
         getPlayer().setRoom(getDungeon()[myI][myJ]);
         ui.spawnPlayer(getPlayer(), (((int) Math.ceil((double) getPlayer().getCoords().y/ 2) * 26) + ((getPlayer().getCoords().y / 2) * 51) + getPlayer().getOffSetJ()),
                           (((int) Math.ceil((double) getPlayer().getCoords().x/2) * 20) + ((getPlayer().getCoords().x / 2) * 51) + getPlayer().getOffSetI()));
@@ -107,5 +109,9 @@ public class DungeonAdventure{
 
     public Player getPlayer() {
         return p;
+    }
+
+    public int getFloor() {
+        return dg.getFloor();
     }
 }

@@ -2,7 +2,8 @@ import java.util.Random;
 
 public class Warrior extends Hero {
     public Warrior() {
-        super(125, 35, 60, "Warrior", 4, 0.8, 0.2);
+//        super(125, 35, 60, "Warrior", 4, 0.8, 0.2);
+        super(125, 1000, 1001, "Warrior", 4, 1, 0.2);
     }
     public String special(final Monster theOther) {
         StringBuilder myAtkInfo = new StringBuilder();
