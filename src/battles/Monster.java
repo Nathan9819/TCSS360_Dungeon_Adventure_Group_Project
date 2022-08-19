@@ -71,12 +71,28 @@ public abstract class Monster extends DungeonCharacter {
         return width;
     }
 
+    public void setWidth(final int theWidth) {
+        if (theWidth > 0) {
+            width = theWidth;
+        }
+    }
+
     public int getHeight() {
         return height;
     }
 
+    public void setHeight(final int theHeight) {
+        if (theHeight > 0) {
+            height = theHeight;
+        }
+    }
+
     public ImageIcon getSprite() {
         return sprite;
+    }
+
+    public void setSprite(final ImageIcon theSprite) {
+        sprite = theSprite;
     }
 
     public Integer getLayer() {
@@ -87,7 +103,23 @@ public abstract class Monster extends DungeonCharacter {
         return offSetI;
     }
 
+    public void setOffSetI(final int theOffSetI) {
+        offSetI = theOffSetI;
+    }
+
     public int getOffSetJ() {
         return offSetJ;
+    }
+
+    public void setOffSetJ(final int theOffSetJ) {
+        offSetJ = theOffSetJ;
+    }
+
+    public String getName() {
+        return super.getName();
+    }
+
+    public void setName(final String theName) {
+        super.setName(theName);
     }
 }

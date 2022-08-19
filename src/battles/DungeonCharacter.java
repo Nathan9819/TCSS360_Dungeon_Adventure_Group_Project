@@ -116,4 +116,7 @@ public abstract class DungeonCharacter {
         setDMGRange(1000, 1001);
         setHit(1);
     }
+    public void setName(final String theName) {
+        myName = theName;
+    }
 }

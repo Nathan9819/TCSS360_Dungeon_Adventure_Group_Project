@@ -34,8 +34,20 @@ public class Entity {
         return width;
     }
 
+    public void setWidth(final int theWidth) {
+        if (theWidth > 0) {
+            width = theWidth;
+        }
+    }
+
     public int getHeight() {
         return height;
+    }
+
+    public void setHeight(final int theHeight) {
+        if (theHeight > 0) {
+            height = theHeight;
+        }
     }
 
     public ImageIcon getSprite() {

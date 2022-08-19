@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * The DungeonGeneration. UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
@@ -16,7 +17,9 @@ import java.io.InputStream;
 public class UI extends JFrame implements KeyListener{
     DungeonAdventure da;
     private boolean started, cheatsActivated;
-    private int currentAction, screenWidth, screenHeight;
+    private int currentAction;
+    private int screenWidth;
+    private int screenHeight;
     private JLayeredPane titleScreen, layeredPane, combatButtons, interactButtons, finalButtons;
     private Font titleFont, normalFont;
     private Color bgColor, txtColor;
@@ -71,6 +74,8 @@ public class UI extends JFrame implements KeyListener{
         this.setFocusable(true);
         this.setLayout(null);
         this.addKeyListener(this);
+        ImageIcon myIcon = new ImageIcon(getClass().getResource("Assets/DungeonAdventureIcon.png"));
+        this.setIconImage(myIcon.getImage());
         this.pack();
         mainMenu();
     }
@@ -263,6 +268,13 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.add(entities[theI][theJ], theEntity.getLayer());
     }
 
+    public void spawnFinalBoss(final Entity theEntity, final int theI, final int theJ) {
+        entities[0][0] = new JLabel();
+        entities[0][0].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theEntity.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theEntity.getOffSetI()), theEntity.getWidth(), theEntity.getHeight());
+        entities[0][0].setIcon(theEntity.getSprite());
+        layeredPane.add(entities[0][0], theEntity.getLayer());
+    }
+
     /**
      * The spawnMonster method is used when the player move to/spawns in a room that is adjacent to a room containing a monster.
      * The contents of a room is only to be revealed when the player comes close enough, so this method is called by the updateRooms
@@ -291,33 +303,17 @@ public class UI extends JFrame implements KeyListener{
      * @param theY      The y-coordinate for the player to be drawn onscreen
      */
     public void spawnPlayer(final Player thePlayer, final int theX, final int theY) {
-        if (da.getFloor() == 0) {
-            player = new JLabel();
-            player.setBounds(theX, theY, thePlayer.getWidth(), thePlayer.getHeight());
-            player.setIcon(thePlayer.getSprite());
-            layeredPane.add(player, thePlayer.getLayer());
-        } else {
-            player.setLocation(theX, theY);
-            layeredPane.add(player, thePlayer.getLayer());
+        player = new JLabel();
+        player.setBounds(theX, theY, thePlayer.getWidth(), thePlayer.getHeight());
+        player.setIcon(thePlayer.getSprite());
+        layeredPane.add(player, thePlayer.getLayer());
+        if (da.getFloor() < 3) {
+            RoomTile myLightRoom = new RoomTile(true);
+            myLightRoom.setRoomImage(da.getRoomCode(thePlayer.getCoords().x, thePlayer.getCoords().y));
+            roomsAndHallways[thePlayer.getCoords().x][thePlayer.getCoords().y].setIcon(myLightRoom.getSprite());
+            updateRooms(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
         }
-        RoomTile myLightRoom = new RoomTile(true);
-        myLightRoom.setRoomImage(da.getRoomCode(thePlayer.getCoords().x, thePlayer.getCoords().y));
-        roomsAndHallways[thePlayer.getCoords().x][thePlayer.getCoords().y].setIcon(myLightRoom.getSprite());
-        updateRooms(thePlayer.getCoords().x, thePlayer.getCoords().y, thePlayer.getRoom());
         layeredPane.update(layeredPane.getGraphics());
-
-//        Key myBlueKey = new Key("Blue");
-//        Key myGreenKey = new Key("Green");
-//        Key myYellowKey = new Key("Yellow");
-//        spawnEntity(myBlueKey, 0, 0);
-//        spawnEntity(myGreenKey, 0, 1);
-//        spawnEntity(myYellowKey, 1, 0);
-//        addToInventory(0, 0, 0);
-//        addToInventory(0, 1, 0);
-//        addToInventory(1, 0, 0);
-//        keys[0] = myBlueKey;
-//        keys[1] = myGreenKey;
-//        keys[2] = myYellowKey;
     }
 
     public void updateRooms(final int theI, final int theJ, final Room theRoom) {
@@ -640,14 +636,18 @@ public class UI extends JFrame implements KeyListener{
         currentAction--;
         Thread.sleep(2000);
         if (da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getHP() <= 0) {
-            description.setText("THE " + da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getName().toUpperCase() + " WAS DEFEATED!");
-            entities[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].setVisible(false);
-            da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].killMonster();
-            player.setBounds((((int) Math.ceil(((double) da.getPlayer().getCoords().y)/ 2) * 26) + (((da.getPlayer().getCoords().y)/ 2) * 51) + da.getPlayer().getOffSetJ()),
-                    (((int) Math.ceil(((double) da.getPlayer().getCoords().x)/2) * 20) + ((((da.getPlayer().getCoords().x) / 2)) * 51) + da.getPlayer().getOffSetI()), da.getPlayer().getWidth(), da.getPlayer().getHeight());
-            description.update(description.getGraphics());
-            currentAction = 0;
             combatButtons.setVisible(false);
+            if (!da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getName().equals("GIANT SCARY RAT")) {
+                description.setText("THE " + da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getName().toUpperCase() + " WAS DEFEATED!");
+                entities[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].setVisible(false);
+                da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].killMonster();
+                player.setBounds((((int) Math.ceil(((double) da.getPlayer().getCoords().y) / 2) * 26) + (((da.getPlayer().getCoords().y) / 2) * 51) + da.getPlayer().getOffSetJ()),
+                        (((int) Math.ceil(((double) da.getPlayer().getCoords().x) / 2) * 20) + ((((da.getPlayer().getCoords().x) / 2)) * 51) + da.getPlayer().getOffSetI()), da.getPlayer().getWidth(), da.getPlayer().getHeight());
+                description.update(description.getGraphics());
+                currentAction = 0;
+            } else {
+                endGame("THE HUGE TERRIFYING RODENT WAS FELLED! THE HERO IS VICTORIOUS!\nPLAY AGAIN?");
+            }
         } else {
             if (currentAction <= 0) {
                 description.setText(da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().attack(da.getPlayer().getHeroType()).toUpperCase());
@@ -660,9 +660,9 @@ public class UI extends JFrame implements KeyListener{
                             (((int) Math.ceil(((double) da.getPlayer().getCoords().x)/2) * 20) + ((((da.getPlayer().getCoords().x) / 2)) * 51) + da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getOffSetI()),
                             da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getWidth(), da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster().getHeight());
                     description.update(description.getGraphics());
-                    // setGameOverScreen();
                     currentAction = 0;
                     combatButtons.setVisible(false);
+                    endGame("THE HERO WAS FELLED! TRY AGAIN?");
                 }
             } else {
                 description.setText("THE " + da.getPlayer().getHeroType().getName().toUpperCase() + " WAS FASTER THAN "
@@ -686,6 +686,7 @@ public class UI extends JFrame implements KeyListener{
                 i = inventory[theRow].length;
             }
         }
+        System.out.println(theX + " : " + theY);
         entities[theX][theY] = null;
         layeredPane.update(layeredPane.getGraphics());
     }
@@ -711,20 +712,21 @@ public class UI extends JFrame implements KeyListener{
     }
 
     private void descend(final int theKey) {
-        removeFromInventory(theKey, 0);
-        roomsAndHallways = new JLabel[22][22];
-        entities = new JLabel[22][22];
         layeredPane.removeAll();
+        Room myRoom = da.getPlayer().getRoom();
         da.generateNewDungeon();
-        for (int i = 0; i < inventory.length; i++) {
-            for (int j = 0; j < inventory[0].length; j++) {
-                if (inventory[i][j] != null) {
-                    layeredPane.add(inventory[i][j]);
+        if (da.getFloor() < 3) {
+            removeFromInventory(theKey, 0);
+            roomsAndHallways = new JLabel[22][22];
+            entities = new JLabel[22][22];
+            for (int i = 0; i < inventory.length; i++) {
+                for (int j = 0; j < inventory[0].length; j++) {
+                    if (inventory[i][j] != null) {
+                        layeredPane.add(inventory[i][j]);
+                    }
                 }
             }
-        }
-        layeredPane.update(layeredPane.getGraphics());
-        if (da.getFloor() < 3) {
+            layeredPane.update(layeredPane.getGraphics());
             this.add(layeredPane);
             for (int i = 0; i < keys.length; i++) {
                 if (keys[i] != null) {
@@ -732,11 +734,30 @@ public class UI extends JFrame implements KeyListener{
                 }
             }
         } else {
-            this.remove(layeredPane);
-            this.update(this.getGraphics());
-            description.setText("CONGRATULATIONS! YOU'VE ESCAPED THE DUNGEON!");
-            finalButtons.setVisible(true);
+            if (myRoom.getTrapDoor() != null) {
+                endGame("CONGRATULATIONS! YOU'VE ESCAPED THE DUNGEON!");
+            } else {
+                for (int i = 0; i < inventory.length; i++) {
+                    for (int j = 0; j < inventory[0].length; j++) {
+                        if (inventory[i][j] != null) {
+                            layeredPane.remove(inventory[i][j]);
+                        }
+                    }
+                }
+                setCurrentAction(da.getPlayer().getHeroType(), da.getDungeon()[0][0].getMonster());
+                combatButtons.setVisible(true);
+                System.out.println("Combat buttons shown");
+                description.setText("THE PORTAL HAS TAKEN YOU TO SOME DANK ROOM\nYOU SWEAR YOU CAN HEAR THE SCURRYING OF A RATHER LARGE RODENT");
+            }
         }
+        this.update(this.getGraphics());
+    }
+
+    private void endGame(final String theFinalMessage) {
+        this.remove(layeredPane);
+        finalButtons.setVisible(true);
+        description.setText(theFinalMessage);
+        this.update(this.getGraphics());
     }
 
     private void close() {
@@ -793,7 +814,9 @@ public class UI extends JFrame implements KeyListener{
                 }
             } else if (da.getPlayer().getRoom().getPortal() != null) {
                 if (acceptButton.equals(source)) {
-                    System.out.println("Progress to final boss");
+                    Key myKey = new Key("Blue");
+                    descend(0);
+                    interactButtons.setVisible(false);
                 } else {
                     interactButtons.setVisible(false);
                 }
@@ -828,6 +851,14 @@ public class UI extends JFrame implements KeyListener{
                 close();
             }
         }
+    }
+
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
     }
 
 }
