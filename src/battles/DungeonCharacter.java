@@ -127,13 +127,13 @@ public abstract class DungeonCharacter {
 	}
         myHit = theHit;
     }
-	/**
-	 * Checks to see if the character can attack its opponent.
-	 * If it can, rolls a number in the character's damage range and damages the enemy.
-	 * 
-	 * @param theOther, the enemy to be attacked
-	 * @return A String containing what took place during the attack
-	 */
+    /**
+     * Checks to see if the character can attack its opponent.
+     * If it can, rolls a number in the character's damage range and damages the enemy.
+     * 
+     * @param theOther, the enemy to be attacked
+     * @return A String containing what took place during the attack
+     */
     public String attack(final DungeonCharacter theOther) {
         StringBuilder myAttackInfo = new StringBuilder();
         if (rand.nextDouble() <= myHit) {
@@ -221,10 +221,18 @@ public abstract class DungeonCharacter {
     public int getShield() {
         return myShield;
     }
+    /**
+     * Activates cheats, setting the damage ridiculously high and the hit chance to guaranteed.
+     */
     public void cheatsActivated() {
         setDMGRange(1000, 1001);
         setHit(1);
     }
+    /**
+     * Sets the name of this DungeonCharacter.
+     * 
+     * @param theName
+     */
     public void setName(final String theName) {
         myName = theName;
     }
