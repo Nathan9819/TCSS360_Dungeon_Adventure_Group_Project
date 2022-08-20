@@ -1,9 +1,24 @@
 import javax.swing.*;
 import java.util.Random;
 
+/**
+ * The DungeonCharacter class. Abstract, as it is only a base for Hero and Monster.
+ * 
+ * @author Colton Wickens
+ * @version August 6, 2022
+ */
 public abstract class DungeonCharacter {
+    /**
+	 * The Max HP.
+	 */
     private int myMaxHP;
+    /**
+	 * The current Hp.
+	 */
     private int myHP;
+    /**
+	 * The lower bound of the damage range.
+	 */
     private int myMinDMG;
     private int myMaxDMG;
     private String myName;
@@ -37,7 +52,6 @@ public abstract class DungeonCharacter {
         setHit(theHit);
         myName = theName;
     }
-
     public int getHP() {
         return myHP;
     }
