@@ -28,7 +28,13 @@ public abstract class DungeonCharacter {
      * The character's name.
      */
     private String myName;
+    /**
+     * The attack speed.
+     */
     private int myAtkSpd;
+    /**
+     * The Hit chance.
+     */
     private double myHit;
     private int myShield;
     private Random rand = new Random();
