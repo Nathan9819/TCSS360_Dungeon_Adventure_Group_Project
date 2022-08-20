@@ -108,24 +108,32 @@ public abstract class DungeonCharacter {
             System.out.println("Minimum damage cannot be less than the maximum.");
             return;
         } else if (theMinDMG <= 0) {
-            System.out.println("Damage range cannot go below 0.");
+            System.out.println("Damage range cannot go below 1.");
             return;
         }
         myMinDMG = theMinDMG;
         myMaxDMG = theMaxDMG;
     }
     /**
-     * Sets the Attack Speed.
-     * Does not allow values less than 1.
+     * Sets the Hit chance.
+     * Does not allow values above 1 or below 0.
      * 
-     * @param theAtkSpd
+     * @param theHit
      */
-    protected void setAtkSpd(final int theAtkSpd) {
-        myAtkSpd = theAtkSpd;
-    }
     protected void setHit(final double theHit) {
+	if (theHit < 0 || theHit > 1) {
+		System.out.println("Hit chance cannot be outside of range [0, 1].");
+		return;
+	}
         myHit = theHit;
     }
+	/**
+	 * Checks to see if the character can attack its opponent.
+	 * If it can, rolls a number in the character's damage range and damages the enemy.
+	 * 
+	 * @param theOther, the enemy to be attacked
+	 * @return A String containing what took place during the attack
+	 */
     public String attack(final DungeonCharacter theOther) {
         StringBuilder myAttackInfo = new StringBuilder();
         if (rand.nextDouble() <= myHit) {
@@ -146,6 +154,7 @@ public abstract class DungeonCharacter {
      * Negative inputs will heal the DungeonCharacter. Positive will hurt it.
      *
      * @param theDMG
+     * @return a String containing what happened
      */
     public String takeDMG(final int theDMG) {
         StringBuilder myDMGInfo = new StringBuilder();
@@ -184,12 +193,31 @@ public abstract class DungeonCharacter {
 	    }
 	    myAtkSpd = theAtkSpd;
     }
+    /**
+     * Returns the DungeonCharacter's name.
+     * 
+     * @return this DungeonCharacter's name
+     */
     public String getName() {
         return myName;
     }
+    /**
+     * Adds the provided shield value to the current shields.
+     * If negative, removes shield.
+     * 
+     * @param theShield
+     */
     protected void addShield(final int theShield) {
         myShield += theShield;
+	if (myShield < 0) {
+		myShield = 0;
+	}
     }
+    /**
+     * Returns the shield value.
+     * 
+     * @return the value of myShield
+     */
     public int getShield() {
         return myShield;
     }
