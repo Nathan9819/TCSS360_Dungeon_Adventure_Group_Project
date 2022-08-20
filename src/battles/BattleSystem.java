@@ -1,6 +1,18 @@
 import java.util.Scanner;
 
+/**
+ * The BattleSystem. This is what does all the battling.
+ * 
+ * @author Colton Wickens
+ * @version August 6, 2022
+ */
 public class BattleSystem {
+    /**
+     *This is the main battling meethod. And also the only method.
+     *
+     * @param thePlayer
+     * @param theEnemy
+     */
     public static void doBattle(final Hero thePlayer, final Monster theEnemy) {
         Scanner in = new Scanner(System.in);
         //boolean cont = true;
