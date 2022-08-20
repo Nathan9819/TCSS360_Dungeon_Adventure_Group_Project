@@ -36,9 +36,18 @@ public abstract class DungeonCharacter {
      * The Hit chance.
      */
     private double myHit;
+    /**
+     * The shield amount.
+     */
     private int myShield;
+    /**
+     * A Randiom variable.
+     */
     private Random rand = new Random();
-
+    
+    /**
+     * The default constructor for DungeonCharacter. Shouldn't be used, but here just in case.
+     */
     protected DungeonCharacter() {
         setHP(100);
         setDMGRange(10, 35);
@@ -64,14 +73,44 @@ public abstract class DungeonCharacter {
         setHit(theHit);
         myName = theName;
     }
+    /**
+	 * Returns the DungeonCharacter's HP.
+	 * 
+	 * @return the HP of this DungeonCharacter
+	 */
     public int getHP() {
         return myHP;
     }
+    /**
+	 * Sets the max and current HP to the provided value.
+	 * Does not allow HP values less than 1.
+	 * 
+	 * @param theMaxHP
+	 */
     protected void setHP(final int theMaxHP) {
-        myMaxHP = theMaxHP;
-        myHP = theMaxHP;
-    }
+		if (theMaxHP <= 0) {
+			System.out.println("Invalid Input for setHP");
+			return;
+		}
+		myMaxHP = theMaxHP;
+		myHP = theMaxHP;
+	}
+    /**
+	 * Sets the damage range.
+	 * Does not allow the max to be less than the min.
+     * Does not allow the min to be less than 1.
+	 * 
+	 * @param theMinDMG
+	 * @param theMaxDMG
+	 */
     protected void setDMGRange(final int theMinDMG, final int theMaxDMG) {
+        if (theMinDMG > theMaxDMG) {
+            System.out.println("Minimum damage cannot be less than the maximum.");
+            return;
+        } else if (theMinDMG <= 0) {
+            System.out.println("Damage range cannot go below 0.");
+            return;
+        }
         myMinDMG = theMinDMG;
         myMaxDMG = theMaxDMG;
     }
