@@ -30,5 +30,4 @@ public class Key extends Entity{
     public String getColor() {
         return color;
     }
-
 }

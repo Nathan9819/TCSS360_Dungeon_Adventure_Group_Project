@@ -33,5 +33,4 @@ public class RoomTile extends Entity{
     public void setRoomImage(String theRoomCode) {
         super.setSprite(new ImageIcon(getClass().getResource("Assets/" + (isLight ? "" : "Dark") + theRoomCode + ".png")));
     }
-
 }

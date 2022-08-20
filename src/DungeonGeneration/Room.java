@@ -354,5 +354,4 @@ public class Room {
     public void setTrapDoor(final TrapDoor theTrapDoor) {
         trapDoor = theTrapDoor;
     }
-
 }
