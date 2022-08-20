@@ -74,35 +74,35 @@ public abstract class DungeonCharacter {
         myName = theName;
     }
     /**
-	 * Returns the DungeonCharacter's HP.
-	 * 
-	 * @return the HP of this DungeonCharacter
-	 */
+     * Returns the DungeonCharacter's HP.
+     * 
+     * @return the HP of this DungeonCharacter
+     */
     public int getHP() {
         return myHP;
     }
     /**
-	 * Sets the max and current HP to the provided value.
-	 * Does not allow HP values less than 1.
-	 * 
-	 * @param theMaxHP
-	 */
+     * Sets the max and current HP to the provided value.
+     * Does not allow HP values less than 1.
+     * 
+     * @param theMaxHP
+     */
     protected void setHP(final int theMaxHP) {
-		if (theMaxHP <= 0) {
-			System.out.println("Invalid Input for setHP");
-			return;
-		}
-		myMaxHP = theMaxHP;
-		myHP = theMaxHP;
-	}
+	    if (theMaxHP <= 0) {
+		    System.out.println("Invalid Input for setHP");
+		    return;
+	    }
+	    myMaxHP = theMaxHP;
+	    myHP = theMaxHP;
+    }
     /**
-	 * Sets the damage range.
-	 * Does not allow the max to be less than the min.
+     * Sets the damage range.
+     * Does not allow the max to be less than the min.
      * Does not allow the min to be less than 1.
-	 * 
-	 * @param theMinDMG
-	 * @param theMaxDMG
-	 */
+     * 
+     * @param theMinDMG
+     * @param theMaxDMG
+     */
     protected void setDMGRange(final int theMinDMG, final int theMaxDMG) {
         if (theMinDMG > theMaxDMG) {
             System.out.println("Minimum damage cannot be less than the maximum.");
@@ -114,6 +114,12 @@ public abstract class DungeonCharacter {
         myMinDMG = theMinDMG;
         myMaxDMG = theMaxDMG;
     }
+    /**
+     * Sets the Attack Speed.
+     * Does not allow values less than 1.
+     * 
+     * @param theAtkSpd
+     */
     protected void setAtkSpd(final int theAtkSpd) {
         myAtkSpd = theAtkSpd;
     }
@@ -165,8 +171,18 @@ public abstract class DungeonCharacter {
         }
         return myDMGInfo.toString();
     }
-    public int getAtkSpd() {
-        return myAtkSpd;
+    /**
+     * Sets the Attack Speed.
+     * Does not allow values less than 1.
+     * 
+     * @param theAtkSpd
+     */
+    protected void setAtkSpd(final int theAtkSpd) {
+	    if (theAtkSpd <= 0) {
+		    System.out.println("Invalid input for attack speed");
+		    return;
+	    }
+	    myAtkSpd = theAtkSpd;
     }
     public String getName() {
         return myName;
