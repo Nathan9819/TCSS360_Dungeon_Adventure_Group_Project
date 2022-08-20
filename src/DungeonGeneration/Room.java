@@ -2,11 +2,12 @@
 import java.awt.*;
 
 /**
- * The DungeonGeneration.Room class is used to store information regarding the rooms within the dungeon. They hold
+ * The Room class is used to store information regarding the rooms within the dungeon. They hold
  * references to their neighbors (if a connection exists), the room contents, the rooms coordinates,
  * the room's code, and if the room has been visited. This information is used throughout other methods
  * and helps achieve the proper display of rooms as well as other basic functions of the program.
- * @Author Nathan Mahnke
+ *
+ * @author Nathan Mahnke
  */
 public class Room {
     private Monster monster;
@@ -21,11 +22,11 @@ public class Room {
     private boolean visited, occupied;
 
     /**
-     * This is the DungeonGeneration.Room constructor. It receives a string for the room's contents and a point for the
-     * room's coordinates. It also instantiates the boolean "visited" as false.
+     * This is the Room constructor. It receives a string for the room's contents and a point for the
+     * Room's coordinates. It also instantiates the boolean "visited" as false.
      *
-     * @param theContents The contents of the room
-     * @param theCoords   The coordinates of the room
+     * @param theContents A String representing the contents of the room
+     * @param theCoords   A Point representing the coordinates of the room
      */
     public Room(final String theContents, final Point theCoords) {
         roomContents = theContents;
@@ -33,6 +34,12 @@ public class Room {
         visited = false;
     }
 
+    /**
+     * setMonster instantiates the Monster stored within the Room Object to be
+     * theMonster.
+     *
+     * @param theMonster The Monster to be stored in the Room
+     */
     public void setMonster(final Monster theMonster) {
         if (!occupied) {
             monster = theMonster;
@@ -42,34 +49,77 @@ public class Room {
         }
     }
 
+    /**
+     * getMonster returns the Monster within the Room
+     *
+     * @return The Monster stored in the variable "monster"
+     */
     public Monster getMonster() {
         return monster;
     }
 
+    /**
+     * killMonster simply sets the Room's Monster to null.
+     */
     public void killMonster() {
         monster = null;
     }
 
+    /**
+     * getRoomCode returns the Room's code which is used when displaying
+     * a room to know which image to assign it.
+     *
+     * @return A String representing the Room's code
+     */
     public String getRoomCode() {
         return roomCode;
     }
 
+    /**
+     * setRoomCode receives a String and updates the Room's
+     * code to the provided String.
+     *
+     * @param theRoomCode The Room's new code
+     */
     public void setRoomCode(final String theRoomCode) {
         roomCode = theRoomCode;
     }
 
+    /**
+     * getRoomContents returns the String representing the Room's contents. This
+     * is used during dungeon generation to show if a Room is generated or a prospective
+     * room.
+     *
+     * @return A String representing the Room's contents
+     */
     public String getRoomContents() {
         return roomContents;
     }
 
+    /**
+     * setRoomContents receives a String and assigns this String to roomContents.
+     *
+     * @param theContents A String representing the new room contents
+     */
     public void setRoomContents(final String theContents) {
         roomContents = theContents;
     }
 
+    /**
+     * getKey return's the Room's Key.
+     *
+     * @return The Room's Key
+     */
     public Key getKey() {
         return key;
     }
 
+    /**
+     * setKey receives a new Key and instantiates the variable "key" to be
+     * the given key, provided the room does not already contain another Entity.
+     *
+     * @param theKey The Room's new Code
+     */
     public void setKey(final Key theKey) {
         if (!occupied) {
             key = theKey;
@@ -84,16 +134,30 @@ public class Room {
         }
     }
 
+    /**
+     * removeKey simply sets the Room's Key to null.
+     */
     public void removeKey() {
         if (key != null) {
             key = null;
         }
     }
 
+    /**
+     * getPotion returns the Room's Potion.
+     *
+     * @return The Room's Potion
+     */
     public Potion getPotion() {
         return potion;
     }
 
+    /**
+     * setPotion instantiates the Room's Potion to be the given Potion,
+     * provided the Room doesn't already contain another Entity.
+     *
+     * @param thePotion The Room's new Potion
+     */
     public void setPotion(final Potion thePotion) {
         if (!occupied) {
             potion = thePotion;
@@ -104,48 +168,107 @@ public class Room {
         }
     }
 
+    /**
+     * removePotion simply sets the Room's Potion to null.
+     */
     public void removePotion() {
         if (potion != null) {
             potion = null;
         }
     }
 
+    /**
+     * getNorth returns the Room to the North that this Room is connected to (which
+     * is null if there isn't a connection).
+     *
+     * @return The Room this Room is connected to to the North
+     */
     public Room getNorth() {
         return north;
     }
 
+    /**
+     * getEast returns the Room to the East that this Room is connected to (which
+     * is null if there isn't a connection).
+     *
+     * @return The Room this Room is connected to to the East
+     */
     public Room getEast() {
         return east;
     }
 
+    /**
+     * getSouth returns the Room to the South that this Room is connected to (which
+     * is null if there isn't a connection).
+     *
+     * @return The Room this Room is connected to to the South
+     */
     public Room getSouth() {
         return south;
     }
 
+    /**
+     * getWest returns the Room to the West that this Room is connected to (which
+     * is null if there isn't a connection).
+     *
+     * @return The Room this Room is connected to to the West
+     */
     public Room getWest() {
         return west;
     }
 
+    /**
+     * setNorth receives a Room and establishes that this Room has a connection with
+     * the provided Room.
+     *
+     * @param theNorth The Room to which this room will form a connection
+     */
     public void setNorth(final Room theNorth) {
         north = theNorth;
     }
 
+    /**
+     * setEast receives a Room and establishes that this Room has a connection with
+     * the provided Room.
+     *
+     * @param theEast The Room to which this room will form a connection
+     */
     public void setEast(final Room theEast) {
         east = theEast;
     }
 
+    /**
+     * setSouth receives a Room and establishes that this Room has a connection with
+     * the provided Room.
+     *
+     * @param theSouth The Room to which this room will form a connection
+     */
     public void setSouth(final Room theSouth) {
         south = theSouth;
     }
 
+    /**
+     * setWest receives a Room and establishes that this Room has a connection with
+     * the provided Room.
+     *
+     * @param theWest The Room to which this room will form a connection
+     */
     public void setWest(final Room theWest) {
         west = theWest;
     }
 
+    /**
+     * setVisited sets the boolean "visited" to true
+     */
     public void setVisited() {
         visited = true;
     }
 
+    /**
+     * getItem returns any Key or Potion stored within the Room.
+     *
+     * @return The Entity stored within the Room
+     */
     public Entity getItem() {
         if (occupied) {
             if (key != null) {
@@ -157,37 +280,77 @@ public class Room {
         return null;
     }
 
+    /**
+     * hasItem is used to determine if the room contains an Entity or not.
+     *
+     * @return True if the Room contains an Entity, false otherwise
+     */
     public boolean hasItem() {
-        if (occupied && monster == null) {
-            return true;
-        }
-        return false;
+        return occupied && monster == null;
     }
 
+    /**
+     * isVisited returns the current state of the boolean "visited".
+     *
+     * @return The boolean "visited"
+     */
     public boolean isVisited() {
-        return visited;
+        return !visited;
     }
 
+    /**
+     * getCoords returns the coordinates of the Room.
+     *
+     * @return A Point representing the coordinates of the Room
+     */
     public Point getCoords() {
         return coords;
     }
 
-    public void setCoords(final Point coords) {
-        this.coords = coords;
+    /**
+     * setCoords receives a Point and assigns that point to the variable
+     * "coords".
+     *
+     * @param theCoords The Point representing the new coordinates
+     */
+    public void setCoords(final Point theCoords) {
+        coords = theCoords;
     }
 
+    /**
+     * getPortal returns the Room's Portal.
+     *
+     * @return The Room's Portal
+     */
     public Portal getPortal() {
         return portal;
     }
 
+    /**
+     * setPortal receives a Portal and assigns it to the variable
+     * "portal".
+     *
+     * @param thePortal The Room's new Portal
+     */
     public void setPortal(final Portal thePortal) {
         portal = thePortal;
     }
 
+    /**
+     * getTrapDoor returns the Room's TrapDoor.
+     *
+     * @return The Room's TrapDoor
+     */
     public TrapDoor getTrapDoor() {
         return trapDoor;
     }
 
+    /**
+     * setTrapDoor receives a TrapDoor and assigns it to the variable
+     * "trapDoor".
+     *
+     * @param theTrapDoor The Room's new TrapDoor
+     */
     public void setTrapDoor(final TrapDoor theTrapDoor) {
         trapDoor = theTrapDoor;
     }

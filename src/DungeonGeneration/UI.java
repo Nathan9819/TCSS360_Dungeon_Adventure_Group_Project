@@ -6,20 +6,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 /**
- * The DungeonGeneration. UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
+ * The UI class is used for all things GUI. This class extends JFrame and implements KeyListener.
  * The extension of JFrame allows the class to act as its own JFrame and the KeyListener implementation
  * allows for the user to input key commands (WASD for movement, etc.).
+ *
  * @Author Nathan Mahnke
  */
 public class UI extends JFrame implements KeyListener{
-    DungeonAdventure da;
+    private DungeonAdventure da;
     private boolean started, cheatsActivated;
-    private int currentAction;
-    private int screenWidth;
-    private int screenHeight;
+    private int currentAction, screenWidth, screenHeight;
     private JLayeredPane titleScreen, layeredPane, combatButtons, interactButtons, finalButtons;
     private Font titleFont, normalFont;
     private Color bgColor, txtColor;
@@ -37,11 +35,11 @@ public class UI extends JFrame implements KeyListener{
 
 
     /**
-     * This is the DungeonGeneration. UI constructor. It receives a DungeonGeneration.DungeonAdventure object that allows it to reference
+     * This is the UI constructor. It receives a DungeonAdventure object that allows it to reference
      * the 2d array within that represents the dungeon. This is vital for polling room contents when
      * displaying a room, as well as, referencing the player character and its location.
      *
-     * @param theDA The DungeonGeneration.DungeonAdventure object
+     * @param theDA The DungeonAdventure Object
      */
     public UI(final DungeonAdventure theDA) {
         this.da = theDA;
@@ -60,7 +58,7 @@ public class UI extends JFrame implements KeyListener{
 
 
     /**
-     * The createMainField method instantiates and sets the parameters of the JFrame which encompasses the DungeonGeneration. UI class.
+     * The createMainField method instantiates and sets the parameters of the JFrame which encompasses the UI class.
      * It also instantiates the JLayeredPane to be used in the placement of visual assets.
      */
     public void createMainField() {
@@ -87,13 +85,14 @@ public class UI extends JFrame implements KeyListener{
      */
     public void mainMenu() {
         try {
-            InputStream myIS = getClass().getResourceAsStream("DungeonGeneration/Assets/MaruMonica.ttf");
+            InputStream myIS = getClass().getResourceAsStream("Assets/MaruMonica.ttf");
             titleFont = Font.createFont(Font.TRUETYPE_FONT, myIS).deriveFont(Font.BOLD, 70f);
             normalFont = titleFont.deriveFont(40f);
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
             System.out.println("Font error!");
         }
+        // Title screen creation
         titleScreen = new JLayeredPane();
         titleScreen.setBounds(0, 0, screenWidth, screenHeight);
         this.add(titleScreen);
@@ -103,6 +102,7 @@ public class UI extends JFrame implements KeyListener{
         myTitleLabel.setFont(titleFont);
         myTitleLabel.setBounds(screenWidth/4, (int) ((double) screenHeight/6), (int) ((double) screenWidth/2.5), screenHeight/8);
         titleScreen.add(myTitleLabel, 0);
+        // Start button creation
         startButton = new JButton("START");
         startButton.setFont(normalFont);
         startButton.setForeground(txtColor);
@@ -111,7 +111,7 @@ public class UI extends JFrame implements KeyListener{
         startButton.setBounds((int) ((double) screenWidth/2.2) - screenWidth/16, (int) ((double) screenHeight/1.5), screenWidth/8, screenHeight/12);
         startButton.setAlignmentX(JLayeredPane.CENTER_ALIGNMENT);
         titleScreen.add(startButton, 0);
-
+        // Knight button creation
         Player myKnight = new Player(0, 0, 0);
         knightButton = new JButton("KNIGHT", new ImageIcon(myKnight.getSprite().getImage().getScaledInstance(myKnight.getWidth()*2, myKnight.getHeight()*2, Image.SCALE_SMOOTH)));
         knightButton.setFont(normalFont);
@@ -120,7 +120,7 @@ public class UI extends JFrame implements KeyListener{
         knightButton.setBounds(0, (int) ((double) screenHeight/2.3), screenWidth/3, screenHeight/12);
         knightButton.addActionListener(gameStart);
         titleScreen.add(knightButton, 0);
-
+        // Priestess button creation
         Player myPriestess = new Player(0, 0, 1);
         priestessButton = new JButton("Priestess", new ImageIcon(myPriestess.getSprite().getImage().getScaledInstance(myPriestess.getWidth()*2, myPriestess.getHeight()*2, Image.SCALE_SMOOTH)));
         priestessButton.setFont(normalFont);
@@ -129,7 +129,7 @@ public class UI extends JFrame implements KeyListener{
         priestessButton.setBounds(screenWidth/3, (int) ((double) screenHeight/2.3), screenWidth/3, screenHeight/12);
         priestessButton.addActionListener(gameStart);
         titleScreen.add(priestessButton, 0);
-
+        // Thief button creation
         Player myThief = new Player(0, 0, 2);
         thiefButton = new JButton("THIEF", new ImageIcon(myThief.getSprite().getImage().getScaledInstance(myThief.getWidth()*2, myThief.getHeight()*2, Image.SCALE_SMOOTH)));
         thiefButton.setFont(normalFont);
@@ -139,21 +139,25 @@ public class UI extends JFrame implements KeyListener{
         thiefButton.addActionListener(gameStart);
         titleScreen.add(thiefButton, 0);
 
+        // Frame is set visible
         this.setVisible(true);
     }
 
 
     /**
      * The startGame method is called once the user selects a class and clicks start. The method handles removing the title menu UI and
-     * adding the game board (JlayeredPane) as well as text area.
+     * adding the game board (JlayeredPane) as well as text area and other pertinent buttons.
      */
     public void startGame() {
+        // Disabling the title screen
         titleScreen.setVisible(false);
+        // Creating the game board's layered pane
         layeredPane = new JLayeredPane();
         layeredPane.setBounds(10, 10, screenWidth - 10, screenHeight - (screenHeight/3));
         layeredPane.setDoubleBuffered(true);
         layeredPane.setBackground(bgColor);
         this.add(layeredPane);
+        // Creating the main text area
         description = new JTextArea("YOU FIND YOURSELF LOST AND ALONE. THE ONLY WAY OUT . . . IS THROUGH!");
         description.setLineWrap(true);
         description.setWrapStyleWord(true);
@@ -163,12 +167,12 @@ public class UI extends JFrame implements KeyListener{
         description.setForeground(txtColor);
         description.setEditable(false);
         this.add(description);
-
+        // Creating the layered pane for holding combat buttons
         combatButtons = new JLayeredPane();
         combatButtons.setBounds(10, screenHeight - (screenHeight/8), screenWidth - 10, screenHeight - (screenHeight/12));
         combatButtons.setDoubleBuffered(true);
         combatButtons.setBackground(bgColor);
-
+        // Attack button creation
         attackButton = new JButton("ATTACK");
         attackButton.setFont(normalFont);
         attackButton.setForeground(txtColor);
@@ -176,7 +180,7 @@ public class UI extends JFrame implements KeyListener{
         attackButton.setBounds(10, 0, screenWidth/5, screenHeight/12);
         attackButton.addActionListener(combat);
         combatButtons.add(attackButton);
-
+        // Special button creation
         specialButton = new JButton("SPECIAL");
         specialButton.setFont(normalFont);
         specialButton.setForeground(txtColor);
@@ -184,15 +188,15 @@ public class UI extends JFrame implements KeyListener{
         specialButton.setBounds(20 + screenWidth/5, 0, screenWidth/5, screenHeight/12);
         specialButton.addActionListener(combat);
         combatButtons.add(specialButton);
-
+        // Adding combat button pane to frame and disabling it from view
         this.add(combatButtons);
         combatButtons.setVisible(false);
-
+        // Creating layered pane for interaction buttons
         interactButtons = new JLayeredPane();
         interactButtons.setBounds(10, screenHeight - (screenHeight/8), screenWidth - 10, screenHeight - (screenHeight/12));
         interactButtons.setDoubleBuffered(true);
         interactButtons.setBackground(bgColor);
-
+        // Accept button creation
         acceptButton = new JButton("YES");
         acceptButton.setFont(normalFont);
         acceptButton.setForeground(txtColor);
@@ -200,7 +204,7 @@ public class UI extends JFrame implements KeyListener{
         acceptButton.setBounds(10, 0, screenWidth/5, screenHeight/12);
         acceptButton.addActionListener(interaction);
         interactButtons.add(acceptButton);
-
+        // Decline button creation
         declineButton = new JButton("NO");
         declineButton.setFont(normalFont);
         declineButton.setForeground(txtColor);
@@ -208,15 +212,15 @@ public class UI extends JFrame implements KeyListener{
         declineButton.setBounds(20 + screenWidth/5, 0, screenWidth/5, screenHeight/12);
         declineButton.addActionListener(interaction);
         interactButtons.add(declineButton);
-
+        // Adding interact button pane to frame and disabling it from view
         this.add(interactButtons);
         interactButtons.setVisible(false);
-
+        // Creating the pane for final buttons (restart and quit)
         finalButtons = new JLayeredPane();
         finalButtons.setBounds(10, screenHeight - (screenHeight/8), screenWidth - 10, screenHeight - (screenHeight/12));
         finalButtons.setDoubleBuffered(true);
         finalButtons.setBackground(bgColor);
-
+        // Quit button creation
         quitButton = new JButton("QUIT");
         quitButton.setFont(normalFont);
         quitButton.setForeground(txtColor);
@@ -224,7 +228,7 @@ public class UI extends JFrame implements KeyListener{
         quitButton.setBounds(10, 0, screenWidth/5, screenHeight/12);
         quitButton.addActionListener(endOfGame);
         finalButtons.add(quitButton);
-
+        // Restart button creation
         restartButton = new JButton("RESTART");
         restartButton.setFont(normalFont);
         restartButton.setForeground(txtColor);
@@ -232,21 +236,21 @@ public class UI extends JFrame implements KeyListener{
         restartButton.setBounds(20 + screenWidth/5, 0, screenWidth/5, screenHeight/12);
         restartButton.addActionListener(endOfGame);
         finalButtons.add(restartButton);
-
+        // Adding final button pane to frame and disabling from view
         this.add(finalButtons);
         finalButtons.setVisible(false);
 
+        // Starting game
         da.startGame();
     }
 
 
     /**
-     * The spawnItem method is used in the placement of virtually all visual assets. The only exception
-     * to this is the placement of the player character's visual asset. This method receives and DungeonGeneration.Entity,
+     * The spawnRoomOrHallway method is used in the placement of all rooms or hallways. This method receives an Entity,
      * two integers (x and y) for screen coordinates, and two more integers (i and j) for array coordinates.
-     * Using the given information, a new JLabel is added to "labels" at the given array coordinates. Then,
-     * the DungeonGeneration.Entity is referenced for its height and width data as well as the visual asset used to represent
-     * it. It is then placed at the given x and y coordinated on the JLayeredPane.
+     * Using the given information, a new JLabel is added to "roomsAndHallways" at the given array coordinates. Then,
+     * the Entity is referenced for its height and width data as well as the visual asset used to represent
+     * it. It is then placed at the given x and y coordinates on the JLayeredPane.
      *
      * @param theEntity The entity to be drawn to the screen
      * @param theX      The x-coordinate for the entity to be drawn onscreen
@@ -261,18 +265,22 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.add(roomsAndHallways[theI][theJ], theEntity.getLayer());
     }
 
+    /**
+     * The spawnEntity method is used in the placement of all items/intractables. This method receives an
+     * Entity and two integers (i and j) for array coordinates. Using the given information, a new JLabel
+     * is added to "labels" at the given array coordinates. Then, the Entity is referenced for its height
+     * and width data as well as the visual asset used to represent it. It is then placed at the calculated
+     * x and y coordinates on the JLayeredPane.
+     *
+     * @param theEntity The entity to be drawn to the screen
+     * @param theI      The i-coordinate for the JLabel to be added to the JLabel array
+     * @param theJ      The j-coordinate for the JLabel to be added to the JLabel array
+     */
     public void spawnEntity(final Entity theEntity, final int theI, final int theJ) {
         entities[theI][theJ] = new JLabel();
         entities[theI][theJ].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theEntity.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theEntity.getOffSetI()), theEntity.getWidth(), theEntity.getHeight());
         entities[theI][theJ].setIcon(theEntity.getSprite());
         layeredPane.add(entities[theI][theJ], theEntity.getLayer());
-    }
-
-    public void spawnFinalBoss(final Entity theEntity, final int theI, final int theJ) {
-        entities[0][0] = new JLabel();
-        entities[0][0].setBounds((((int) Math.ceil((double) theJ / 2) * 26) + ((theJ / 2) * 51) + theEntity.getOffSetJ()), (((int) Math.ceil((double) theI / 2) * 20) + ((theI / 2) * 51) + theEntity.getOffSetI()), theEntity.getWidth(), theEntity.getHeight());
-        entities[0][0].setIcon(theEntity.getSprite());
-        layeredPane.add(entities[0][0], theEntity.getLayer());
     }
 
     /**
@@ -296,7 +304,9 @@ public class UI extends JFrame implements KeyListener{
      * accepts a player object as well sa two integers (x and y) to be used for the players onscreen coordinates.
      * The method then places the player character onscreen at the given coordinates and calls the setLight method
      * to update the lighting of the rooms adjacent to the player. This effect restricts the player's view of the board
-     * allowing them to only see rooms previously visited or rooms adjacent to rooms previously visited.
+     * allowing them to only see rooms previously visited or rooms adjacent to rooms previously visited. No lighting
+     * needs to be updated on the third floor, so that method along with a few other updates are not called/made when
+     * the floor is three or greater.
      *
      * @param thePlayer The player object to be drawn onscreen
      * @param theX      The x-coordinate for the player to be drawn onscreen
@@ -316,13 +326,23 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.update(layeredPane.getGraphics());
     }
 
+    /**
+     * updateRooms is a method called when the player moves or is spawned in. It receives the coordinates of a Room and
+     * the Room itself (This could be simplified to simply reference the coordinates of the Room from the Room object
+     * received). Using this information, All adjacent rooms are checked. If they exist and a path to them exists, then
+     * the room and the hallway leading to it are set to their light variants and anything within the room is displayed.
+     *
+     * @param theI    The i-coordinate of the Room
+     * @param theJ    The j-coordinate of the Room
+     * @param theRoom The Room to check from
+     */
     public void updateRooms(final int theI, final int theJ, final Room theRoom) {
         RoomTile myLightRoom = new RoomTile(true);
         myLightRoom.setRoomImage(da.getRoomCode(theI, theJ));
         HallwayHorizontal myLightHH = new HallwayHorizontal(true);
         HallwayVertical myLightHV = new HallwayVertical(true);
         if (theRoom.getNorth() != null) {
-            if (!theRoom.getNorth().isVisited()) {
+            if (theRoom.getNorth().isVisited()) {
                 roomsAndHallways[theI - 1][theJ].setIcon(myLightHV.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI - 2, theJ));
                 roomsAndHallways[theI - 2][theJ].setIcon(myLightRoom.getSprite());
@@ -344,7 +364,7 @@ public class UI extends JFrame implements KeyListener{
             }
         }
         if (theRoom.getEast() != null) {
-            if (!theRoom.getEast().isVisited()) {
+            if (theRoom.getEast().isVisited()) {
                 roomsAndHallways[theI][theJ + 1].setIcon(myLightHH.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI, theJ + 2));
                 roomsAndHallways[theI][theJ + 2].setIcon(myLightRoom.getSprite());
@@ -363,7 +383,7 @@ public class UI extends JFrame implements KeyListener{
             }
         }
         if (theRoom.getWest() != null) {
-            if (!theRoom.getWest().isVisited()) {
+            if (theRoom.getWest().isVisited()) {
                 roomsAndHallways[theI][theJ - 1].setIcon(myLightHH.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI, theJ - 2));
                 roomsAndHallways[theI][theJ - 2].setIcon(myLightRoom.getSprite());
@@ -382,7 +402,7 @@ public class UI extends JFrame implements KeyListener{
             }
         }
         if (theRoom.getSouth() != null) {
-            if (!theRoom.getSouth().isVisited()) {
+            if (theRoom.getSouth().isVisited()) {
                 roomsAndHallways[theI + 1][theJ].setIcon(myLightHV.getSprite());
                 myLightRoom.setRoomImage(da.getRoomCode(theI + 2, theJ));
                 roomsAndHallways[theI + 2][theJ].setIcon(myLightRoom.getSprite());
@@ -405,7 +425,7 @@ public class UI extends JFrame implements KeyListener{
     }
 
     /**
-     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.
+     * This method is unused, but required due to the implementation of KeyListener by UI.
      *
      * @param theE The key being typed
      */
@@ -484,7 +504,7 @@ public class UI extends JFrame implements KeyListener{
     }
 
     /**
-     * This method is unused, but required due to the implementation of KeyListener by DungeonGeneration.
+     * This method is unused, but required due to the implementation of KeyListener by UI.
      *
      * @param theE The key being released
      */
@@ -497,7 +517,9 @@ public class UI extends JFrame implements KeyListener{
      * The movePlayer method accepts and integer representing the direction to move the player.
      * For this method to be called, the direction has already been tested and is considered valid,
      * so the method simply moves the player in the given direction by setting the proper offsets,
-     * update the players room, coordinates, and the lighting of the rooms.
+     * update the players room, coordinates, and the lighting of the rooms. The method also checks what
+     * the room being moved into contains and properly handles the interaction between the player and the
+     * Room's contents.
      *
      * @param theDirection The direction for the player to be moved
      */
@@ -522,34 +544,25 @@ public class UI extends JFrame implements KeyListener{
             case 2 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getSouth());
             case 3 -> da.getPlayer().setRoom(da.getPlayer().getRoom().getWest());
         }
-        System.out.println(da.getPlayer().getCoords().x + " : " + da.getPlayer().getCoords().y);
         Key myKey = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getKey();
         Potion myPotion = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getPotion();
         Monster myMonster = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getMonster();
         TrapDoor myTrapDoor = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getTrapDoor();
         Portal myPortal = da.getDungeon()[da.getPlayer().getCoords().x][da.getPlayer().getCoords().y].getPortal();
 
+        // If the room contains a trap door
         if (myTrapDoor != null) {
-            description.setText("AT YOUR FEET, YOU DISCOVER A TRAP DOOR!\n");
-            if (myTrapDoor.isOpened()) {
-                description.append("DESCEND?");
-            } else {
-                description.append("IT'S LOCKED TIGHT. IT LOOKS LIKE A GREY KEY COULD FIT THE LOCK");
-            }
-            boolean myTest = false;
+            description.setText("AT YOUR FEET, YOU DISCOVER A TRAP DOOR!\nIT LOOKS LIKE A GREY KEY COULD FIT THE LOCK");
             for (int i = 0; i < keys.length; i++) {
                 if (keys[i] != null){
                     if (keys[i].getColor().equals("Grey")) {
                         description.append("\nYOU HAVE THE KEY TO OPEN THIS DOOR.\nUSE KEY?");
                         interactButtons.setVisible(true);
-                        myTest = true;
                         break;
                     }
                 }
             }
-            if (!myTest) {
-                System.out.println("NO GREY KEY IN INVENTORY");
-            }
+        // If the room contains a portal
         } else if (myPortal != null) {
             description.setText("THE FLOOR OF THIS ROOM IS COVERED IN INTRICATE CARVINGS\nYOU SEE THREE SMALL KEY HOLES. ONE BLUE, ONE YELLOW, ONE GREEN");
             boolean myBlue = false, myGreen = false, myYellow = false;
@@ -575,7 +588,7 @@ public class UI extends JFrame implements KeyListener{
             }
         }
 
-        if (!da.getPlayer().getRoom().isVisited()) {
+        if (da.getPlayer().getRoom().isVisited()) {
             // If the room contains a key
             if (myKey != null) {
                 description.setText(myKey.getName().toUpperCase() + " COLLECTED!");
@@ -590,7 +603,6 @@ public class UI extends JFrame implements KeyListener{
             // If the room contains a potion
             } else if (myPotion != null) {
                 description.setText(myPotion.getName().toUpperCase() + " COLLECTED!");
-                da.getPlayer().addPotion(myPotion);
                 if (inventory[1][9] == null) {
                     addToInventory(da.getPlayer().getCoords().x, da.getPlayer().getCoords().y, 1);
                 } else {
@@ -615,6 +627,13 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.update(layeredPane.getGraphics());
     }
 
+    /**
+     * setCurrentAction is used to referee combat. It applies the speed mechanic to the combat, allowing the faster
+     * combatant to go first and more often if applicable.
+     *
+     * @param thePlayer  The Player involved in the combat
+     * @param theMonster The Monster involved in the combat
+     */
     private void setCurrentAction(final Hero thePlayer, final Monster theMonster) {
         int atk = thePlayer.getAtkSpd() % theMonster.getAtkSpd();
         if (atk <= 0) {
@@ -623,6 +642,19 @@ public class UI extends JFrame implements KeyListener{
         currentAction = atk;
     }
 
+    /**
+     * battle handles all things to do with combat. It receives an int representing the player's desired attack type
+     * then handles the interaction between the player and the monster. It applies the players chosen attack, checks if
+     * the player is fast enough to get to go a second time (if they are, it lets them choose another attack), checks
+     * if the Monster has been killed, if it hasn't, it resolves the Monster's attack and then simply waits for the next
+     * time it is called. If the player is killed, the game is sent to the final screen and the player is told they have
+     * died. If the monster dies, the player is recentered in the room, the monster is removed from the room, and combat
+     * buttons are hidden, re-enabling movement.
+     *
+     * @param attackType            An int representing the type of attack chosen by the player
+     * @throws InterruptedException This is caused by the used of Thread.sleep() to slow the speed of
+     *                              combat text to a readable rate
+     */
     private void battle(final int attackType) throws InterruptedException {
         if (attackType > 1 || attackType < 0) {
             return;
@@ -676,6 +708,14 @@ public class UI extends JFrame implements KeyListener{
         }
     }
 
+    /**
+     * addToInventory moves a JLabel in the entities array to the inventory array and physically moves the JLabel to the
+     * appropriate on-screen location given the row number passed and the number of items in the inventory already.
+     *
+     * @param theX   An int representing the x-coordinate
+     * @param theY   An int representing the y-coordinate
+     * @param theRow An int representing the row of the inventory for the JLabel to be moved to
+     */
     public void addToInventory(final int theX, final int theY, int theRow) {
         entities[theX][theY].setIcon(new ImageIcon(((ImageIcon) entities[theX][theY].getIcon()).getImage().getScaledInstance(entities[theX][theY].getWidth()*2, entities[theX][theY].getHeight()*2, Image.SCALE_SMOOTH)));
         entities[theX][theY].setSize(entities[theX][theY].getWidth()*2, entities[theX][theY].getHeight()*2);
@@ -691,6 +731,14 @@ public class UI extends JFrame implements KeyListener{
         layeredPane.update(layeredPane.getGraphics());
     }
 
+    /**
+     * removeFromInventory is basically the same as addToInventory, but the inverse. The item at the row and column
+     * provided within the inventory array is removed and items are shifted to reflect this removal and not leave a
+     * gap where the JLabel once was.
+     *
+     * @param theCol An int representing the column
+     * @param theRow An int representing the row
+     */
     public void removeFromInventory(final int theCol, final int theRow) {
         keys[theCol] = null;
         inventory[theRow][theCol] = null;
@@ -711,6 +759,15 @@ public class UI extends JFrame implements KeyListener{
         }
     }
 
+    /**
+     * descend handles anything and everything to do with floor transitions. It receives a key (A key is always used to
+     * travel to the next floor) and removes this key from the inventory before continuing on and resetting the JFrame to
+     * be ready for the new dungeon to be displayed. As a side note, this method needs to be updated to include an option
+     * to remove multiple keys as descending to the boss room costs 3 keys. At the moment, the entire inventory is hidden
+     * when entering the boss floor, but this is a band-aid fix.
+     *
+     * @param theKey The Key to be removed from the inventory
+     */
     private void descend(final int theKey) {
         layeredPane.removeAll();
         Room myRoom = da.getPlayer().getRoom();
@@ -753,6 +810,12 @@ public class UI extends JFrame implements KeyListener{
         this.update(this.getGraphics());
     }
 
+    /**
+     * endGame is called when/if the player dies, escapes the dungeon, or beats the final boss. It removes the game
+     * board from the JFrame and displays the quit and restart buttons.
+     *
+     * @param theFinalMessage
+     */
     private void endGame(final String theFinalMessage) {
         this.remove(layeredPane);
         finalButtons.setVisible(true);
@@ -760,10 +823,18 @@ public class UI extends JFrame implements KeyListener{
         this.update(this.getGraphics());
     }
 
+    /**
+     * close simply disposes of the JFrame that encompasses the UI class. This class exists because this.dispose() cannot
+     * be called from within the actionPerformed method so the quit button cannot close the game without it.
+     */
     private void close() {
         this.dispose();
     }
 
+    /**
+     * gameStartHandler implements ActionListener so that it may be attached to the title screen buttons and handle
+     * information related to starting the game, such as, choosing player class and clicking the start button.
+     */
     private class gameStartHandler implements ActionListener {
 
         @Override
@@ -786,6 +857,10 @@ public class UI extends JFrame implements KeyListener{
         }
     }
 
+    /**
+     * Similar to gameStartHandler, interactionHandler is used for the yes and no buttons and resolves the effects of the
+     * player's choice.
+     */
     private class interactionHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent theE) {
@@ -824,6 +899,10 @@ public class UI extends JFrame implements KeyListener{
         }
     }
 
+    /**
+     * combatHandler implements ActionListener so that it can be used when in combat to call the battle method passing
+     * it the proper value given the player's choice of attack type.
+     */
     private class combatHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -840,6 +919,12 @@ public class UI extends JFrame implements KeyListener{
         }
     }
 
+    /**
+     * endOfGameHandler, just like the other handlers, is responsible for button inputs. It handles the quit and restart
+     * buttons. The quit button simply closes the game, but the restart button is a little more hacked together. It
+     * creates a whole new game then closes the current one. There is definitely a better solution to this and it will be
+     * refined in later versions.
+     */
     private class endOfGameHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -852,13 +937,4 @@ public class UI extends JFrame implements KeyListener{
             }
         }
     }
-
-    public int getScreenWidth() {
-        return screenWidth;
-    }
-
-    public int getScreenHeight() {
-        return screenHeight;
-    }
-
 }

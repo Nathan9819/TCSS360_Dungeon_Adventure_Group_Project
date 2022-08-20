@@ -64,7 +64,7 @@ public abstract class Monster extends DungeonCharacter {
     protected String healSelf() {
         int heal = 0 - (rand.nextInt((myMaxHeal + 1) - myMinHeal) + myMinHeal);
         super.takeDMG(heal);
-        return (super.getName() + " healed " + (0 - heal) + " and has " + super.getHP() + "HP!");
+        return ("\n" + super.getName() + " healed " + (0 - heal) + " and has " + super.getHP() + "HP!");
     }
 
     public int getWidth() {

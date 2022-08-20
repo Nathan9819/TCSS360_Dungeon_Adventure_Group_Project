@@ -53,7 +53,7 @@ public class DungeonGenerator {
         } else {
             finalDungeon = new Room[1][1];
             Ogre finalBoss = new Ogre();
-            finalBoss.setSprite(new ImageIcon(getClass().getResource("DungeonGeneration/Assets/finalBoss.png")));
+            finalBoss.setSprite(new ImageIcon(getClass().getResource("Assets/finalBoss.png")));
             finalBoss.setOffSetI(12);
             finalBoss.setOffSetI(70);
             finalBoss.setHeight(32);
@@ -158,11 +158,16 @@ public class DungeonGenerator {
 
     /**
      * placeEntities is responsible for populating the object stored within the Rooms of the dungeon.
-     * It iterates over all rooms and randomly adds either a monster,
+     * It initializes an ArrayList of Room objects by calling the spawnKeysAndStairs method and passing
+     * it the ArrayList returned by getRooms. spawnKeysAndStairs then spawns key items removing the rooms
+     * where they were added from the ArrayList containing all Room objects. The resulting ArrayList is
+     * one containing all rooms that do not hold a key item. This ArrayList is then iterated over and a
+     * random selection of items are spawned within them. Each category of entities has an equal chance
+     * of occurring. The categories include potions, monsters, or empty rooms.
      */
     public void placeEntities() {
         ArrayList<Room> myRooms = spawnKeysAndStairs(getRooms());
-        int myEnemyCount = 0, myItemOCount = 0, myNextSpawn = 0;
+        int myEnemyCount = 0, myItemOCount = 0, myNextSpawn;
         Random myRand = new Random();
         for (Room r : myRooms) {
             if (r != finalDungeon[0][7]) {
@@ -192,6 +197,14 @@ public class DungeonGenerator {
         }
     }
 
+    /**
+     * As described in the placeEntities method, the spawnKeysAndStairs method receives and ArrayList
+     * of Room objects, it randomly placed key items in the rooms provided. It then returns the
+     * ArrayList it received, minus the Rooms it added key items too.
+     *
+     * @param theRooms An ArrayList of Rooms for key items for be added to
+     * @return The ArrayList received minus the Rooms in which key items were added
+     */
     private ArrayList<Room> spawnKeysAndStairs(final ArrayList<Room> theRooms) {
         Random myRand = new Random();
         int myKey = myRand.nextInt(theRooms.size());
@@ -250,12 +263,18 @@ public class DungeonGenerator {
         return theRooms;
     }
 
+    /**
+     * getRooms creates an ArrayList and populates it with all Rooms in finalDungeon which
+     * have the room contents "Room". It then returns this ArrayList.
+     *
+     * @return An ArrayList of all Rooms in the dungeon with the contents "Room"
+     */
     private ArrayList<Room> getRooms() {
         ArrayList<Room> myArrayList = new ArrayList<>();
-        for (int row = 0; row < finalDungeon.length; row++) {
+        for (Room[] rooms : finalDungeon) {
             for (int col = 0; col < finalDungeon[0].length; col++) {
-                if (finalDungeon[row][col].getRoomContents().equals("Room")) {
-                    myArrayList.add(finalDungeon[row][col]);
+                if (rooms[col].getRoomContents().equals("Room")) {
+                    myArrayList.add(rooms[col]);
                 }
             }
         }
@@ -269,28 +288,33 @@ public class DungeonGenerator {
      * direction from the original room for this new room to be generated. The room at the point
      * has its contents set to "Room" and the room in the proper direction given the integer has its
      * contents set to "Prospective". As well, these two rooms become linked via references to each other
-     * stored within the room object. This is used for later traversal of the dungeon.
+     * stored within the Room object. This is used for later traversal of the dungeon.
      *
-     * @param thePoint         The coordinates of the room from which the new room is to be generated
+     * @param thePoint     The coordinates of the room from which the new room is to be generated
      * @param theDirection The direction from the original room which the new room is to be generated
      */
     public void createRoom(final Point thePoint, final int theDirection) {
-        if (theDirection == 0) {
-            initialDungeon[thePoint.x][thePoint.y].setNorth(initialDungeon[thePoint.x - 1][thePoint.y]);
-            initialDungeon[thePoint.x - 1][thePoint.y].setRoomContents("Prospective");
-            initialDungeon[thePoint.x - 1][thePoint.y].setSouth(initialDungeon[thePoint.x][thePoint.y]);
-        } else if (theDirection == 1) {
-            initialDungeon[thePoint.x][thePoint.y].setEast(initialDungeon[thePoint.x][thePoint.y + 1]);
-            initialDungeon[thePoint.x][thePoint.y + 1].setRoomContents("Prospective");
-            initialDungeon[thePoint.x][thePoint.y + 1].setWest(initialDungeon[thePoint.x][thePoint.y]);
-        } else if (theDirection == 2) {
-            initialDungeon[thePoint.x][thePoint.y].setSouth(initialDungeon[thePoint.x + 1][thePoint.y]);
-            initialDungeon[thePoint.x + 1][thePoint.y].setRoomContents("Prospective");
-            initialDungeon[thePoint.x + 1][thePoint.y].setNorth(initialDungeon[thePoint.x][thePoint.y]);
-        } else if (theDirection == 3) {
-            initialDungeon[thePoint.x][thePoint.y].setWest(initialDungeon[thePoint.x][thePoint.y - 1]);
-            initialDungeon[thePoint.x][thePoint.y - 1].setRoomContents("Prospective");
-            initialDungeon[thePoint.x][thePoint.y - 1].setEast(initialDungeon[thePoint.x][thePoint.y]);
+        switch (theDirection) {
+            case 0 -> {
+                initialDungeon[thePoint.x][thePoint.y].setNorth(initialDungeon[thePoint.x - 1][thePoint.y]);
+                initialDungeon[thePoint.x - 1][thePoint.y].setRoomContents("Prospective");
+                initialDungeon[thePoint.x - 1][thePoint.y].setSouth(initialDungeon[thePoint.x][thePoint.y]);
+            }
+            case 1 -> {
+                initialDungeon[thePoint.x][thePoint.y].setEast(initialDungeon[thePoint.x][thePoint.y + 1]);
+                initialDungeon[thePoint.x][thePoint.y + 1].setRoomContents("Prospective");
+                initialDungeon[thePoint.x][thePoint.y + 1].setWest(initialDungeon[thePoint.x][thePoint.y]);
+            }
+            case 2 -> {
+                initialDungeon[thePoint.x][thePoint.y].setSouth(initialDungeon[thePoint.x + 1][thePoint.y]);
+                initialDungeon[thePoint.x + 1][thePoint.y].setRoomContents("Prospective");
+                initialDungeon[thePoint.x + 1][thePoint.y].setNorth(initialDungeon[thePoint.x][thePoint.y]);
+            }
+            case 3 -> {
+                initialDungeon[thePoint.x][thePoint.y].setWest(initialDungeon[thePoint.x][thePoint.y - 1]);
+                initialDungeon[thePoint.x][thePoint.y - 1].setRoomContents("Prospective");
+                initialDungeon[thePoint.x][thePoint.y - 1].setEast(initialDungeon[thePoint.x][thePoint.y]);
+            }
         }
     }
 
@@ -299,7 +323,7 @@ public class DungeonGenerator {
      * in the direction provided and returns true if the room is empty with no connections,
      * otherwise it returns false.
      *
-     * @param theRoom      The DungeonGeneration.Room from which to check
+     * @param theRoom      The Room from which to check
      * @param theDirection The direction in which to check
      * @return             True if the room in the given direction is empty, false otherwise
      */
@@ -316,7 +340,7 @@ public class DungeonGenerator {
         // If the move is west
         } else if (theDirection == 3 && theRoom.getCoords().y - 1 >= 0) {
             return initialDungeon[theRoom.getCoords().x][theRoom.getCoords().y - 1].getRoomContents().equals(" ");
-        // DungeonGeneration.Room was on edge of board and thus could not move off it
+        // Room was on edge of board and thus could not move off it
         } else {
             return false;
         }
@@ -369,35 +393,10 @@ public class DungeonGenerator {
         finalDungeon = generateConnections(finalDungeon);
     }
 
-
-//    /**
-//     * The displayDungeon method acts as debugging tool to print out a DungeonGeneration.Room[][] to the console.
-//     *
-//     * @param theRooms The DungeonGeneration.Room[][] to be printed
-//     */
-//    public void displayDungeon(Room[][] theRooms) {
-//        System.out.print("\t ");
-//        for(int i = 0; i < theRooms.length; i++) {
-//            if (i < 10) {
-//                System.out.print(" " + i + "  ");
-//            } else {
-//                System.out.print(i + "  ");
-//            }
-//        }
-//        for (int i = 0; i < theRooms.length; i++) {
-//            System.out.print(i + "\t| ");
-//            for (int j = 0; j < theRooms[0].length; j++) {
-//                System.out.print(theRooms[i][j].getRoomContents());
-//                System.out.print("   ");
-//            }
-//            System.out.print("\n");
-//        }
-//    }
-
     /**
-     * The generateConnections method accepts a 2d array of DungeonGeneration.Room objects. It is designed to add
+     * The generateConnections method accepts a 2d array of Room objects. It is designed to add
      * symbols in positions that are between two Rooms which are connected via references to
-     * each other. It does this by iterating over the DungeonGeneration.Room[][] and adding symbols where applicable.
+     * each other. It does this by iterating over the Room[][] and adding symbols where applicable.
      *
      * @param theRooms The array to which connections between rooms should be added
      * @return         The provided array but with connections between all applicable Rooms
@@ -423,7 +422,7 @@ public class DungeonGenerator {
     }
 
     /**
-     * The cleanUpDungeon method snips any connections between Rooms with the contents "Prospective" and any other rooms. Rooms
+     * The cleanUpDungeon method 'snips' any connections between Rooms with the contents "Prospective" and any other rooms. Rooms
      * marked "Prospective" are only used in the generation process to denote rooms which could be generated and, at this point,
      * no longer serve purpose and are thus removed. This is done by iterating over the initial dungeon and setting
      * appropriate connections between rooms to null and setting the Rooms containing "Prospective" to contain " ".
@@ -450,9 +449,9 @@ public class DungeonGenerator {
     /**
      * The addRoomCodes method is designed to encrypt the state of each room within the given 2d
      * array of room objects. Each room is evaluated regarding its connections to other rooms. Each
-     * connection (or lack thereof) is stored in a 4-digit binary number beginning with the DungeonGeneration.Room's north
-     * and proceeding clockwise. A 1 represents a connection to another DungeonGeneration.Room, while a 0 represents no
-     * connection. This string is then saved to the DungeonGeneration.Room object for which it was generated for later
+     * connection (or lack thereof) is stored in a 4-digit binary number beginning with the Room's north
+     * and proceeding clockwise. A 1 represents a connection to another Room, while a 0 represents no
+     * connection. This string is then saved to the Room object for which it was generated for later
      * use by the GUI.
      *
      * @param theRooms The 2d array of rooms for which roomCodes should be generated.
@@ -473,10 +472,20 @@ public class DungeonGenerator {
         }
     }
 
+    /**
+     * getDungeon returns the 2d array finalDungeon
+     *
+     * @return A 2d array of Room objects
+     */
     public Room[][] getDungeon() {
         return finalDungeon;
     }
 
+    /**
+     * getFloor returns the current floor
+     *
+     * @return An int representing the current floor
+     */
     public int getFloor() {
         return floor;
     }

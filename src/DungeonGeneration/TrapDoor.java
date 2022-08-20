@@ -1,27 +1,20 @@
 import javax.swing.*;
-import java.net.URL;
 
+/**
+ * This class represents the trap doors which can be found within the dungeon.
+ *
+ * @author Nathan Mahnke
+ */
 public class TrapDoor extends Entity{
-    private boolean opened;
 
+    /**
+     * This is the TrapDoor constructor. It calls the Entity Constructor, passing it relevant information, then uses super.setSprite
+     * to assign itself the proper ImageIcon based on whether the trap door is open or closed.
+     *
+     * @param theBoolean True if the trap door is open, false if it's closed
+     */
     public TrapDoor(final boolean theBoolean) {
         super(52, 52, 200);
-        opened = theBoolean;
-        setTrapDoorImage();
-    }
-
-    private void setTrapDoorImage() {
-        URL myUrl;
-        if(opened) {
-            myUrl = getClass().getResource("Assets/TrapDoorOpen.png");
-        } else {
-            myUrl = getClass().getResource("Assets/TrapDoorClosed.png");
-        }
-        assert myUrl != null;
-        super.setSprite(new ImageIcon(myUrl));
-    }
-
-    public boolean isOpened() {
-        return opened;
+        super.setSprite(new ImageIcon(getClass().getResource("Assets/TrapDoor" + (theBoolean ? "Open" : "Closed") + ".png")));
     }
 }

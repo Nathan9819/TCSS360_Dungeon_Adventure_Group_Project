@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 /**
  * This class handles interaction between DungeonGenerator and UI. It passes information between
@@ -12,10 +13,10 @@ import java.awt.*;
  */
 public class DungeonAdventure{
     private int playerClass;
-    private DungeonGenerator dg;
+    private final DungeonGenerator dg;
     private Player p;
     private Room[][] dungeon;
-    private UI ui;
+    private final UI ui;
 
     /**
      * This is the DungeonAdventure constructor. It is used to instantiate dg, which is a DungeonGenerator
@@ -66,7 +67,8 @@ public class DungeonAdventure{
      */
     public void finalBoss() {
         RoomTile myBossRoom = new RoomTile(true);
-        myBossRoom.setSprite(new ImageIcon(getClass().getResource("Assets/finalBossRoom.png")));
+        URL myUrl = DungeonAdventure.class.getResource("Assets/finalBossRoom.png");
+        myBossRoom.setSprite(new ImageIcon(myUrl));
         myBossRoom.setHeight(156);
         myBossRoom.setWidth(156);
         ui.spawnRoomOrHallway(myBossRoom, 100, 100, 0, 0);
