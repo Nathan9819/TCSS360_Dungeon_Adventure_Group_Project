@@ -9,16 +9,16 @@ import java.util.Random;
  */
 public abstract class DungeonCharacter {
     /**
-	 * The Max HP.
-	 */
+     * The Max HP.
+     */
     private int myMaxHP;
     /**
-	 * The current Hp.
-	 */
+    * The current Hp.
+    */
     private int myHP;
     /**
-	 * The lower bound of the damage range.
-	 */
+     * The lower bound of the damage range.
+     */
     private int myMinDMG;
     private int myMaxDMG;
     private String myName;
