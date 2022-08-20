@@ -13,14 +13,20 @@ public abstract class DungeonCharacter {
      */
     private int myMaxHP;
     /**
-    * The current Hp.
-    */
+     * The current Hp.
+     */
     private int myHP;
     /**
      * The lower bound of the damage range.
      */
     private int myMinDMG;
+    /** 
+     * The upper bound of the damage range.
+     */
     private int myMaxDMG;
+    /**
+     * The character's name.
+     */
     private String myName;
     private int myAtkSpd;
     private double myHit;
