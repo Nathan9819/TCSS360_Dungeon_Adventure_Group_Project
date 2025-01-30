@@ -1,0 +1,1 @@
+[![Watch the video](https://raw.githubusercontent.com/Nathan9819/TCSS360_Dungeon_Adventure_Group_Project/main/assets/thumbnail.jpg)](https://raw.githubusercontent.com/Nathan9819/TCSS360_Dungeon_Adventure_Group_Project/main/assets/video.mp4)
