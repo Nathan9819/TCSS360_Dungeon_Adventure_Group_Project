@@ -1,1 +1,1 @@
-[![Watch the video](https://raw.githubusercontent.com/Nathan9819/TCSS360_Dungeon_Adventure_Group_Project/master/thumbnail.png)](https://raw.githubusercontent.com/Nathan9819/TCSS360_Dungeon_Adventure_Group_Project/master/Demo.mp4)
+[![Watch the video](https://raw.githubusercontent.com/Nathan9819/TCSS360_Dungeon_Adventure_Group_Project/master/image.png)](https://raw.githubusercontent.com/Nathan9819/TCSS360_Dungeon_Adventure_Group_Project/master/Demo.mp4)
